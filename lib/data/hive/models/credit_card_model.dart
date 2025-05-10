@@ -23,7 +23,10 @@ class CreditCardModel extends HiveObject {
   final double limit;
 
   @HiveField(6)
-  final double currentDue;
+  double currentDueAmount;
+
+  @HiveField(7)
+  DateTime? lastPaidDate;
 
   CreditCardModel({
     required this.cardName,
@@ -32,6 +35,23 @@ class CreditCardModel extends HiveObject {
     required this.billingDate,
     required this.dueDate,
     required this.limit,
-    required this.currentDue,
+    required this.currentDueAmount,
+    this.lastPaidDate,
   });
+
+  CreditCardModel copyWith({
+    required double currentDueAmount,
+    required DateTime lastPaidDate,
+  }) {
+    return CreditCardModel(
+      cardName: cardName,
+      bankName: bankName,
+      last4Digits: last4Digits,
+      billingDate: billingDate,
+      dueDate: dueDate,
+      limit: limit,
+      currentDueAmount: currentDueAmount,
+      lastPaidDate: lastPaidDate,
+    );
+  }
 }

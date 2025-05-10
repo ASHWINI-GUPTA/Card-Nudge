@@ -100,7 +100,7 @@ class CreditCardTile extends ConsumerWidget {
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   Text(
-                    'Current Due: ${_formatCurrency(card.currentDue)}',
+                    'Current Due: ${_formatCurrency(card.currentDueAmount)}',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:credit_card_manager/presentation/providers/credit_card_provider.dart';
 import '../widgets/credit_card_tile.dart';
 import 'add_card_screen.dart';
+import 'upcoming_due_screen.dart';
 
 class CardListScreen extends ConsumerWidget {
   const CardListScreen({super.key});
@@ -12,7 +13,22 @@ class CardListScreen extends ConsumerWidget {
     final cards = ref.watch(creditCardListProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Credit Cards')),
+      appBar: AppBar(
+        title: const Text('Credit Cards'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.date_range),
+            tooltip: 'Upcoming Dues',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const UpcomingDueScreen(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       body:
           cards.isEmpty
               ? const Center(child: Text('No cards added yet.'))

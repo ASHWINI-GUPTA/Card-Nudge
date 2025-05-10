@@ -23,14 +23,15 @@ class CreditCardModelAdapter extends TypeAdapter<CreditCardModel> {
       billingDate: fields[3] as DateTime,
       dueDate: fields[4] as DateTime,
       limit: fields[5] as double,
-      currentDue: fields[6] as double,
+      currentDueAmount: fields[6] as double,
+      lastPaidDate: fields[7] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, CreditCardModel obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.cardName)
       ..writeByte(1)
@@ -44,7 +45,9 @@ class CreditCardModelAdapter extends TypeAdapter<CreditCardModel> {
       ..writeByte(5)
       ..write(obj.limit)
       ..writeByte(6)
-      ..write(obj.currentDue);
+      ..write(obj.currentDueAmount)
+      ..writeByte(7)
+      ..write(obj.lastPaidDate);
   }
 
   @override

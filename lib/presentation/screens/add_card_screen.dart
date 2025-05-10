@@ -38,7 +38,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
       text: card?.limit.toString() ?? '',
     );
     _currentDueController = TextEditingController(
-      text: card?.currentDue.toString() ?? '',
+      text: card?.currentDueAmount.toString() ?? '',
     );
 
     _billingDate = card?.billingDate;
@@ -78,7 +78,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
       billingDate: _billingDate!,
       dueDate: _dueDate!,
       limit: double.parse(_limitController.text.trim()),
-      currentDue: double.tryParse(_currentDueController.text.trim()) ?? 0,
+      currentDueAmount: double.tryParse(_currentDueController.text.trim()) ?? 0,
     );
 
     final notifier = ref.read(creditCardListProvider.notifier);

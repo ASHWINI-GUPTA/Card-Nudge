@@ -58,4 +58,17 @@ class CreditCardNotifier extends StateNotifier<List<CreditCardModel>> {
     sortedList.sort((a, b) => a.dueDate.compareTo(b.dueDate));
     return sortedList;
   }
+
+  void markAsPaid(int key) {
+    final box = CreditCardStorage.getBox();
+    final index = box.values.toList().indexWhere((card) => card.key == key);
+    if (index != -1) {
+      final card = box.getAt(index);
+      if (card != null) {
+        card.currentDueAmount = 0;
+        box.putAt(index, card);
+        loadCards();
+      }
+    }
+  }
 }
