@@ -12,7 +12,7 @@ class CreditCardNotifier extends StateNotifier<List<CreditCardModel>> {
 
   void loadCards() {
     final box = CreditCardStorage.getBox();
-    state = box.values.toList();
+    state = box.values.toList()..sort((a, b) => a.dueDate.compareTo(b.dueDate));
   }
 
   void add(CreditCardModel card) {
@@ -47,5 +47,15 @@ class CreditCardNotifier extends StateNotifier<List<CreditCardModel>> {
     final box = CreditCardStorage.getBox();
     box.put(key, card);
     loadCards();
+  }
+
+  List<CreditCardModel> get sortedOnDueDate {
+    if (state.isEmpty) {
+      return [];
+    }
+
+    final sortedList = List<CreditCardModel>.from(state);
+    sortedList.sort((a, b) => a.dueDate.compareTo(b.dueDate));
+    return sortedList;
   }
 }

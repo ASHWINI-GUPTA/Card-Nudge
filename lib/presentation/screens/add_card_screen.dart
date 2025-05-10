@@ -109,7 +109,11 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
     final spacing = const SizedBox(height: 12);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Credit Card')),
+      appBar: AppBar(
+        title: Text(
+          widget.card == null ? 'Add Credit Card' : 'Update Card Information',
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -189,10 +193,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 20),
-              FilledButton(
-                onPressed: _saveCard,
-                child: const Text('Save Card'),
-              ),
+              FilledButton(onPressed: _saveCard, child: const Text('Save')),
             ],
           ),
         ),
