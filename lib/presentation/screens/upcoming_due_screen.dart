@@ -56,13 +56,7 @@ class UpcomingDueScreen extends ConsumerWidget {
                                   if (value == 'mark_paid') {
                                     ref
                                         .read(creditCardListProvider.notifier)
-                                        .updateByKey(
-                                          card.key,
-                                          card.copyWith(
-                                            currentDueAmount: 0,
-                                            lastPaidDate: DateTime.now(),
-                                          ),
-                                        );
+                                        .markAsPaid(card.key);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text('Marked as Paid'),

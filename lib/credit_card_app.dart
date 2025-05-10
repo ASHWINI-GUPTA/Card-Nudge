@@ -7,7 +7,7 @@ class CreditCardApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Credit Card Manager',
+      title: 'Card Nudge',
       theme: ThemeData(
         useMaterial3: true,
         colorSchemeSeed: Colors.teal,

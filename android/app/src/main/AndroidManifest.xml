@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="credit_card_manager"
+        android:label="Card Nudge"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -34,6 +34,7 @@
         <receiver android:enabled="true" android:exported="false"
             android:name="com.dexterous.flutterlocalnotifications.FlutterLocalNotificationsPlugin">
         </receiver>
+        <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

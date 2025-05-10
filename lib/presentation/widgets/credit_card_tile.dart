@@ -1,9 +1,9 @@
-import 'package:credit_card_manager/data/hive/models/credit_card_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import '../../data/hive/models/credit_card_model.dart';
 import 'package:intl/intl.dart';
 
+import '../../data/hive/models/credit_card_model.dart';
 import '../providers/credit_card_provider.dart';
 import '../screens/add_card_screen.dart';
 

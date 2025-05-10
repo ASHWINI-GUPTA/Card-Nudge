@@ -17,7 +17,7 @@ class CreditCardModel extends HiveObject {
   final DateTime billingDate;
 
   @HiveField(4)
-  final DateTime dueDate;
+  DateTime dueDate;
 
   @HiveField(5)
   final double limit;

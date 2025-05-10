@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:credit_card_manager/presentation/providers/credit_card_provider.dart';
+import '../providers/credit_card_provider.dart';
 import '../widgets/credit_card_tile.dart';
 import 'add_card_screen.dart';
 import 'upcoming_due_screen.dart';
