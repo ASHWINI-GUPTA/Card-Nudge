@@ -1,0 +1,170 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../data/hive/models/credit_card_model.dart';
+import '../providers/credit_card_provider.dart';
+
+class AddCardScreen extends ConsumerStatefulWidget {
+  const AddCardScreen({super.key});
+
+  @override
+  ConsumerState<AddCardScreen> createState() => _AddCardScreenState();
+}
+
+class _AddCardScreenState extends ConsumerState<AddCardScreen> {
+  final _formKey = GlobalKey<FormState>();
+
+  final _cardNameController = TextEditingController();
+  final _bankNameController = TextEditingController();
+  final _last4DigitsController = TextEditingController();
+  final _limitController = TextEditingController();
+  final _currentDueController = TextEditingController();
+
+  DateTime? _billingDate;
+  DateTime? _dueDate;
+
+  Future<void> _pickDate(BuildContext context, bool isBilling) async {
+    final selected = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+    );
+
+    if (selected != null) {
+      setState(() {
+        if (isBilling) {
+          _billingDate = selected;
+        } else {
+          _dueDate = selected;
+        }
+      });
+    }
+  }
+
+  void _saveCard() {
+    if (_formKey.currentState?.validate() != true ||
+        _billingDate == null ||
+        _dueDate == null) {
+      return;
+    }
+
+    final newCard = CreditCardModel(
+      cardName: _cardNameController.text.trim(),
+      bankName: _bankNameController.text.trim(),
+      last4Digits: _last4DigitsController.text.trim(),
+      billingDate: _billingDate!,
+      dueDate: _dueDate!,
+      limit: double.parse(_limitController.text.trim()),
+      currentDue: double.tryParse(_currentDueController.text.trim()) ?? 0,
+    );
+
+    ref.read(creditCardListProvider.notifier).addCard(newCard);
+    Navigator.pop(context);
+  }
+
+  @override
+  void dispose() {
+    _cardNameController.dispose();
+    _bankNameController.dispose();
+    _last4DigitsController.dispose();
+    _limitController.dispose();
+    _currentDueController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = const SizedBox(height: 12);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Add Credit Card')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              TextFormField(
+                controller: _cardNameController,
+                decoration: const InputDecoration(labelText: 'Card Name'),
+                validator:
+                    (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+              ),
+              spacing,
+              TextFormField(
+                controller: _bankNameController,
+                decoration: const InputDecoration(labelText: 'Bank Name'),
+                validator:
+                    (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+              ),
+              spacing,
+              TextFormField(
+                controller: _last4DigitsController,
+                decoration: const InputDecoration(labelText: 'Last 4 Digits'),
+                keyboardType: TextInputType.number,
+                maxLength: 4,
+                validator:
+                    (v) =>
+                        v == null || v.length != 4
+                            ? 'Enter exactly 4 digits'
+                            : null,
+              ),
+              spacing,
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.calendar_today),
+                      label: Text(
+                        _billingDate == null
+                            ? 'Billing Date'
+                            : 'Billing: ${_billingDate!.day}/${_billingDate!.month}',
+                      ),
+                      onPressed: () => _pickDate(context, true),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.event),
+                      label: Text(
+                        _dueDate == null
+                            ? 'Due Date'
+                            : 'Due: ${_dueDate!.day}/${_dueDate!.month}',
+                      ),
+                      onPressed: () => _pickDate(context, false),
+                    ),
+                  ),
+                ],
+              ),
+              spacing,
+              TextFormField(
+                controller: _limitController,
+                decoration: const InputDecoration(
+                  labelText: 'Credit Limit (₹)',
+                ),
+                keyboardType: TextInputType.number,
+                validator:
+                    (v) =>
+                        v == null || double.tryParse(v) == null
+                            ? 'Enter valid number'
+                            : null,
+              ),
+              spacing,
+              TextFormField(
+                controller: _currentDueController,
+                decoration: const InputDecoration(labelText: 'Current Due (₹)'),
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 20),
+              FilledButton(
+                onPressed: _saveCard,
+                child: const Text('Save Card'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
