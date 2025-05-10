@@ -15,9 +15,37 @@ class CreditCardNotifier extends StateNotifier<List<CreditCardModel>> {
     state = box.values.toList();
   }
 
-  void addCard(CreditCardModel card) {
+  void add(CreditCardModel card) {
     final box = CreditCardStorage.getBox();
     box.add(card);
     loadCards(); // refresh list
+  }
+
+  void updateByKey(int key, CreditCardModel card) {
+    final box = CreditCardStorage.getBox();
+    final index = box.values.toList().indexWhere((card) => card.key == key);
+    box.putAt(index, card);
+    loadCards();
+  }
+
+  void deleteByKey(int key) {
+    final box = CreditCardStorage.getBox();
+    final index = box.values.toList().indexWhere((card) => card.key == key);
+    if (index != -1) {
+      box.deleteAt(index);
+      loadCards();
+    }
+  }
+
+  void clearCards() {
+    final box = CreditCardStorage.getBox();
+    box.clear();
+    loadCards();
+  }
+
+  void restoreByKey(int key, CreditCardModel card) {
+    final box = CreditCardStorage.getBox();
+    box.put(key, card);
+    loadCards();
   }
 }

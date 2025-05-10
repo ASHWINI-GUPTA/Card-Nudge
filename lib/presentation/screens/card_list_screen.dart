@@ -30,9 +30,86 @@ class CardListScreen extends ConsumerWidget {
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   final card = cards[index];
-                  return CreditCardTile(card: card);
+
+                  return Dismissible(
+                    key: ValueKey(card.key),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: const Icon(Icons.delete, color: Colors.white),
+                    ),
+                    confirmDismiss: (direction) async {
+                      return await showDialog(
+                        context: context,
+                        builder:
+                            (ctx) => AlertDialog(
+                              title: const Text('Delete Card'),
+                              content: const Text(
+                                'Are you sure you want to delete this card?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(ctx).pop(false),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.of(ctx).pop(true),
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            ),
+                      );
+                    },
+                    onDismissed: (direction) {
+                      final deletedCard = card;
+                      final deletedKey = card.key as int;
+
+                      ref
+                          .read(creditCardListProvider.notifier)
+                          .deleteByKey(deletedKey);
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('${deletedCard.cardName} deleted'),
+                          action: SnackBarAction(
+                            label: 'Undo',
+                            onPressed: () async {
+                              ref
+                                  .read(creditCardListProvider.notifier)
+                                  .restoreByKey(deletedKey, deletedCard);
+                            },
+                          ),
+                          duration: const Duration(seconds: 5),
+                        ),
+                      );
+                    },
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AddCardScreen(card: card),
+                          ),
+                        );
+                      },
+                      child: Card(
+                        child: ListTile(
+                          title: Text(card.cardName),
+                          subtitle: Text(
+                            'Due: ${card.dueDate.toLocal().toString().split(' ')[0]}',
+                          ),
+                          trailing: Text(
+                            '₹${card.currentDue.toStringAsFixed(2)}',
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
                 },
               ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(

@@ -4,7 +4,9 @@ import '../../../data/hive/models/credit_card_model.dart';
 import '../providers/credit_card_provider.dart';
 
 class AddCardScreen extends ConsumerStatefulWidget {
-  const AddCardScreen({super.key});
+  final CreditCardModel? card;
+
+  const AddCardScreen({super.key, this.card});
 
   @override
   ConsumerState<AddCardScreen> createState() => _AddCardScreenState();
@@ -13,14 +15,35 @@ class AddCardScreen extends ConsumerStatefulWidget {
 class _AddCardScreenState extends ConsumerState<AddCardScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final _cardNameController = TextEditingController();
-  final _bankNameController = TextEditingController();
-  final _last4DigitsController = TextEditingController();
-  final _limitController = TextEditingController();
-  final _currentDueController = TextEditingController();
+  late final TextEditingController _cardNameController;
+  late final TextEditingController _bankNameController;
+  late final TextEditingController _last4DigitsController;
+  late final TextEditingController _limitController;
+  late final TextEditingController _currentDueController;
 
   DateTime? _billingDate;
   DateTime? _dueDate;
+  @override
+  void initState() {
+    super.initState();
+
+    final card = widget.card;
+
+    _cardNameController = TextEditingController(text: card?.cardName ?? '');
+    _bankNameController = TextEditingController(text: card?.bankName ?? '');
+    _last4DigitsController = TextEditingController(
+      text: card?.last4Digits ?? '',
+    );
+    _limitController = TextEditingController(
+      text: card?.limit.toString() ?? '',
+    );
+    _currentDueController = TextEditingController(
+      text: card?.currentDue.toString() ?? '',
+    );
+
+    _billingDate = card?.billingDate;
+    _dueDate = card?.dueDate;
+  }
 
   Future<void> _pickDate(BuildContext context, bool isBilling) async {
     final selected = await showDatePicker(
@@ -41,14 +64,14 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
     }
   }
 
-  void _saveCard() {
+  Future<void> _saveCard() async {
     if (_formKey.currentState?.validate() != true ||
         _billingDate == null ||
         _dueDate == null) {
       return;
     }
 
-    final newCard = CreditCardModel(
+    final updatedCard = CreditCardModel(
       cardName: _cardNameController.text.trim(),
       bankName: _bankNameController.text.trim(),
       last4Digits: _last4DigitsController.text.trim(),
@@ -58,7 +81,16 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
       currentDue: double.tryParse(_currentDueController.text.trim()) ?? 0,
     );
 
-    ref.read(creditCardListProvider.notifier).addCard(newCard);
+    final notifier = ref.read(creditCardListProvider.notifier);
+
+    if (widget.card != null) {
+      // UPDATE
+      notifier.updateByKey(widget.card!.key, updatedCard);
+    } else {
+      // ADD
+      notifier.add(updatedCard);
+    }
+
     Navigator.pop(context);
   }
 
