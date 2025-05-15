@@ -1,16 +1,48 @@
-# credit_card_manager
+# 💳 Card Nudge - Credit Card Manager
 
-A new Flutter project.
+<div align="center">
+  <img src="https://github.com/ASHWINI-GUPTA/Card-Nudge/blob/main/assets/icon/icon.png" alt="Card Nudge App Icon" height="150">
+</div>
 
-## Getting Started
+Stay ahead of your credit card dues - gently. A modern, minimal Flutter app to manage all your credit cards in one place.
 
-This project is a starting point for a Flutter application.
+## 🌟 Features
 
-A few resources to get you started if this is your first Flutter project:
+### 🏦 Card Management
+- ➕ Add multiple credit cards with details
+- 🏷️ Custom names, bank info, last 4 digits
+- 📅 Track billing cycles & due dates
+- 💰 Set card limits for better control
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### 🔔 Smart Reminders
+- ⏰ Local notifications 3 days before due date
+- 🔔 Due day reminders
+- 🎯 Never miss a payment deadline
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 📊 Dashboard & Views
+- 📆 Visual calendar view of due dates
+- 📝 Clean list view of all cards
+- 🚨 Color-coded status (upcoming, near-due, overdue)
+- 📈 Total dues summary
+
+### 🛡️ Data Security
+- 📱 Offline-first design
+- 🔄 Local backup/restore functionality
+- 🔒 (Planned) Firebase sync option
+
+## 🎨 Screenshots
+<div align="center">
+  <img src="https://github.com/ASHWINI-GUPTA/Card-Nudge/blob/main/screenshots/list_and.jpeg" alt="List Card" height="300">
+  <img src="https://github.com/ASHWINI-GUPTA/Card-Nudge/blob/main/screenshots/add_and.jpeg" alt="Add Card" height="300">
+  <img src="https://github.com/ASHWINI-GUPTA/Card-Nudge/blob/main/screenshots/due_and.jpeg" alt="Due Screen" height="300">
+</div>
+
+## 🛠️ Technology Stack
+
+```plaintext
+Flutter 3.19+ • Dart 3.x
+├── Hive (Local Database)
+├── Local Notifications
+├── Material 3 Design
+├── Dark/Light Theme
+└── Platform: Android & iOS
