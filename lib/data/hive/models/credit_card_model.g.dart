@@ -17,37 +17,43 @@ class CreditCardModelAdapter extends TypeAdapter<CreditCardModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return CreditCardModel(
-      cardName: fields[0] as String,
-      bankName: fields[1] as String,
-      last4Digits: fields[2] as String,
-      billingDate: fields[3] as DateTime,
-      dueDate: fields[4] as DateTime,
-      limit: fields[5] as double,
-      currentDueAmount: fields[6] as double,
-      lastPaidDate: fields[7] as DateTime?,
+      id: fields[0] as String?,
+      cardName: fields[1] as String,
+      bankName: fields[2] as String,
+      last4Digits: fields[3] as String,
+      billingDate: fields[4] as DateTime,
+      dueDate: fields[5] as DateTime,
+      limit: fields[6] as double,
+      currentDueAmount: fields[7] as double,
+      lastPaidDate: fields[8] as DateTime?,
+      cardType: fields[9] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, CreditCardModel obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(10)
       ..writeByte(0)
-      ..write(obj.cardName)
+      ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.bankName)
+      ..write(obj.cardName)
       ..writeByte(2)
-      ..write(obj.last4Digits)
+      ..write(obj.bankName)
       ..writeByte(3)
-      ..write(obj.billingDate)
+      ..write(obj.last4Digits)
       ..writeByte(4)
-      ..write(obj.dueDate)
+      ..write(obj.billingDate)
       ..writeByte(5)
-      ..write(obj.limit)
+      ..write(obj.dueDate)
       ..writeByte(6)
-      ..write(obj.currentDueAmount)
+      ..write(obj.limit)
       ..writeByte(7)
-      ..write(obj.lastPaidDate);
+      ..write(obj.currentDueAmount)
+      ..writeByte(8)
+      ..write(obj.lastPaidDate)
+      ..writeByte(9)
+      ..write(obj.cardType);
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../notification_service.dart';
 import '../providers/credit_card_provider.dart';
 import '../widgets/credit_card_tile.dart';
 import 'add_card_screen.dart';
@@ -16,6 +17,13 @@ class CardListScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Credit Cards'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.lightbulb),
+            tooltip: 'Send Insights',
+            onPressed: () {
+              NotificationService.showInsightNotification();
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.date_range),
             tooltip: 'Upcoming Dues',

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'credit_card_app.dart';
 import 'data/hive/models/credit_card_model.dart';
-import 'data/hive/models/transaction_model.dart';
+import 'data/hive/models/reminder_model.dart';
 import 'notification_service.dart';
 
 void main() async {
@@ -11,12 +11,13 @@ void main() async {
   await NotificationService.init();
   await Hive.initFlutter();
   Hive.registerAdapter(CreditCardModelAdapter());
-  Hive.registerAdapter(TransactionModelAdapter());
+  Hive.registerAdapter(ReminderModelAdapter());
 
+  await Hive.openBox<ReminderModel>('reminders_box');
   await Hive.openBox<CreditCardModel>('credit_cards');
-  await Hive.openBox<TransactionModel>('transactions');
 
   final creditCardBox = Hive.box<CreditCardModel>('credit_cards');
+
   if (creditCardBox.isEmpty) {
     creditCardBox.addAll([
       CreditCardModel(

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import '../../data/hive/models/credit_card_model.dart';
 import 'package:intl/intl.dart';
-
 import '../../data/hive/models/credit_card_model.dart';
 import '../providers/credit_card_provider.dart';
 import '../screens/add_card_screen.dart';
@@ -20,7 +18,7 @@ class CreditCardTile extends ConsumerWidget {
     final now = DateTime.now();
     final difference = dueDate.difference(now).inDays;
     if (difference < 0) {
-      return 'Overdue by ${-difference} day${-difference == 1 ? '' : 's'}';
+      return 'Overdue by ${-difference} day${-difference == 1 ? '' : 's'} (was on ${DateFormat('dd-MMM').format(dueDate)})';
     } else if (difference == 0) {
       return 'Due today';
     } else {
@@ -99,6 +97,7 @@ class CreditCardTile extends ConsumerWidget {
                     'Limit: ${_formatCurrency(card.limit)}',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
+                  const SizedBox(height: 8),
                   Text(
                     'Current Due: ${_formatCurrency(card.currentDueAmount)}',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(

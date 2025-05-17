@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -11,14 +11,24 @@ class NotificationService {
   static Future<void> init() async {
     tzData.initializeTimeZones();
 
+    const DarwinInitializationSettings iosInit = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const iosInit = DarwinInitializationSettings();
     const initSettings = InitializationSettings(
       android: androidInit,
       iOS: iosInit,
     );
 
-    await _notifications.initialize(initSettings);
+    await _notifications.initialize(
+      initSettings,
+      onDidReceiveNotificationResponse: (details) {
+        debugPrint('iOS Local Notification received ${details.payload}');
+      },
+    );
 
     // Request permissions
     if (Platform.isAndroid) {
@@ -83,5 +93,51 @@ class NotificationService {
   static Future<List<PendingNotificationRequest>>
   getPendingNotifications() async {
     return await _notifications.pendingNotificationRequests();
+  }
+
+  static Future<void> showInsightNotification() async {
+    final int dueSoonCount = _getDueSoonCount();
+    final bigText =
+        '💡 You have $dueSoonCount card${dueSoonCount == 1 ? '' : 's'} due this week. Stay ahead and avoid late fees!';
+
+    // Android notification details
+    final androidDetails = AndroidNotificationDetails(
+      'insight_channel',
+      'Insight Notifications',
+      channelDescription: 'Shows daily credit card insights',
+      importance: Importance.high,
+      priority: Priority.high,
+      styleInformation: BigTextStyleInformation(
+        bigText,
+        contentTitle: '💳 Card Nudge Insight',
+        summaryText: 'Manage your dues smarter!',
+      ),
+    );
+
+    // iOS (Darwin) notification details
+    final iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+      subtitle: '📅 Weekly Summary',
+      threadIdentifier: 'insight_thread',
+    );
+
+    // Combine platform-specific details
+    final notificationDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    await _notifications.show(
+      999,
+      '💳 Card Nudge Insight',
+      bigText,
+      notificationDetails,
+    );
+  }
+
+  static _getDueSoonCount() {
+    return 1; // Placeholder for actual logic to count cards due soon
   }
 }
