@@ -1,6 +1,6 @@
 # flutter pub run flutter_launcher_icons
 flutter_launcher_icons:
-  image_path: "assets/icon/card_nudge.png"
+  image_path: "assets/icons/card_nudge.png"
 
   android: "ic_launcher"
   # android_adaptive_icon: true
