@@ -15,7 +15,7 @@ class CardListScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Credit Cards'),
+        title: const Text('Cards'),
         actions: [
           IconButton(
             icon: const Icon(Icons.lightbulb),
@@ -26,7 +26,7 @@ class CardListScreen extends ConsumerWidget {
           ),
           IconButton(
             icon: const Icon(Icons.date_range),
-            tooltip: 'Upcoming Dues',
+            tooltip: 'Upcoming Payments',
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -39,7 +39,7 @@ class CardListScreen extends ConsumerWidget {
       ),
       body:
           cards.isEmpty
-              ? const Center(child: Text('No cards added yet.'))
+              ? const Center(child: Text('You have not added any cards yet.'))
               : ListView.separated(
                 padding: const EdgeInsets.all(16),
                 itemCount: cards.length,

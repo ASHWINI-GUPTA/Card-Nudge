@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import '../../data/hive/models/credit_card_model.dart';
+import '../providers/bank_info_provider.dart';
 import '../providers/credit_card_provider.dart';
 
 class UpcomingDueScreen extends ConsumerWidget {
@@ -15,10 +17,10 @@ class UpcomingDueScreen extends ConsumerWidget {
     final groupedCards = _groupCardsByDueDate(filteredCards);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Upcoming Dues')),
+      appBar: AppBar(title: const Text('Upcoming Card Payments')),
       body:
           cards.isEmpty
-              ? const Center(child: Text('No dues found.'))
+              ? const Center(child: Text('You have no upcoming card payments.'))
               : ListView.builder(
                 itemCount: groupedCards.length,
                 itemBuilder: (context, index) {
@@ -47,6 +49,23 @@ class UpcomingDueScreen extends ConsumerWidget {
                           ),
                           child: Card(
                             child: ListTile(
+                              leading: Builder(
+                                builder: (context) {
+                                  final bank = BankInfoProvider.getBankInfo(
+                                    card.bankName,
+                                  );
+                                  return bank.logoPath != null
+                                      ? SvgPicture.asset(
+                                        bank.logoPath as String,
+                                        width: 35,
+                                        height: 35,
+                                      )
+                                      : const Icon(
+                                        Icons.account_balance,
+                                        size: 35,
+                                      );
+                                },
+                              ),
                               title: Text(card.cardName),
                               subtitle: Text(
                                 'Due: ₹${card.currentDueAmount.toStringAsFixed(0)}',
