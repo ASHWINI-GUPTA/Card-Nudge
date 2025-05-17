@@ -18,7 +18,7 @@ class CreditCardApp extends StatelessWidget {
         colorSchemeSeed: Colors.teal,
         brightness: Brightness.dark,
       ),
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.light,
       home: const CardListScreen(),
     );
   }

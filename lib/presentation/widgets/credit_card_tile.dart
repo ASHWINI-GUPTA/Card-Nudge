@@ -1,5 +1,7 @@
+import 'package:card_nudge/presentation/providers/bank_info_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import '../../data/hive/models/credit_card_model.dart';
 import '../providers/credit_card_provider.dart';
@@ -14,10 +16,18 @@ class CreditCardTile extends ConsumerWidget {
     return format.format(amount);
   }
 
-  String _dueDateLabel(DateTime dueDate) {
+  String _dueDateLabel(CreditCardModel card) {
+    final dueDate = card.dueDate;
     final now = DateTime.now();
     final difference = dueDate.difference(now).inDays;
-    if (difference < 0) {
+
+    if (card.currentDueAmount == 0) {
+      return 'No dues';
+    } else if (card.currentDueAmount < 0) {
+      return 'Overpaid by ${-card.currentDueAmount}';
+    } else if (difference < -7) {
+      return 'Overdue by ${-difference} day${-difference == 1 ? '' : 's'} (was on ${DateFormat('dd-MMM').format(dueDate)})';
+    } else if (difference < 0) {
       return 'Overdue by ${-difference} day${-difference == 1 ? '' : 's'} (was on ${DateFormat('dd-MMM').format(dueDate)})';
     } else if (difference == 0) {
       return 'Due today';
@@ -26,7 +36,13 @@ class CreditCardTile extends ConsumerWidget {
     }
   }
 
-  Color _dueDateColor(DateTime dueDate, BuildContext context) {
+  Color _dueDateColor(CreditCardModel card, BuildContext context) {
+    final dueDate = card.dueDate;
+    if (card.currentDueAmount == 0) {
+      return Theme.of(context).colorScheme.onSurface;
+    } else if (card.currentDueAmount < 0) {
+      return Theme.of(context).colorScheme.primary;
+    }
     final now = DateTime.now();
     final difference = dueDate.difference(now).inDays;
     if (difference < 0) {
@@ -83,32 +99,55 @@ class CreditCardTile extends ConsumerWidget {
                 ),
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: Column(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '${card.cardName} • ${card.bankName}',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text('**** ${card.last4Digits}'),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Limit: ${_formatCurrency(card.limit)}',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Current Due: ${_formatCurrency(card.currentDueAmount)}',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                  // Card details column
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${card.cardName} • ${card.bankName}',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 8),
+                        Text('**** ${card.last4Digits}'),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Limit: ${_formatCurrency(card.limit)}',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Current Due: ${_formatCurrency(card.currentDueAmount)}',
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _dueDateLabel(card),
+                          style: TextStyle(color: _dueDateColor(card, context)),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    _dueDateLabel(card.dueDate),
-                    style: TextStyle(
-                      color: _dueDateColor(card.dueDate, context),
+                  // Bank icon
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12.0, top: 4.0),
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        final bank = BankInfoProvider.getBankInfo(
+                          card.bankName,
+                        );
+                        return bank.logoPath != null
+                            ? SvgPicture.asset(
+                              bank.logoPath as String,
+                              width: 35,
+                              height: 35,
+                            )
+                            : const Icon(Icons.account_balance, size: 35);
+                      },
                     ),
                   ),
                 ],

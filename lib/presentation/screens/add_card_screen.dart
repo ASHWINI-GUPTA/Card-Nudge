@@ -1,5 +1,7 @@
+import 'package:card_nudge/presentation/providers/bank_info_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../data/hive/models/credit_card_model.dart';
 import '../providers/credit_card_provider.dart';
 
@@ -127,9 +129,37 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                     (v) => v == null || v.trim().isEmpty ? 'Required' : null,
               ),
               spacing,
-              TextFormField(
-                controller: _bankNameController,
+              DropdownButtonFormField<String>(
+                value:
+                    _bankNameController.text.isNotEmpty
+                        ? _bankNameController.text
+                        : null,
                 decoration: const InputDecoration(labelText: 'Bank Name'),
+                items:
+                    BankInfoProvider.getAllBanks().map((bank) {
+                      return DropdownMenuItem<String>(
+                        value: bank.name,
+                        child: Row(
+                          children: [
+                            if (bank.logoPath != null)
+                              SvgPicture.asset(
+                                bank.logoPath as String,
+                                width: 20,
+                              )
+                            else
+                              const Icon(Icons.account_balance, size: 20),
+                            const SizedBox(width: 8),
+                            Text(bank.name),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+
+                onChanged: (value) {
+                  setState(() {
+                    _bankNameController.text = value ?? '';
+                  });
+                },
                 validator:
                     (v) => v == null || v.trim().isEmpty ? 'Required' : null,
               ),
