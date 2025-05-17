@@ -50,9 +50,9 @@
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>Card Nudge uses notifications to remind you of upcoming card dues and payment dates.</string>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>This app uses notifications to remind you about due dates.</string>
-	<key>NSUserNotificationUsageDescription</key>
-	<string>We use notifications to remind you of credit card due dates and help you avoid late payments.</string>
 </dict>
 </plist>

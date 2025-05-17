@@ -1,8 +1,9 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="in.fnlsg.card_nudge">
     <application
         android:label="Card Nudge"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -30,11 +31,9 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
         <receiver android:enabled="true" android:exported="false"
             android:name="com.dexterous.flutterlocalnotifications.FlutterLocalNotificationsPlugin">
         </receiver>
-        <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
@@ -47,4 +46,7 @@
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 </manifest>
