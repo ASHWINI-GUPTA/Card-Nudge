@@ -5,6 +5,8 @@ import 'credit_card_app.dart';
 import 'data/hive/models/credit_card_model.dart';
 import 'data/hive/models/reminder_model.dart';
 import 'notification_service.dart';
+import 'presentation/providers/card_mock_data_provider.dart';
+import 'presentation/screens/dashboard_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,46 +21,7 @@ void main() async {
   final creditCardBox = Hive.box<CreditCardModel>('credit_cards');
 
   if (creditCardBox.isEmpty) {
-    creditCardBox.addAll([
-      CreditCardModel(
-        cardName: 'Coral',
-        bankName: 'ICICI Bank',
-        last4Digits: '1234',
-        billingDate: DateTime(2025, 4, 15),
-        dueDate: DateTime(2025, 5, 5),
-        limit: 5000.0,
-        currentDueAmount: 1500.0,
-        lastPaidDate: DateTime(2025, 4, 5),
-      ),
-      CreditCardModel(
-        cardName: 'Moneyback',
-        bankName: 'HDFC Bank',
-        last4Digits: '5678',
-        billingDate: DateTime(2025, 4, 10),
-        dueDate: DateTime(2025, 5, 1),
-        limit: 3000.0,
-        currentDueAmount: 800.0,
-        lastPaidDate: DateTime(2025, 4, 1),
-      ),
-      CreditCardModel(
-        cardName: 'Amazon Pay',
-        bankName: 'ICICI Bank',
-        last4Digits: '9012',
-        billingDate: DateTime(2025, 5, 20),
-        dueDate: DateTime(2025, 6, 10),
-        limit: 7000.0,
-        currentDueAmount: 0,
-      ),
-      CreditCardModel(
-        cardName: 'Atlas',
-        bankName: 'Axis Bank',
-        last4Digits: '3456',
-        billingDate: DateTime(2025, 5, 25),
-        dueDate: DateTime(2025, 6, 15),
-        limit: 6000.0,
-        currentDueAmount: 0,
-      ),
-    ]);
+    creditCardBox.addAll(CardMockDataProvider.getMockCreditCards());
   }
 
   runApp(const ProviderScope(child: CreditCardApp()));

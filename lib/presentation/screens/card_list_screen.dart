@@ -46,7 +46,7 @@ class CardListScreen extends ConsumerWidget {
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   final card = cards[index];
-                  return CreditCardTile(card: card);
+                  return CreditCard(card: card);
                 },
               ),
       floatingActionButton: FloatingActionButton(

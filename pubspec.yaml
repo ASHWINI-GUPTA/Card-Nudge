@@ -54,6 +54,8 @@ dependencies:
   flutter_hooks: ^0.21.2
   hooks_riverpod: ^2.4.0
   flutter_svg: ^2.1.0
+  go_router: ^15.1.2
+  fl_chart: ^1.0.0
 
 dev_dependencies:
   # The "flutter_lints" package below contains a set of recommended lints to

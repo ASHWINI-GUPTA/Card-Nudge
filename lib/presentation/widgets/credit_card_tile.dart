@@ -7,9 +7,9 @@ import '../../data/hive/models/credit_card_model.dart';
 import '../providers/credit_card_provider.dart';
 import '../screens/add_card_screen.dart';
 
-class CreditCardTile extends ConsumerWidget {
+class CreditCard extends ConsumerWidget {
   final CreditCardModel card;
-  const CreditCardTile({super.key, required this.card});
+  const CreditCard({super.key, required this.card});
 
   String _formatCurrency(double amount) {
     final format = NumberFormat.currency(locale: 'en_IN', symbol: '₹');
