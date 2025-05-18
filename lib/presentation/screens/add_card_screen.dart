@@ -1,8 +1,9 @@
-import 'package:card_nudge/presentation/providers/bank_info_provider.dart';
+import 'package:card_nudge/presentation/providers/bank_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../data/hive/models/credit_card_model.dart';
+import '../../data/enums/card_type.dart';
 import '../providers/credit_card_provider.dart';
 
 class AddCardScreen extends ConsumerStatefulWidget {
@@ -19,9 +20,9 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
 
   late final TextEditingController _cardNameController;
   late final TextEditingController _bankNameController;
+  late final TextEditingController _cardTypeController;
   late final TextEditingController _last4DigitsController;
   late final TextEditingController _limitController;
-  late final TextEditingController _currentDueController;
 
   DateTime? _billingDate;
   DateTime? _dueDate;
@@ -31,16 +32,16 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
 
     final card = widget.card;
 
-    _cardNameController = TextEditingController(text: card?.cardName ?? '');
-    _bankNameController = TextEditingController(text: card?.bankName ?? '');
+    _cardNameController = TextEditingController(text: card?.name ?? '');
+    _bankNameController = TextEditingController(text: card?.bankId ?? '');
+    _cardTypeController = TextEditingController(
+      text: card?.cardType.name ?? '',
+    );
     _last4DigitsController = TextEditingController(
       text: card?.last4Digits ?? '',
     );
     _limitController = TextEditingController(
-      text: card?.limit.toString() ?? '',
-    );
-    _currentDueController = TextEditingController(
-      text: card?.currentDueAmount.toString() ?? '',
+      text: card?.creditLimit.toString() ?? '',
     );
 
     _billingDate = card?.billingDate;
@@ -74,13 +75,14 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
     }
 
     final updatedCard = CreditCardModel(
-      cardName: _cardNameController.text.trim(),
-      bankName: _bankNameController.text.trim(),
+      name: _cardNameController.text.trim(),
+      bankId: _bankNameController.text.trim(),
       last4Digits: _last4DigitsController.text.trim(),
       billingDate: _billingDate!,
       dueDate: _dueDate!,
-      limit: double.parse(_limitController.text.trim()),
-      currentDueAmount: double.tryParse(_currentDueController.text.trim()) ?? 0,
+      creditLimit: double.parse(_limitController.text.trim()),
+      currentUtilization: 0.0,
+      cardType: CardType.Visa,
     );
 
     final notifier = ref.read(creditCardListProvider.notifier);
@@ -102,7 +104,6 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
     _bankNameController.dispose();
     _last4DigitsController.dispose();
     _limitController.dispose();
-    _currentDueController.dispose();
     super.dispose();
   }
 
@@ -112,9 +113,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.card == null ? 'Add Credit Card' : 'Update Card Information',
-        ),
+        title: Text(widget.card == null ? 'Add Card' : 'Update Card'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -124,7 +123,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
             children: [
               TextFormField(
                 controller: _cardNameController,
-                decoration: const InputDecoration(labelText: 'Card Name'),
+                decoration: const InputDecoration(labelText: 'Card'),
                 validator:
                     (v) => v == null || v.trim().isEmpty ? 'Required' : null,
               ),
@@ -134,11 +133,11 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                     _bankNameController.text.isNotEmpty
                         ? _bankNameController.text
                         : null,
-                decoration: const InputDecoration(labelText: 'Bank Name'),
+                decoration: const InputDecoration(labelText: 'Bank'),
                 items:
-                    BankInfoProvider.getAllBanks().map((bank) {
+                    BankNotifier.getAllBanks().map((bank) {
                       return DropdownMenuItem<String>(
-                        value: bank.name,
+                        value: bank.id,
                         child: Row(
                           children: [
                             if (bank.logoPath != null)
@@ -151,6 +150,31 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                             const SizedBox(width: 8),
                             Text(bank.name),
                           ],
+                        ),
+                      );
+                    }).toList(),
+
+                onChanged: (value) {
+                  setState(() {
+                    _bankNameController.text = value ?? '';
+                  });
+                },
+                validator:
+                    (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+              ),
+              spacing,
+              DropdownButtonFormField<String>(
+                value:
+                    _cardTypeController.text.isNotEmpty
+                        ? _cardTypeController.text
+                        : null,
+                decoration: const InputDecoration(labelText: 'Bank'),
+                items:
+                    CardType.values.map((type) {
+                      return DropdownMenuItem<String>(
+                        value: type.name,
+                        child: Row(
+                          children: [const SizedBox(width: 8), Text(type.name)],
                         ),
                       );
                     }).toList(),
@@ -217,11 +241,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                             : null,
               ),
               spacing,
-              TextFormField(
-                controller: _currentDueController,
-                decoration: const InputDecoration(labelText: 'Current Due (₹)'),
-                keyboardType: TextInputType.number,
-              ),
+
               const SizedBox(height: 20),
               FilledButton(onPressed: _saveCard, child: const Text('Save')),
             ],

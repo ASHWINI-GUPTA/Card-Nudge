@@ -1,38 +1,38 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'credit_card_model.dart';
+part of 'bank_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class CreditCardModelAdapter extends TypeAdapter<CreditCardModel> {
+class BankModelAdapter extends TypeAdapter<BankModel> {
   @override
-  final int typeId = 1;
+  final int typeId = 0;
 
   @override
-  CreditCardModel read(BinaryReader reader) {
+  BankModel read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return CreditCardModel(
+    return BankModel(
       id: fields[0] as String?,
       name: fields[1] as String,
-      bankId: fields[2] as String,
-      last4Digits: fields[3] as String,
-      billingDate: fields[4] as DateTime,
-      dueDate: fields[5] as DateTime,
-      cardType: fields[6] as CardType,
-      creditLimit: fields[7] as double,
-      currentUtilization: fields[8] as double,
+      code: fields[2] as String?,
+      logoPath: fields[3] as String?,
+      supportNumber: fields[4] as String?,
+      website: fields[5] as String?,
+      isFavorite: fields[6] as bool,
+      colorHex: fields[7] as String?,
+      priority: fields[8] as int?,
       createdAt: fields[9] as DateTime?,
       updatedAt: fields[10] as DateTime?,
     );
   }
 
   @override
-  void write(BinaryWriter writer, CreditCardModel obj) {
+  void write(BinaryWriter writer, BankModel obj) {
     writer
       ..writeByte(11)
       ..writeByte(0)
@@ -40,19 +40,19 @@ class CreditCardModelAdapter extends TypeAdapter<CreditCardModel> {
       ..writeByte(1)
       ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.bankId)
+      ..write(obj.code)
       ..writeByte(3)
-      ..write(obj.last4Digits)
+      ..write(obj.logoPath)
       ..writeByte(4)
-      ..write(obj.billingDate)
+      ..write(obj.supportNumber)
       ..writeByte(5)
-      ..write(obj.dueDate)
+      ..write(obj.website)
       ..writeByte(6)
-      ..write(obj.cardType)
+      ..write(obj.isFavorite)
       ..writeByte(7)
-      ..write(obj.creditLimit)
+      ..write(obj.colorHex)
       ..writeByte(8)
-      ..write(obj.currentUtilization)
+      ..write(obj.priority)
       ..writeByte(9)
       ..write(obj.createdAt)
       ..writeByte(10)
@@ -65,7 +65,7 @@ class CreditCardModelAdapter extends TypeAdapter<CreditCardModel> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CreditCardModelAdapter &&
+      other is BankModelAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

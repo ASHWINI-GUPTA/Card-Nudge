@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'presentation/screens/card_list_screen.dart';
-import 'presentation/screens/dashboard_screen.dart';
 import 'presentation/screens/home_screen.dart';
-import 'presentation/screens/upcoming_due_screen.dart';
+// import 'presentation/screens/upcoming_due_screen.dart';
 
 class CreditCardApp extends StatelessWidget {
   const CreditCardApp({super.key});
@@ -22,12 +21,13 @@ class CreditCardApp extends StatelessWidget {
           path: '/cards',
           builder: (context, state) => const CardListScreen(),
         ),
-        GoRoute(
-          path: '/due',
-          builder: (context, state) => const UpcomingDueScreen(),
-        ),
+        // GoRoute(
+        //   path: '/due',
+        //   builder: (context, state) => const UpcomingDueScreen(),
+        // ),
       ],
     );
+
     return MaterialApp.router(
       title: 'Card Nudge',
       theme: ThemeData(
@@ -41,7 +41,6 @@ class CreditCardApp extends StatelessWidget {
         brightness: Brightness.dark,
       ),
       themeMode: ThemeMode.light,
-      // home: const DashboardScreen(),
       debugShowCheckedModeBanner: false,
       routerConfig: router,
     );

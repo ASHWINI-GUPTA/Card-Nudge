@@ -1,4 +1,4 @@
-import 'package:card_nudge/presentation/screens/upcoming_due_screen.dart';
+// import 'package:card_nudge/presentation/screens/upcoming_due_screen.dart';
 import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
 import 'card_list_screen.dart';
@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _screens = [
     const DashboardScreen(),
     const CardListScreen(),
-    const UpcomingDueScreen(),
+    // const UpcomingDueScreen(),
   ];
 
   final List<NavigationDestination> _destinations = const [
@@ -30,11 +30,11 @@ class _HomeScreenState extends State<HomeScreen> {
       selectedIcon: Icon(Icons.credit_card),
       label: 'Cards',
     ),
-    NavigationDestination(
-      icon: Icon(Icons.event_note_outlined),
-      selectedIcon: Icon(Icons.event_note),
-      label: 'Due',
-    ),
+    // NavigationDestination(
+    //   icon: Icon(Icons.event_note_outlined),
+    //   selectedIcon: Icon(Icons.event_note),
+    //   label: 'Due',
+    // ),
   ];
 
   @override

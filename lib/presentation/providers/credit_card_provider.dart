@@ -29,7 +29,7 @@ class CreditCardNotifier extends StateNotifier<List<CreditCardModel>> {
         id: card.key.hashCode ^ i,
         title: '📅 Payment Reminder!',
         body:
-            '💳 ${card.cardName} is due on ${_formatDate(dueDate)}. Don\'t miss it!',
+            '💳 ${card.name} is due on ${_formatDate(dueDate)}. Don\'t miss it!',
         scheduledDate: dueDate.subtract(Duration(days: i)),
       );
     }
@@ -38,8 +38,7 @@ class CreditCardNotifier extends StateNotifier<List<CreditCardModel>> {
     await NotificationService.scheduleNotification(
       id: card.key.hashCode ^ 2,
       title: '📝 Add Your Due Amount',
-      body:
-          '💳 How much do you owe on ${card.cardName}? Let\'s keep it updated!',
+      body: '💳 How much do you owe on ${card.name}? Let\'s keep it updated!',
       scheduledDate: dueDate,
     );
 
@@ -49,7 +48,7 @@ class CreditCardNotifier extends StateNotifier<List<CreditCardModel>> {
         id: card.key.hashCode ^ (100 + i),
         title: '⏰ Overdue Payment Reminder!',
         body:
-            '💳 ${card.cardName} payment is overdue since ${_formatDate(dueDate)}. Please pay it as soon as possible!',
+            '💳 ${card.name} payment is overdue since ${_formatDate(dueDate)}. Please pay it as soon as possible!',
         scheduledDate: dueDate.add(Duration(days: i)),
       );
     }
@@ -114,23 +113,5 @@ class CreditCardNotifier extends StateNotifier<List<CreditCardModel>> {
     final sortedList = List<CreditCardModel>.from(state);
     sortedList.sort((a, b) => a.dueDate.compareTo(b.dueDate));
     return sortedList;
-  }
-
-  Future<void> markAsPaid(int key) async {
-    final box = CreditCardStorage.getBox();
-    final index = box.values.toList().indexWhere((card) => card.key == key);
-    if (index != -1) {
-      final card = box.getAt(index);
-      if (card != null) {
-        card.currentDueAmount = 0;
-        card.lastPaidDate = DateTime.now();
-        card.dueDate = card.dueDate.add(Duration(days: 30));
-        box.putAt(index, card);
-        await _scheduleNotifications(
-          card,
-        ); // Reschedule notifications for the new due date
-        loadCards();
-      }
-    }
   }
 }

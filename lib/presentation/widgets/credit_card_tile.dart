@@ -1,4 +1,4 @@
-import 'package:card_nudge/presentation/providers/bank_info_provider.dart';
+import 'package:card_nudge/presentation/providers/bank_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -16,43 +16,43 @@ class CreditCard extends ConsumerWidget {
     return format.format(amount);
   }
 
-  String _dueDateLabel(CreditCardModel card) {
-    final dueDate = card.dueDate;
-    final now = DateTime.now();
-    final difference = dueDate.difference(now).inDays;
+  // String _dueDateLabel(CreditCardModel card) {
+  //   final dueDate = card.dueDate;
+  //   final now = DateTime.now();
+  //   final difference = dueDate.difference(now).inDays;
 
-    if (card.currentDueAmount == 0) {
-      return 'No dues';
-    } else if (card.currentDueAmount < 0) {
-      return 'Overpaid by ${-card.currentDueAmount}';
-    } else if (difference < -7) {
-      return 'Overdue by ${-difference} day${-difference == 1 ? '' : 's'} (was on ${DateFormat('dd-MMM').format(dueDate)})';
-    } else if (difference < 0) {
-      return 'Overdue by ${-difference} day${-difference == 1 ? '' : 's'} (was on ${DateFormat('dd-MMM').format(dueDate)})';
-    } else if (difference == 0) {
-      return 'Due today';
-    } else {
-      return 'Due in $difference day${difference == 1 ? '' : 's'}';
-    }
-  }
+  //   if (card.currentDueAmount == 0) {
+  //     return 'No dues';
+  //   } else if (card.currentDueAmount < 0) {
+  //     return 'Overpaid by ${-card.currentDueAmount}';
+  //   } else if (difference < -7) {
+  //     return 'Overdue by ${-difference} day${-difference == 1 ? '' : 's'} (was on ${DateFormat('dd-MMM').format(dueDate)})';
+  //   } else if (difference < 0) {
+  //     return 'Overdue by ${-difference} day${-difference == 1 ? '' : 's'} (was on ${DateFormat('dd-MMM').format(dueDate)})';
+  //   } else if (difference == 0) {
+  //     return 'Due today';
+  //   } else {
+  //     return 'Due in $difference day${difference == 1 ? '' : 's'}';
+  //   }
+  // }
 
-  Color _dueDateColor(CreditCardModel card, BuildContext context) {
-    final dueDate = card.dueDate;
-    if (card.currentDueAmount == 0) {
-      return Theme.of(context).colorScheme.onSurface;
-    } else if (card.currentDueAmount < 0) {
-      return Theme.of(context).colorScheme.primary;
-    }
-    final now = DateTime.now();
-    final difference = dueDate.difference(now).inDays;
-    if (difference < 0) {
-      return Theme.of(context).colorScheme.error;
-    } else if (difference <= 7) {
-      return Theme.of(context).colorScheme.primary;
-    } else {
-      return Theme.of(context).colorScheme.onSurfaceVariant;
-    }
-  }
+  // Color _dueDateColor(CreditCardModel card, BuildContext context) {
+  //   final dueDate = card.dueDate;
+  //   if (card.currentDueAmount == 0) {
+  //     return Theme.of(context).colorScheme.onSurface;
+  //   } else if (card.currentDueAmount < 0) {
+  //     return Theme.of(context).colorScheme.primary;
+  //   }
+  //   final now = DateTime.now();
+  //   final difference = dueDate.difference(now).inDays;
+  //   if (difference < 0) {
+  //     return Theme.of(context).colorScheme.error;
+  //   } else if (difference <= 7) {
+  //     return Theme.of(context).colorScheme.primary;
+  //   } else {
+  //     return Theme.of(context).colorScheme.onSurfaceVariant;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -71,7 +71,7 @@ class CreditCard extends ConsumerWidget {
         ref.read(creditCardListProvider.notifier).deleteByKey(deletedKey);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${deletedCard.cardName} deleted'),
+            content: Text('${deletedCard.name} deleted'),
             action: SnackBarAction(
               label: 'UNDO',
               onPressed:
@@ -108,27 +108,27 @@ class CreditCard extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${card.cardName} • ${card.bankName}',
+                          '${card.name} • ${card.bankId}',
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         const SizedBox(height: 8),
                         Text('**** ${card.last4Digits}'),
                         const SizedBox(height: 8),
                         Text(
-                          'Limit: ${_formatCurrency(card.limit)}',
+                          'Limit: ${_formatCurrency(card.creditLimit)}',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const SizedBox(height: 8),
-                        Text(
-                          'Current Due: ${_formatCurrency(card.currentDueAmount)}',
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
+                        // Text(
+                        //   'Current Due: ${_formatCurrency(card.currentDueAmount)}',
+                        //   style: Theme.of(context).textTheme.bodyMedium
+                        //       ?.copyWith(fontWeight: FontWeight.bold),
+                        // ),
                         const SizedBox(height: 8),
-                        Text(
-                          _dueDateLabel(card),
-                          style: TextStyle(color: _dueDateColor(card, context)),
-                        ),
+                        // Text(
+                        //   _dueDateLabel(card),
+                        //   style: TextStyle(color: _dueDateColor(card, context)),
+                        // ),
                       ],
                     ),
                   ),
@@ -137,9 +137,7 @@ class CreditCard extends ConsumerWidget {
                     padding: const EdgeInsets.only(left: 12.0, top: 4.0),
                     child: Consumer(
                       builder: (context, ref, child) {
-                        final bank = BankInfoProvider.getBankInfo(
-                          card.bankName,
-                        );
+                        final bank = BankNotifier.getBankInfo(card.name);
                         return bank.logoPath != null
                             ? SvgPicture.asset(
                               bank.logoPath as String,
