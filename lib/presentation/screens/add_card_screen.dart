@@ -168,7 +168,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                     _cardTypeController.text.isNotEmpty
                         ? _cardTypeController.text
                         : null,
-                decoration: const InputDecoration(labelText: 'Bank'),
+                decoration: const InputDecoration(labelText: 'Network'),
                 items:
                     CardType.values.map((type) {
                       return DropdownMenuItem<String>(

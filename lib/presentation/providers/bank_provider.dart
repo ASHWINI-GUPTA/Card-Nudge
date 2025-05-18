@@ -41,4 +41,8 @@ class BankNotifier extends StateNotifier<List<BankModel>> {
     });
     return sortedBanks;
   }
+
+  BankModel getById(String id) {
+    return state.firstWhere((bank) => bank.id == id);
+  }
 }

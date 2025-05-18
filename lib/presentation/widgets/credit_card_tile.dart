@@ -1,3 +1,4 @@
+import 'package:card_nudge/data/hive/models/payment_model.dart';
 import 'package:card_nudge/presentation/providers/bank_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import '../../data/hive/models/credit_card_model.dart';
 import '../providers/credit_card_provider.dart';
+import '../providers/payment_provider.dart';
 import '../screens/add_card_screen.dart';
 
 class CreditCard extends ConsumerWidget {
@@ -16,46 +18,74 @@ class CreditCard extends ConsumerWidget {
     return format.format(amount);
   }
 
-  // String _dueDateLabel(CreditCardModel card) {
-  //   final dueDate = card.dueDate;
-  //   final now = DateTime.now();
-  //   final difference = dueDate.difference(now).inDays;
+  String _dueDateLabel(List<PaymentModel> payments) {
+    final now = DateTime.now();
 
-  //   if (card.currentDueAmount == 0) {
-  //     return 'No dues';
-  //   } else if (card.currentDueAmount < 0) {
-  //     return 'Overpaid by ${-card.currentDueAmount}';
-  //   } else if (difference < -7) {
-  //     return 'Overdue by ${-difference} day${-difference == 1 ? '' : 's'} (was on ${DateFormat('dd-MMM').format(dueDate)})';
-  //   } else if (difference < 0) {
-  //     return 'Overdue by ${-difference} day${-difference == 1 ? '' : 's'} (was on ${DateFormat('dd-MMM').format(dueDate)})';
-  //   } else if (difference == 0) {
-  //     return 'Due today';
-  //   } else {
-  //     return 'Due in $difference day${difference == 1 ? '' : 's'}';
-  //   }
-  // }
+    if (payments.isEmpty) {
+      return 'No payment records';
+    }
 
-  // Color _dueDateColor(CreditCardModel card, BuildContext context) {
-  //   final dueDate = card.dueDate;
-  //   if (card.currentDueAmount == 0) {
-  //     return Theme.of(context).colorScheme.onSurface;
-  //   } else if (card.currentDueAmount < 0) {
-  //     return Theme.of(context).colorScheme.primary;
-  //   }
-  //   final now = DateTime.now();
-  //   final difference = dueDate.difference(now).inDays;
-  //   if (difference < 0) {
-  //     return Theme.of(context).colorScheme.error;
-  //   } else if (difference <= 7) {
-  //     return Theme.of(context).colorScheme.primary;
-  //   } else {
-  //     return Theme.of(context).colorScheme.onSurfaceVariant;
-  //   }
-  // }
+    final lastPayment = payments.last;
+    final dueDate = card.dueDate;
+    final difference = dueDate.difference(now).inDays;
+
+    // If the card has no due amount
+    if (lastPayment.dueAmount == 0) {
+      if (lastPayment.isPaid) {
+        return 'All dues cleared on ${DateFormat('dd-MMM').format(lastPayment.paymentDate)}';
+      } else {
+        return 'No dues';
+      }
+    }
+
+    // If payment is overdue
+    if (difference < 0) {
+      return 'Overdue by ${-difference} day${-difference == 1 ? '' : 's'} (was due on ${DateFormat('dd-MMM').format(dueDate)})';
+    }
+
+    // If payment is due today
+    if (difference == 0) {
+      return 'Due today';
+    }
+
+    // If payment is upcoming
+    if (difference > 0) {
+      return 'Due in $difference day${difference == 1 ? '' : 's'} (on ${DateFormat('dd-MMM').format(dueDate)})';
+    }
+
+    // Fallback
+    return 'Payment status unknown';
+  }
+
+  Color _dueDateColor(List<PaymentModel> payments, BuildContext context) {
+    if (payments.isEmpty) {
+      return Theme.of(context).colorScheme.onSurfaceVariant;
+    }
+
+    final lastPayment = payments.last;
+    final dueDate = card.dueDate;
+    final now = DateTime.now();
+    final difference = dueDate.difference(now).inDays;
+
+    if (lastPayment.dueAmount == 0) {
+      return Theme.of(context).colorScheme.onSurface;
+    } else if (difference < 0) {
+      return Theme.of(context).colorScheme.error;
+    } else if (difference <= 7) {
+      return Theme.of(context).colorScheme.primary;
+    } else {
+      return Theme.of(context).colorScheme.onSurfaceVariant;
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var payments = ref
+        .read(paymentProvider.notifier)
+        .getPaymentsForCard(card.id);
+
+    var bank = ref.read(bankProvider.notifier).getById(card.bankId);
+
     return Dismissible(
       key: ValueKey(card.key),
       direction: DismissDirection.endToStart,
@@ -108,7 +138,7 @@ class CreditCard extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${card.name} • ${card.bankId}',
+                          '${card.name} • ${bank.name}',
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         const SizedBox(height: 8),
@@ -119,16 +149,19 @@ class CreditCard extends ConsumerWidget {
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const SizedBox(height: 8),
-                        // Text(
-                        //   'Current Due: ${_formatCurrency(card.currentDueAmount)}',
-                        //   style: Theme.of(context).textTheme.bodyMedium
-                        //       ?.copyWith(fontWeight: FontWeight.bold),
-                        // ),
+
+                        Text(
+                          'Current Due: ${_formatCurrency(payments.isEmpty ? 0 : payments.last.dueAmount)}',
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(height: 8),
-                        // Text(
-                        //   _dueDateLabel(card),
-                        //   style: TextStyle(color: _dueDateColor(card, context)),
-                        // ),
+                        Text(
+                          _dueDateLabel(payments),
+                          style: TextStyle(
+                            color: _dueDateColor(payments, context),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -137,7 +170,6 @@ class CreditCard extends ConsumerWidget {
                     padding: const EdgeInsets.only(left: 12.0, top: 4.0),
                     child: Consumer(
                       builder: (context, ref, child) {
-                        final bank = BankNotifier.getBankInfo(card.name);
                         return bank.logoPath != null
                             ? SvgPicture.asset(
                               bank.logoPath as String,
