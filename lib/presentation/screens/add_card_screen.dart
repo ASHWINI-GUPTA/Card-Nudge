@@ -173,15 +173,13 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                     CardType.values.map((type) {
                       return DropdownMenuItem<String>(
                         value: type.name,
-                        child: Row(
-                          children: [const SizedBox(width: 8), Text(type.name)],
-                        ),
+                        child: Row(children: [Text(type.name)]),
                       );
                     }).toList(),
 
                 onChanged: (value) {
                   setState(() {
-                    _bankNameController.text = value ?? '';
+                    _cardTypeController.text = value ?? '';
                   });
                 },
                 validator:
