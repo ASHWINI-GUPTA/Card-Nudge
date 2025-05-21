@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../data/hive/models/credit_card_model.dart';
 import '../../data/hive/models/payment_model.dart';
-import '../widgets/create_due_bottomsheet.dart';
+import '../widgets/add_due_bottom_sheet.dart';
 import '../widgets/credit_card_tile.dart';
 import '../widgets/minimal_payment_display_card.dart';
 

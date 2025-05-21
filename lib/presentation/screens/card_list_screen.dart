@@ -1,7 +1,7 @@
-import 'package:card_nudge/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../constants/app_strings.dart';
+import '../../services/navigation_service.dart';
 import '../providers/credit_card_provider.dart';
 import '../widgets/credit_card_tile.dart';
 import 'add_card_screen.dart';
@@ -11,54 +11,86 @@ class CardListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Watch the synchronous List<CreditCardModel> from creditCardListProvider
-    final cards = ref.watch(creditCardListProvider);
+    final cardsAsync = ref.watch(creditCardListProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: Semantics(
           label: AppStrings.cardsTitle,
-          child: const Text(AppStrings.cardsTitle),
+          child: Text(
+            AppStrings.cardsTitle,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
         ),
         centerTitle: true,
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          // Invalidate provider to trigger reload
           ref.invalidate(creditCardListProvider);
-          // Wait for the notifier's loadCards to complete
-          await ref.read(creditCardListProvider.notifier).loadCards();
         },
-        child:
-            cards.isEmpty
-                ? Center(
-                  child: Semantics(
-                    label: AppStrings.noCardsMessage,
-                    child: Text(
-                      AppStrings.noCardsMessage,
-                      style: Theme.of(context).textTheme.bodyLarge,
+        child: cardsAsync.when(
+          data:
+              (cards) =>
+                  cards.isEmpty
+                      ? Center(
+                        child: Semantics(
+                          label: AppStrings.noCardsMessage,
+                          child: Text(
+                            AppStrings.noCardsMessage,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      )
+                      : ListView.separated(
+                        padding: const EdgeInsets.all(16.0),
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: cards.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 12),
+                        itemBuilder: (context, index) {
+                          final card = cards[index];
+                          return Semantics(
+                            label: '${AppStrings.cardLabel}: ${card.name}',
+                            child: CreditCard(
+                              key: ValueKey(card.id),
+                              card: card,
+                            ),
+                          );
+                        },
+                      ),
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error:
+              (error, stack) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Semantics(
+                      label: AppStrings.cardLoadError,
+                      child: Text(
+                        '${AppStrings.cardLoadError}: $error',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                  ),
-                )
-                : ListView.separated(
-                  padding: const EdgeInsets.all(16.0), // Use constant padding
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: cards.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final card = cards[index];
-                    return CreditCard(
-                      key: ValueKey(card.id), // Unique key for each card
-                      card: card,
-                    );
-                  },
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => ref.invalidate(creditCardListProvider),
+                      child: Text(AppStrings.retryButton),
+                    ),
+                  ],
                 ),
+              ),
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed:
-            () => NavigationService.navigateTo(context, const AddCardScreen()),
-        tooltip: AppStrings.addCard, // Accessibility
-        child: const Icon(Icons.add),
+      floatingActionButton: Semantics(
+        label: AppStrings.addCard,
+        child: FloatingActionButton(
+          onPressed:
+              () =>
+                  NavigationService.navigateTo(context, const AddCardScreen()),
+          tooltip: AppStrings.addCard,
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

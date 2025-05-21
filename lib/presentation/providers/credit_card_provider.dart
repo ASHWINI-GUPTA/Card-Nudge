@@ -6,23 +6,41 @@ import '../../data/hive/models/credit_card_model.dart';
 import '../../data/hive/storage/credit_card_storage.dart';
 import '../../services/notification_service.dart';
 
-// Provider for the Hive box (dependency injection)
 final creditCardBoxProvider = Provider<Box<CreditCardModel>>((ref) {
   return CreditCardStorage.getBox();
 });
 
-// StateNotifierProvider for managing credit card state
 final creditCardListProvider =
-    StateNotifierProvider<CreditCardNotifier, List<CreditCardModel>>(
-      (ref) => CreditCardNotifier(ref.read(creditCardBoxProvider))..loadCards(),
+    AsyncNotifierProvider<CreditCardNotifier, List<CreditCardModel>>(
+      CreditCardNotifier.new,
     );
 
-class CreditCardNotifier extends StateNotifier<List<CreditCardModel>> {
-  final Box<CreditCardModel> _box;
+class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
+  Box<CreditCardModel> get _box => ref.read(creditCardBoxProvider);
 
-  CreditCardNotifier(this._box) : super([]) {
-    // Listen to Hive box changes for real-time updates
+  @override
+  Future<List<CreditCardModel>> build() async {
     _box.listenable().addListener(_onBoxChange);
+    return _box.values.toList();
+  }
+
+  Future<void> save(CreditCardModel card) async {
+    state = const AsyncValue.loading();
+    try {
+      if (state.value!.any((c) => c.id == card.id && c.key != card.key)) {
+        await _box.put(card.key, card);
+        state = AsyncValue.data([
+          ...state.value!.where((c) => c.key != card.key),
+          card,
+        ]);
+      } else {
+        await _box.add(card);
+        state = AsyncValue.data([...state.value!, card]);
+      }
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      rethrow; // Allow widgets to catch errors
+    }
   }
 
   String _formatDate(DateTime date) {
@@ -80,15 +98,7 @@ class CreditCardNotifier extends StateNotifier<List<CreditCardModel>> {
 
   // Load cards from Hive box asynchronously
   Future<void> loadCards() async {
-    try {
-      final cards =
-          _box.values.toList()..sort((a, b) => a.dueDate.compareTo(b.dueDate));
-      state = cards;
-    } catch (e) {
-      // Handle errors (e.g., log or set empty state)
-      print('Error loading cards: $e');
-      state = [];
-    }
+    state = AsyncValue.data(_box.values.toList());
   }
 
   // Handle box changes for real-time updates
@@ -96,7 +106,7 @@ class CreditCardNotifier extends StateNotifier<List<CreditCardModel>> {
     final newCards =
         _box.values.toList()..sort((a, b) => a.dueDate.compareTo(b.dueDate));
     if (newCards != state) {
-      state = newCards;
+      state = AsyncValue.data(newCards);
     }
   }
 
@@ -167,7 +177,7 @@ class CreditCardNotifier extends StateNotifier<List<CreditCardModel>> {
   }
 
   // Get sorted cards (use state directly)
-  List<CreditCardModel> get sortedOnDueDate => state;
+  List<CreditCardModel> get sortedOnDueDate => state.value ?? [];
 
   // Get card by ID
   CreditCardModel? getById(String cardId) {
@@ -177,13 +187,5 @@ class CreditCardNotifier extends StateNotifier<List<CreditCardModel>> {
       print('Error getting card by ID: $e');
       return null;
     }
-  }
-
-  @override
-  void dispose() {
-    // Remove listener to prevent memory leaks
-    _box.listenable().removeListener(_onBoxChange);
-    // Note: Don't close the box here if shared via creditCardBoxProvider
-    super.dispose();
   }
 }

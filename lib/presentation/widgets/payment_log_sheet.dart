@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
+import '../../constants/app_strings.dart';
+import '../../data/enums/payment_option.dart';
 import '../../data/hive/models/payment_model.dart';
+import '../../services/navigation_service.dart';
 import '../providers/payment_provider.dart';
-
-enum PaymentOption { totalDue, minDue, custom }
 
 class LogPaymentBottomSheet extends ConsumerStatefulWidget {
   final PaymentModel payment;
@@ -19,6 +21,8 @@ class LogPaymentBottomSheet extends ConsumerStatefulWidget {
 class _LogPaymentBottomSheetState extends ConsumerState<LogPaymentBottomSheet> {
   PaymentOption _selectedOption = PaymentOption.totalDue;
   final TextEditingController _customAmountController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
@@ -26,99 +30,174 @@ class _LogPaymentBottomSheetState extends ConsumerState<LogPaymentBottomSheet> {
     super.dispose();
   }
 
-  void _logPayment() {
-    double amount;
-
-    switch (_selectedOption) {
-      case PaymentOption.totalDue:
-        amount = widget.payment.dueAmount;
-        break;
-      case PaymentOption.minDue:
-        amount = widget.payment.minimumDueAmount!;
-        break;
-      case PaymentOption.custom:
-        amount =
-            double.tryParse(_customAmountController.text.replaceAll(',', '')) ??
-            0.0;
-        break;
+  Future<PaymentModel?> _logPayment() async {
+    if (_selectedOption == PaymentOption.custom &&
+        !_formKey.currentState!.validate()) {
+      return null;
     }
 
-    if (amount <= 0) return;
+    setState(() => _isSubmitting = true);
 
-    ref.read(paymentProvider.notifier).markAsPaid(widget.payment.id, amount);
+    try {
+      double amount;
+      switch (_selectedOption) {
+        case PaymentOption.totalDue:
+          amount = widget.payment.dueAmount;
+          break;
+        case PaymentOption.minDue:
+          amount = widget.payment.minimumDueAmount ?? widget.payment.dueAmount;
+          break;
+        case PaymentOption.custom:
+          amount = double.parse(_customAmountController.text.trim());
+          break;
+      }
 
-    Navigator.pop(context);
+      await ref
+          .read(paymentProvider.notifier)
+          .markAsPaid(widget.payment.id, amount);
+
+      final updatedPayment = widget.payment.copyWith(
+        isPaid: true,
+        paidAmount: amount,
+      );
+
+      if (!mounted) return null;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(AppStrings.paymentLoggedSuccess)),
+      );
+      return updatedPayment;
+    } catch (e) {
+      if (!mounted) return null;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${AppStrings.paymentLogError}: $e')),
+      );
+      return null;
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final currencyFormat = NumberFormat.currency(locale: 'en_IN', symbol: '₹');
-    var payments = ref
-        .read(paymentProvider.notifier)
-        .getPaymentsForCard(widget.payment.id);
-
-    final unPaidPayment = payments.last;
 
     return Padding(
-      padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text(
-            'Log Payment',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          RadioListTile<PaymentOption>(
-            value: PaymentOption.totalDue,
-            groupValue: _selectedOption,
-            onChanged: (value) => setState(() => _selectedOption = value!),
-            title: Text(
-              'Total Due (${currencyFormat.format(unPaidPayment.dueAmount)})',
-            ),
-          ),
-
-          if (unPaidPayment.minimumDueAmount != null)
-            RadioListTile<PaymentOption>(
-              value: PaymentOption.minDue,
-              groupValue: _selectedOption,
-              onChanged: (value) => setState(() => _selectedOption = value!),
-              title: Text(
-                'Minimum Due (${currencyFormat.format(unPaidPayment.minimumDueAmount)})',
-              ),
-            ),
-          RadioListTile<PaymentOption>(
-            value: PaymentOption.custom,
-            groupValue: _selectedOption,
-            onChanged: (value) => setState(() => _selectedOption = value!),
-            title: const Text('Custom Amount'),
-          ),
-          if (_selectedOption == PaymentOption.custom)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: TextField(
-                controller: _customAmountController,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                ),
-                decoration: const InputDecoration(
-                  hintText: 'Enter custom amount',
-                  border: OutlineInputBorder(),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom + 32,
+        top: 16,
+        left: 16,
+        right: 16,
+      ),
+      child: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Semantics(
+                label: AppStrings.logPayment,
+                child: Text(
+                  AppStrings.logPayment,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ),
-            ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: _logPayment,
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 48),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+              const SizedBox(height: 16),
+              RadioListTile<PaymentOption>(
+                value: PaymentOption.totalDue,
+                groupValue: _selectedOption,
+                onChanged:
+                    _isSubmitting
+                        ? null
+                        : (value) => setState(() => _selectedOption = value!),
+                title: Text(
+                  '${AppStrings.totalDue} (${currencyFormat.format(widget.payment.dueAmount)})',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
               ),
-            ),
-            child: const Text('Log Payment'),
+              if (widget.payment.minimumDueAmount != null)
+                RadioListTile<PaymentOption>(
+                  value: PaymentOption.minDue,
+                  groupValue: _selectedOption,
+                  onChanged:
+                      _isSubmitting
+                          ? null
+                          : (value) => setState(() => _selectedOption = value!),
+                  title: Text(
+                    '${AppStrings.minimumDue} (${currencyFormat.format(widget.payment.minimumDueAmount)})',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
+              RadioListTile<PaymentOption>(
+                value: PaymentOption.custom,
+                groupValue: _selectedOption,
+                onChanged:
+                    _isSubmitting
+                        ? null
+                        : (value) => setState(() => _selectedOption = value!),
+                title: Text(
+                  AppStrings.customAmount,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+              ),
+              if (_selectedOption == PaymentOption.custom)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: TextFormField(
+                    controller: _customAmountController,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^\d*\.?\d{0,2}'),
+                      ),
+                    ],
+                    decoration: const InputDecoration(
+                      labelText: AppStrings.customAmountLabel,
+                    ),
+                    validator: (value) {
+                      final v = double.tryParse(value?.trim() ?? '');
+                      if (v == null || v <= 0) {
+                        return AppStrings.invalidCustomAmountError;
+                      }
+                      if (v > widget.payment.dueAmount) {
+                        return AppStrings.amountExceedsDueError;
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed:
+                    _isSubmitting
+                        ? null
+                        : () async {
+                          final payment = await _logPayment();
+                          if (payment != null) {
+                            NavigationService.pop(context);
+                          }
+                        },
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child:
+                    _isSubmitting
+                        ? const CircularProgressIndicator()
+                        : Text(
+                          AppStrings.logPaymentButton,
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+              ),
+              const SizedBox(height: 16),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

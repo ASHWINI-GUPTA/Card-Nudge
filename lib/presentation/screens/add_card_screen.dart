@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/services.dart';
-import '../../../data/hive/models/credit_card_model.dart';
+import '../../constants/app_strings.dart';
 import '../../data/enums/card_type.dart';
+import '../../data/hive/models/credit_card_model.dart';
+import '../../services/navigation_service.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/bank_provider.dart';
-import '../../constants/app_strings.dart';
 
 class AddCardScreen extends ConsumerStatefulWidget {
   final CreditCardModel? card;
@@ -47,6 +48,62 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
     _dueDate = card?.dueDate;
   }
 
+  Future<CreditCardModel?> _saveCard() async {
+    if (_formKey.currentState?.validate() != true ||
+        _billingDate == null ||
+        _dueDate == null) {
+      if (_billingDate == null || _dueDate == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text(AppStrings.selectDatesError)),
+        );
+      }
+      return null;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      final cardType = CardType.values.firstWhere(
+        (type) => type.name == _cardTypeController.text.trim(),
+        orElse: () => CardType.Visa,
+      );
+
+      final updatedCard = CreditCardModel(
+        id: widget.card?.id ?? UniqueKey().toString(),
+        name: _cardNameController.text.trim(),
+        bankId: _bankNameController.text.trim(),
+        last4Digits: _last4DigitsController.text.trim(),
+        billingDate: _billingDate!,
+        dueDate: _dueDate!,
+        creditLimit: double.parse(_limitController.text.trim()),
+        currentUtilization: widget.card?.currentUtilization ?? 0.0,
+        cardType: cardType,
+      );
+
+      await ref.read(creditCardListProvider.notifier).save(updatedCard);
+
+      if (!mounted) return null;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            widget.card == null
+                ? AppStrings.cardAddedSuccess
+                : AppStrings.cardUpdatedSuccess,
+          ),
+        ),
+      );
+      return updatedCard;
+    } catch (e) {
+      if (!mounted) return null;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${AppStrings.cardSaveError}: $e')),
+      );
+      return null;
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
+
   Future<void> _pickDate(BuildContext context, bool isBilling) async {
     final selected = await showDatePicker(
       context: context,
@@ -63,67 +120,6 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
           _dueDate = selected;
         }
       });
-    }
-  }
-
-  Future<void> _saveCard() async {
-    if (_formKey.currentState?.validate() != true ||
-        _billingDate == null ||
-        _dueDate == null) {
-      if (_billingDate == null || _dueDate == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text(AppStrings.selectDatesError)),
-        );
-      }
-      return;
-    }
-
-    setState(() => _isSubmitting = true);
-
-    try {
-      final cardType = CardType.values.firstWhere(
-        (type) => type.name == _cardTypeController.text.trim(),
-        orElse: () => CardType.Visa, // Fallback
-      );
-
-      final updatedCard = CreditCardModel(
-        id: widget.card?.id ?? UniqueKey().toString(),
-        name: _cardNameController.text.trim(),
-        bankId: _bankNameController.text.trim(),
-        last4Digits: _last4DigitsController.text.trim(),
-        billingDate: _billingDate!,
-        dueDate: _dueDate!,
-        creditLimit: double.parse(_limitController.text.trim()),
-        currentUtilization: widget.card?.currentUtilization ?? 0.0,
-        cardType: cardType,
-      );
-
-      final notifier = ref.read(creditCardListProvider.notifier);
-
-      if (widget.card != null) {
-        await notifier.updateByKey(widget.card!.key, updatedCard);
-      } else {
-        await notifier.add(updatedCard);
-      }
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            widget.card == null
-                ? AppStrings.cardAddedSuccess
-                : AppStrings.cardUpdatedSuccess,
-          ),
-        ),
-      );
-      Navigator.pop(context);
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${AppStrings.cardSaveError}: $e')),
-      );
-    } finally {
-      if (mounted) setState(() => _isSubmitting = false);
     }
   }
 
@@ -175,7 +171,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                   labelText: AppStrings.bankLabel,
                 ),
                 items:
-                    ref.watch(bankProvider.notifier).getAllBanks().map((bank) {
+                    ref.watch(bankProvider).map((bank) {
                       return DropdownMenuItem<String>(
                         value: bank.id,
                         child: Row(
@@ -312,7 +308,15 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
               ),
               const SizedBox(height: 20),
               FilledButton(
-                onPressed: _isSubmitting ? null : _saveCard,
+                onPressed:
+                    _isSubmitting
+                        ? null
+                        : () async {
+                          final card = await _saveCard();
+                          if (card != null) {
+                            NavigationService.pop(context);
+                          }
+                        },
                 child:
                     _isSubmitting
                         ? const CircularProgressIndicator()

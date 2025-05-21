@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import '../../constants/app_strings.dart';
 import '../../data/hive/models/payment_model.dart';
+import '../../services/navigation_service.dart';
 import '../providers/payment_provider.dart';
-import '../../constants/app_strings.dart'; // For localized strings
 
 class AddDueBottomSheet extends ConsumerStatefulWidget {
   final String cardId;
@@ -28,14 +29,14 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
     super.dispose();
   }
 
-  Future<void> _submit() async {
+  Future<PaymentModel?> _submit() async {
     if (!_formKey.currentState!.validate() || _selectedDate == null) {
       if (_selectedDate == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text(AppStrings.selectDateError)),
         );
       }
-      return;
+      return null;
     }
 
     setState(() => _isSubmitting = true);
@@ -48,7 +49,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
               : null;
 
       final payment = PaymentModel(
-        id: UniqueKey().toString(), // Ensure unique ID
+        id: UniqueKey().toString(),
         cardId: widget.cardId,
         dueAmount: dueAmount,
         minimumDueAmount: minimumDue,
@@ -57,17 +58,19 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
         paidAmount: 0,
       );
 
-      await ref.read(paymentProvider.notifier).addPayment(payment);
-      if (!mounted) return;
+      await ref.read(paymentProvider.notifier).save(payment);
+
+      if (!mounted) return null;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text(AppStrings.paymentAddedSuccess)),
       );
-      Navigator.of(context).pop();
+      return payment;
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted) return null;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${AppStrings.paymentAddError}: $e')),
       );
+      return null;
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -172,12 +175,23 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: _isSubmitting ? null : _submit,
+                      onPressed:
+                          _isSubmitting
+                              ? null
+                              : () async {
+                                final payment = await _submit();
+                                if (payment != null) {
+                                  NavigationService.pop(context);
+                                }
+                              },
                       icon: const Icon(Icons.add),
-                      label: Text(
-                        AppStrings.createDueButton,
-                        style: Theme.of(context).textTheme.labelLarge,
-                      ),
+                      label:
+                          _isSubmitting
+                              ? const CircularProgressIndicator()
+                              : Text(
+                                AppStrings.createDueButton,
+                                style: Theme.of(context).textTheme.labelLarge,
+                              ),
                     ),
                   ),
                   const SizedBox(height: 16),

@@ -36,4 +36,24 @@ class AppStrings {
   static const cardSaveError = 'Failed to save card';
 
   static const saveButton = "Save";
+
+  // Log Payment Bottom Sheet
+  static const logPayment = 'Log Payment';
+  static const totalDue = 'Total Due';
+  static const minimumDue = 'Minimum Due';
+  static const customAmount = 'Custom Amount';
+  static const customAmountLabel = 'Custom Amount (₹)';
+  static const enterCustomAmount = 'Enter custom amount';
+  static const invalidCustomAmountError = 'Enter a valid positive amount';
+  static const amountExceedsDueError = 'Amount cannot exceed due amount';
+  static const paymentLoggedSuccess = 'Payment logged successfully';
+  static const paymentLogError = 'Failed to log payment';
+  static const logPaymentButton = 'Log Payment';
+
+  static const navigationError = 'Navigation error';
+  static const paymentNotFoundError = 'Payment not found';
+
+  // List
+  static const cardLoadError = 'Failed to load cards';
+  static const retryButton = 'Retry';
 }
