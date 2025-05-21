@@ -2,9 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 
+import '../../constants/app_strings.dart';
 import '../../data/hive/models/credit_card_model.dart';
 import '../../data/hive/storage/credit_card_storage.dart';
 import '../../services/notification_service.dart';
+import 'payment_provider.dart';
 
 final creditCardBoxProvider = Provider<Box<CreditCardModel>>((ref) {
   return CreditCardStorage.getBox();
@@ -21,7 +23,8 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
   @override
   Future<List<CreditCardModel>> build() async {
     _box.listenable().addListener(_onBoxChange);
-    return _box.values.toList();
+    return _box.values.where((card) => !card.isArchived).toList()
+      ..sort((a, b) => a.dueDate.compareTo(b.dueDate));
   }
 
   Future<void> save(CreditCardModel card) async {
@@ -135,20 +138,24 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
     }
   }
 
-  // Delete a card by key
-  Future<void> deleteByKey(int key) async {
+  Future<void> delete(int key) async {
+    state = const AsyncValue.loading();
     try {
-      final index = _box.values.toList().indexWhere((card) => card.key == key);
-      if (index != -1) {
-        final card = _box.getAt(index);
-        if (card != null) {
-          await NotificationService.cancelNotifications(card.key);
-        }
-        await _box.deleteAt(index);
-        _onBoxChange();
+      if (!_box.containsKey(key)) {
+        throw const FormatException(AppStrings.cardNotFoundError);
       }
-    } catch (e) {
-      print('Error deleting card: $e');
+      final card = _box.get(key)!;
+      await _box.delete(key);
+      // Delete associated payments
+      final payments = ref.read(paymentProvider.notifier);
+      final cardPayments = payments.getPaymentsForCard(card.id);
+      for (var payment in cardPayments) {
+        await ref.read(paymentBoxProvider).delete(payment.id);
+      }
+      state = AsyncValue.data(_box.values.toList());
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      rethrow;
     }
   }
 

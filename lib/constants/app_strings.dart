@@ -56,4 +56,27 @@ class AppStrings {
   // List
   static const cardLoadError = 'Failed to load cards';
   static const retryButton = 'Retry';
+
+  // Details
+  static const invalidBankError = 'Invalid bank selected';
+  static const cardDetailsTitle = 'Card Details';
+  static const editCard = 'Edit Card';
+  static const deleteCard = 'Delete Card';
+  static const archiveCard = 'Archive Card';
+  static const upcomingPayment = 'Upcoming Payment';
+  static const noUpcomingDues = 'No upcoming dues';
+  static const paymentHistory = 'Payment History';
+  static const noPastPayments = 'No past payments yet';
+  static const paymentHistoryItem = 'Payment';
+  static const upcomingPaymentCard = 'Upcoming Payment Card';
+  static const cardNotFoundError = 'Card not found';
+  static const paymentLoadError = 'Failed to load payments';
+  static const deleteCardConfirmation = 'Delete Card Confirmation';
+  static const deleteCardMessage = 'Are you sure you want to delete this card?';
+  static const cancelButton = 'Cancel';
+  static const deleteButton = 'Delete';
+  static const cardDeletedSuccess = 'Card deleted successfully';
+  static const cardDeleteError = 'Failed to delete card';
+  static const archiveNotImplemented = 'Archive feature not implemented';
+  static const cardArchivedSuccess = 'Card archived successfully';
 }

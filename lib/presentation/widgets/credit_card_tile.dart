@@ -100,8 +100,7 @@ class _CreditCardState extends ConsumerState<CreditCard>
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder:
-            (_) => CardDetailsScreen(card: widget.card, payments: payments),
+        builder: (_) => CardDetailsScreen(cardId: widget.card.id),
       ),
     );
   }
@@ -130,9 +129,7 @@ class _CreditCardState extends ConsumerState<CreditCard>
     );
 
     if (confirmed == true) {
-      ref
-          .read(creditCardListProvider.notifier)
-          .deleteByKey(widget.card.key as int);
+      ref.read(creditCardListProvider.notifier).delete(widget.card.key as int);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${widget.card.name} deleted'),

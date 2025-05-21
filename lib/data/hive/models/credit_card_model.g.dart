@@ -28,13 +28,14 @@ class CreditCardModelAdapter extends TypeAdapter<CreditCardModel> {
       currentUtilization: fields[8] as double,
       createdAt: fields[9] as DateTime?,
       updatedAt: fields[10] as DateTime?,
+      isArchived: fields[11] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, CreditCardModel obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -56,7 +57,9 @@ class CreditCardModelAdapter extends TypeAdapter<CreditCardModel> {
       ..writeByte(9)
       ..write(obj.createdAt)
       ..writeByte(10)
-      ..write(obj.updatedAt);
+      ..write(obj.updatedAt)
+      ..writeByte(11)
+      ..write(obj.isArchived);
   }
 
   @override

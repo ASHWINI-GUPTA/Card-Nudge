@@ -39,6 +39,9 @@ class CreditCardModel extends HiveObject {
   @HiveField(10)
   final DateTime updatedAt;
 
+  @HiveField(11)
+  final bool isArchived;
+
   CreditCardModel({
     String? id,
     required this.name,
@@ -51,6 +54,7 @@ class CreditCardModel extends HiveObject {
     this.currentUtilization = 0.0,
     DateTime? createdAt,
     DateTime? updatedAt,
+    this.isArchived = false,
   }) : id = id ?? const Uuid().v4(),
        createdAt = (createdAt ?? DateTime.now()).toUtc(),
        updatedAt = (updatedAt ?? DateTime.now()).toUtc();
@@ -64,6 +68,7 @@ class CreditCardModel extends HiveObject {
     CardType? cardType,
     double? creditLimit,
     double? currentUtilization,
+    bool? isArchived,
   }) {
     return CreditCardModel(
       id: id,
@@ -76,6 +81,7 @@ class CreditCardModel extends HiveObject {
       creditLimit: creditLimit ?? this.creditLimit,
       currentUtilization: currentUtilization ?? this.currentUtilization,
       createdAt: createdAt,
+      isArchived: isArchived ?? this.isArchived,
     );
   }
 
