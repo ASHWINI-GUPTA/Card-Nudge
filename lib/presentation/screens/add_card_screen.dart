@@ -1,10 +1,12 @@
-import 'package:card_nudge/presentation/providers/bank_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter/services.dart';
 import '../../../data/hive/models/credit_card_model.dart';
 import '../../data/enums/card_type.dart';
 import '../providers/credit_card_provider.dart';
+import '../providers/bank_provider.dart';
+import '../../constants/app_strings.dart';
 
 class AddCardScreen extends ConsumerStatefulWidget {
   final CreditCardModel? card;
@@ -17,21 +19,19 @@ class AddCardScreen extends ConsumerStatefulWidget {
 
 class _AddCardScreenState extends ConsumerState<AddCardScreen> {
   final _formKey = GlobalKey<FormState>();
-
   late final TextEditingController _cardNameController;
   late final TextEditingController _bankNameController;
   late final TextEditingController _cardTypeController;
   late final TextEditingController _last4DigitsController;
   late final TextEditingController _limitController;
-
   DateTime? _billingDate;
   DateTime? _dueDate;
+  bool _isSubmitting = false;
+
   @override
   void initState() {
     super.initState();
-
     final card = widget.card;
-
     _cardNameController = TextEditingController(text: card?.name ?? '');
     _bankNameController = TextEditingController(text: card?.bankId ?? '');
     _cardTypeController = TextEditingController(
@@ -43,7 +43,6 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
     _limitController = TextEditingController(
       text: card?.creditLimit.toString() ?? '',
     );
-
     _billingDate = card?.billingDate;
     _dueDate = card?.dueDate;
   }
@@ -56,7 +55,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
       lastDate: DateTime(2100),
     );
 
-    if (selected != null) {
+    if (selected != null && mounted) {
       setState(() {
         if (isBilling) {
           _billingDate = selected;
@@ -71,37 +70,68 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
     if (_formKey.currentState?.validate() != true ||
         _billingDate == null ||
         _dueDate == null) {
+      if (_billingDate == null || _dueDate == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text(AppStrings.selectDatesError)),
+        );
+      }
       return;
     }
 
-    final updatedCard = CreditCardModel(
-      name: _cardNameController.text.trim(),
-      bankId: _bankNameController.text.trim(),
-      last4Digits: _last4DigitsController.text.trim(),
-      billingDate: _billingDate!,
-      dueDate: _dueDate!,
-      creditLimit: double.parse(_limitController.text.trim()),
-      currentUtilization: 0.0,
-      cardType: CardType.Visa,
-    );
+    setState(() => _isSubmitting = true);
 
-    final notifier = ref.read(creditCardListProvider.notifier);
+    try {
+      final cardType = CardType.values.firstWhere(
+        (type) => type.name == _cardTypeController.text.trim(),
+        orElse: () => CardType.Visa, // Fallback
+      );
 
-    if (widget.card != null) {
-      // UPDATE
-      notifier.updateByKey(widget.card!.key, updatedCard);
-    } else {
-      // ADD
-      notifier.add(updatedCard);
+      final updatedCard = CreditCardModel(
+        id: widget.card?.id ?? UniqueKey().toString(),
+        name: _cardNameController.text.trim(),
+        bankId: _bankNameController.text.trim(),
+        last4Digits: _last4DigitsController.text.trim(),
+        billingDate: _billingDate!,
+        dueDate: _dueDate!,
+        creditLimit: double.parse(_limitController.text.trim()),
+        currentUtilization: widget.card?.currentUtilization ?? 0.0,
+        cardType: cardType,
+      );
+
+      final notifier = ref.read(creditCardListProvider.notifier);
+
+      if (widget.card != null) {
+        await notifier.updateByKey(widget.card!.key, updatedCard);
+      } else {
+        await notifier.add(updatedCard);
+      }
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            widget.card == null
+                ? AppStrings.cardAddedSuccess
+                : AppStrings.cardUpdatedSuccess,
+          ),
+        ),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${AppStrings.cardSaveError}: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
     }
-
-    Navigator.pop(context);
   }
 
   @override
   void dispose() {
     _cardNameController.dispose();
     _bankNameController.dispose();
+    _cardTypeController.dispose();
     _last4DigitsController.dispose();
     _limitController.dispose();
     super.dispose();
@@ -109,11 +139,14 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final spacing = const SizedBox(height: 12);
+    const spacing = SizedBox(height: 12);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.card == null ? 'Add Card' : 'Update Card'),
+        title: Text(
+          widget.card == null ? AppStrings.addCard : AppStrings.updateCard,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -123,9 +156,14 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
             children: [
               TextFormField(
                 controller: _cardNameController,
-                decoration: const InputDecoration(labelText: 'Card'),
+                decoration: const InputDecoration(
+                  labelText: AppStrings.cardLabel,
+                ),
                 validator:
-                    (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                    (v) =>
+                        v == null || v.trim().isEmpty
+                            ? AppStrings.requiredFieldError
+                            : null,
               ),
               spacing,
               DropdownButtonFormField<String>(
@@ -133,7 +171,9 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                     _bankNameController.text.isNotEmpty
                         ? _bankNameController.text
                         : null,
-                decoration: const InputDecoration(labelText: 'Bank'),
+                decoration: const InputDecoration(
+                  labelText: AppStrings.bankLabel,
+                ),
                 items:
                     ref.watch(bankProvider.notifier).getAllBanks().map((bank) {
                       return DropdownMenuItem<String>(
@@ -142,8 +182,13 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                           children: [
                             if (bank.logoPath != null)
                               SvgPicture.asset(
-                                bank.logoPath as String,
+                                bank.logoPath!,
                                 width: 20,
+                                placeholderBuilder:
+                                    (_) => const Icon(
+                                      Icons.account_balance,
+                                      size: 20,
+                                    ),
                               )
                             else
                               const Icon(Icons.account_balance, size: 20),
@@ -153,14 +198,19 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                         ),
                       );
                     }).toList(),
-
-                onChanged: (value) {
-                  setState(() {
-                    _bankNameController.text = value ?? '';
-                  });
-                },
+                onChanged:
+                    _isSubmitting
+                        ? null
+                        : (value) {
+                          setState(() {
+                            _bankNameController.text = value ?? '';
+                          });
+                        },
                 validator:
-                    (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                    (v) =>
+                        v == null || v.trim().isEmpty
+                            ? AppStrings.requiredFieldError
+                            : null,
               ),
               spacing,
               DropdownButtonFormField<String>(
@@ -168,33 +218,43 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                     _cardTypeController.text.isNotEmpty
                         ? _cardTypeController.text
                         : null,
-                decoration: const InputDecoration(labelText: 'Network'),
+                decoration: const InputDecoration(
+                  labelText: AppStrings.networkLabel,
+                ),
                 items:
                     CardType.values.map((type) {
                       return DropdownMenuItem<String>(
                         value: type.name,
-                        child: Row(children: [Text(type.name)]),
+                        child: Text(type.name),
                       );
                     }).toList(),
-
-                onChanged: (value) {
-                  setState(() {
-                    _cardTypeController.text = value ?? '';
-                  });
-                },
+                onChanged:
+                    _isSubmitting
+                        ? null
+                        : (value) {
+                          setState(() {
+                            _cardTypeController.text = value ?? '';
+                          });
+                        },
                 validator:
-                    (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                    (v) =>
+                        v == null || v.trim().isEmpty
+                            ? AppStrings.requiredFieldError
+                            : null,
               ),
               spacing,
               TextFormField(
                 controller: _last4DigitsController,
-                decoration: const InputDecoration(labelText: 'Last 4 Digits'),
+                decoration: const InputDecoration(
+                  labelText: AppStrings.last4DigitsLabel,
+                ),
                 keyboardType: TextInputType.number,
                 maxLength: 4,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 validator:
                     (v) =>
                         v == null || v.length != 4
-                            ? 'Enter exactly 4 digits'
+                            ? AppStrings.last4DigitsError
                             : null,
               ),
               spacing,
@@ -205,10 +265,12 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                       icon: const Icon(Icons.calendar_today),
                       label: Text(
                         _billingDate == null
-                            ? 'Billing Date'
-                            : 'Billing: ${_billingDate!.day}/${_billingDate!.month}',
+                            ? AppStrings.billingDateLabel
+                            : '${AppStrings.billingDateLabel}: ${_billingDate!.day}/${_billingDate!.month}',
+                        style: Theme.of(context).textTheme.labelMedium,
                       ),
-                      onPressed: () => _pickDate(context, true),
+                      onPressed:
+                          _isSubmitting ? null : () => _pickDate(context, true),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -217,10 +279,14 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                       icon: const Icon(Icons.event),
                       label: Text(
                         _dueDate == null
-                            ? 'Due Date'
-                            : 'Due: ${_dueDate!.day}/${_dueDate!.month}',
+                            ? AppStrings.dueDateLabel
+                            : '${AppStrings.dueDateLabel}: ${_dueDate!.day}/${_dueDate!.month}',
+                        style: Theme.of(context).textTheme.labelMedium,
                       ),
-                      onPressed: () => _pickDate(context, false),
+                      onPressed:
+                          _isSubmitting
+                              ? null
+                              : () => _pickDate(context, false),
                     ),
                   ),
                 ],
@@ -229,19 +295,29 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
               TextFormField(
                 controller: _limitController,
                 decoration: const InputDecoration(
-                  labelText: 'Credit Limit (₹)',
+                  labelText: AppStrings.creditLimitLabel,
                 ),
-                keyboardType: TextInputType.number,
-                validator:
-                    (v) =>
-                        v == null || double.tryParse(v) == null
-                            ? 'Enter valid number'
-                            : null,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                ],
+                validator: (v) {
+                  final value = double.tryParse(v?.trim() ?? '');
+                  return value == null || value <= 0
+                      ? AppStrings.invalidCreditLimitError
+                      : null;
+                },
               ),
-              spacing,
-
               const SizedBox(height: 20),
-              FilledButton(onPressed: _saveCard, child: const Text('Save')),
+              FilledButton(
+                onPressed: _isSubmitting ? null : _saveCard,
+                child:
+                    _isSubmitting
+                        ? const CircularProgressIndicator()
+                        : Text(AppStrings.saveButton),
+              ),
             ],
           ),
         ),

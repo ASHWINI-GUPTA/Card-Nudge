@@ -17,4 +17,23 @@ class AppStrings {
   static const paymentAddedSuccess = 'Payment due added successfully';
   static const paymentAddError = 'Failed to add payment due';
   static const createDueButton = "Add";
+
+  // Add/Update Card
+  static const updateCard = 'Update Card';
+  static const cardLabel = 'Card';
+  static const bankLabel = 'Bank';
+  static const networkLabel = 'Network';
+  static const last4DigitsLabel = 'Last 4 Digits';
+  static const billingDateLabel = 'Billing Date';
+  static const dueDateLabel = 'Due Date';
+  static const creditLimitLabel = 'Credit Limit (₹)';
+  static const requiredFieldError = 'This field is required';
+  static const last4DigitsError = 'Enter exactly 4 digits';
+  static const invalidCreditLimitError = 'Enter a valid positive number';
+  static const selectDatesError = 'Please select billing and due dates';
+  static const cardAddedSuccess = 'Card added successfully';
+  static const cardUpdatedSuccess = 'Card updated successfully';
+  static const cardSaveError = 'Failed to save card';
+
+  static const saveButton = "Save";
 }
