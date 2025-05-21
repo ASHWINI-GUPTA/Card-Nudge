@@ -116,4 +116,5 @@ class CreditCardModel extends HiveObject {
   bool get isNearDueDate => dueDate.difference(DateTime.now()).inDays <= 7;
   bool get isOverUtilized => currentUtilization > creditLimit * 0.9;
   double get utilizationPercentage => (currentUtilization / creditLimit) * 100;
+  bool get isFavorite => false;
 }

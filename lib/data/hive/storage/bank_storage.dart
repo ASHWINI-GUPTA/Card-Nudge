@@ -1,16 +1,27 @@
 import 'package:card_nudge/data/hive/models/bank_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-class BankStorage {
-  static const String boxName = 'bank_box';
-  static Box<BankModel> getBox() => Hive.box<BankModel>(boxName);
+import '../adapters/card_type_adapter.dart';
 
-  // Seeds Hive box on first install
-  static Future<void> initBankInfo() async {
-    final box = getBox();
-    if (box.isEmpty) {
+class BankStorage {
+  static Box<BankModel>? _box;
+
+  static Box<BankModel> getBox() {
+    if (_box == null || !_box!.isOpen) {
+      throw Exception('Hive box not initialized. Call initHive() first.');
+    }
+    return _box!;
+  }
+
+  static Future<void> initHive() async {
+    Hive.registerAdapter(BankModelAdapter());
+    Hive.registerAdapter(CardTypeAdapter());
+
+    _box = await Hive.openBox<BankModel>('banks');
+
+    if (_box!.isEmpty) {
       for (var bank in _banks) {
-        await box.put(bank.id, bank);
+        await _box!.put(bank.id, bank);
       }
     }
   }

@@ -135,7 +135,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                         : null,
                 decoration: const InputDecoration(labelText: 'Bank'),
                 items:
-                    BankNotifier.getAllBanks().map((bank) {
+                    ref.watch(bankProvider.notifier).getAllBanks().map((bank) {
                       return DropdownMenuItem<String>(
                         value: bank.id,
                         child: Row(
