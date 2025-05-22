@@ -19,6 +19,8 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
   final _formKey = GlobalKey<FormState>();
   final _dueAmountController = TextEditingController();
   final _minimumDueController = TextEditingController();
+
+  // AG TODO: This should be same as Card Due Date.
   DateTime? _selectedDate;
   bool _isSubmitting = false;
 
@@ -159,7 +161,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
                   ),
                   const SizedBox(height: 12),
                   ListTile(
-                    key: const ValueKey('date_picker'),
+                    key: const ValueKey('payment_date_picker'),
                     onTap: _isSubmitting ? null : _pickDate,
                     contentPadding: EdgeInsets.zero,
                     title: const Text(AppStrings.paymentDateLabel),

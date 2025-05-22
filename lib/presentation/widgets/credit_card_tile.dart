@@ -1,460 +1,333 @@
-import 'package:card_nudge/presentation/widgets/payment_log_sheet.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import '../../constants/app_strings.dart';
+import '../../data/enums/card_type.dart';
 import '../../data/hive/models/credit_card_model.dart';
-import '../../data/hive/models/payment_model.dart';
+import '../../data/hive/models/bank_model.dart';
 import '../providers/bank_provider.dart';
-import '../providers/credit_card_provider.dart';
 import '../providers/payment_provider.dart';
-import '../screens/add_card_screen.dart';
-import '../screens/card_details_screen.dart';
 
-class CreditCard extends ConsumerStatefulWidget {
+class CreditCardTile extends ConsumerWidget {
   final CreditCardModel card;
-  const CreditCard({super.key, required this.card});
+  final bool showLogPaymentButton;
+
+  const CreditCardTile({
+    super.key,
+    required this.card,
+    this.showLogPaymentButton = true,
+  });
+
+  String get maskedCardNumber {
+    return '**** **** **** ${card.last4Digits}';
+  }
+
+  static final _currencyFormat = NumberFormat.currency(
+    locale: 'en_IN',
+    symbol: '₹',
+    decimalDigits: 0,
+  );
 
   @override
-  ConsumerState<CreditCard> createState() => _CreditCardState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bankAsync = ref.watch(bankProvider);
+    return bankAsync.when(
+      data: (banks) {
+        final bank = banks.firstWhere(
+          (b) => b.id == card.bankId,
+          orElse: () => throw Exception(AppStrings.invalidBankError),
+        );
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          child: CardContainer(
+            bank: bank,
+            child: CardContent(
+              card: card,
+              bank: bank,
+              showLogPaymentButton: showLogPaymentButton,
+            ),
+          ),
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error:
+          (error, stack) => Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '${AppStrings.bankLoadError}: $error',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => ref.invalidate(bankProvider),
+                  child: Text(AppStrings.retryButton),
+                ),
+              ],
+            ),
+          ),
+    );
+  }
 }
 
-class _CreditCardState extends ConsumerState<CreditCard>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _pulseController;
-  double _swipeOffset = 0;
-  SwipeAction? _currentAction;
-  bool _showActionLabel = false;
+class CardContainer extends StatelessWidget {
+  final BankModel bank;
+  final Widget child;
 
-  @override
-  void initState() {
-    super.initState();
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    )..repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _pulseController.dispose();
-    super.dispose();
-  }
-
-  String _formatCurrency(double amount) {
-    return '₹${NumberFormat('#,##0.00').format(amount)}';
-  }
-
-  bool _isDueToday(List<PaymentModel> payments) {
-    if (payments.isEmpty) return false;
-    final dueDate = widget.card.dueDate;
-    return dueDate.difference(DateTime.now()).inDays == 0 &&
-        payments.last.dueAmount > 0;
-  }
-
-  void _triggerHapticFeedback() {
-    HapticFeedback.lightImpact();
-  }
-
-  void _handleSwipeAction(SwipeAction action) {
-    _triggerHapticFeedback();
-
-    switch (action) {
-      case SwipeAction.delete:
-        _deleteCard();
-        break;
-      case SwipeAction.archive:
-        _archiveCard();
-        break;
-      case SwipeAction.favorite:
-        _toggleFavorite();
-        break;
-      case SwipeAction.edit:
-        _editCard();
-        break;
-    }
-  }
-
-  void _showPaymentBottomSheet() {
-    final upcommingPayment = ref
-        .watch(paymentProvider.notifier)
-        .getUpcomingPayment(widget.card.id);
-    if (upcommingPayment != null) {
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) {
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: LogPaymentBottomSheet(payment: upcommingPayment),
-          );
-        },
-      );
-    }
-  }
-
-  void _showCardDetails(List<PaymentModel> payments) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => CardDetailsScreen(cardId: widget.card.id),
-      ),
-    );
-  }
-
-  Future<void> _deleteCard() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Delete Card'),
-            content: const Text('Are you sure you want to delete this card?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text(
-                  'Delete',
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-            ],
-          ),
-    );
-
-    if (confirmed == true) {
-      ref.read(creditCardListProvider.notifier).delete(widget.card.key as int);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${widget.card.name} deleted'),
-          action: SnackBarAction(
-            label: 'UNDO',
-            onPressed:
-                () => ref
-                    .read(creditCardListProvider.notifier)
-                    .restoreByKey(widget.card.key as int, widget.card),
-          ),
-        ),
-      );
-    }
-  }
-
-  void _archiveCard() {
-    // ref
-    //     .read(creditCardListProvider.notifier)
-    //     .updateByKey(widget.card.key, widget.card.copyWith(isArchived: true));
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('${widget.card.name} archived')));
-  }
-
-  void _toggleFavorite() {
-    // ref
-    //     .read(creditCardListProvider.notifier)
-    //     .updateByKey(
-    //       widget.card.key,
-    //       widget.card.copyWith(isFavorite: !widget.card.isFavorite),
-    //     );
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${widget.card.name} ${widget.card.isFavorite ? 'removed from' : 'added to'} favorites',
-        ),
-      ),
-    );
-  }
-
-  void _editCard() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => AddCardScreen(card: widget.card)),
-    );
-  }
-
-  SwipeAction? _getActionFromOffset(double offset) {
-    if (offset < -100) return SwipeAction.delete; // Left swipe always delete
-    if (offset > 100) {
-      // Right swipe actions based on card state
-      if (true) return SwipeAction.edit;
-      if (widget.card.isFavorite) return SwipeAction.archive;
-      return SwipeAction.favorite;
-    }
-    return null;
-  }
-
-  Color _getActionColor(SwipeAction action) {
-    switch (action) {
-      case SwipeAction.delete:
-        return Colors.red;
-      case SwipeAction.archive:
-        return Colors.orange;
-      case SwipeAction.favorite:
-        return Colors.yellow[700]!;
-      case SwipeAction.edit:
-        return Colors.blue;
-    }
-  }
-
-  IconData _getActionIcon(SwipeAction action) {
-    switch (action) {
-      case SwipeAction.delete:
-        return Icons.delete;
-      case SwipeAction.archive:
-        return Icons.archive;
-      case SwipeAction.favorite:
-        return Icons.favorite;
-      case SwipeAction.edit:
-        return Icons.edit;
-    }
-  }
-
-  String _getActionLabel(SwipeAction action) {
-    switch (action) {
-      case SwipeAction.delete:
-        return 'Delete';
-      case SwipeAction.archive:
-        return 'Archive';
-      case SwipeAction.favorite:
-        return widget.card.isFavorite ? 'Unfavorite' : 'Favorite';
-      case SwipeAction.edit:
-        return 'Edit';
-    }
-  }
+  const CardContainer({super.key, required this.bank, required this.child});
 
   @override
   Widget build(BuildContext context) {
-    var payments =
-        ref
-            .watch(paymentProvider.notifier)
-            .getPaymentsForCard(widget.card.id)
-            .toList();
+    final colorHex = bank.colorHex?.replaceFirst('#', '') ?? 'FF1A1A1A';
+    final colorValue = int.parse(colorHex, radix: 16);
 
-    final bank = ref.watch(bankProvider.notifier).getById(widget.card.bankId);
-    final hasDue = payments.isNotEmpty && payments.last.dueAmount > 0;
-    final isDueToday = _isDueToday(payments);
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      clipBehavior: Clip.antiAlias,
+      child: Container(
+        height: 200,
+        width:
+            MediaQuery.of(context).size.width * 0.9 > 400
+                ? 400
+                : MediaQuery.of(context).size.width * 0.9,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(colorValue), const Color(0xFF2A2A2A)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: child,
+      ),
+    );
+  }
+}
 
-    return GestureDetector(
-      onHorizontalDragStart: (_) {
-        setState(() {
-          _showActionLabel = false;
-          _currentAction = null;
-        });
-      },
-      onHorizontalDragUpdate: (details) {
-        setState(() {
-          _swipeOffset += details.primaryDelta!;
-          final newAction = _getActionFromOffset(_swipeOffset);
-          if (newAction != _currentAction) {
-            _currentAction = newAction;
-            if (newAction != null) _triggerHapticFeedback();
-          }
-        });
-      },
-      onHorizontalDragEnd: (_) {
-        setState(() {
-          if (_currentAction != null) {
-            _showActionLabel = true;
-            Future.delayed(const Duration(milliseconds: 300), () {
-              if (mounted) {
-                setState(() => _showActionLabel = false);
-                _handleSwipeAction(
-                  _currentAction ?? SwipeAction.favorite,
-                ); // TODO: Fix it
-              }
-            });
-          }
-          _swipeOffset = 0;
-          _currentAction = null;
-        });
-      },
-      child: Stack(
-        children: [
-          // Background action indicator
-          if (_currentAction != null)
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: _getActionColor(_currentAction!).withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                alignment:
-                    _swipeOffset < 0
-                        ? Alignment.centerRight
-                        : Alignment.centerLeft,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Icon(
-                    _getActionIcon(_currentAction!),
-                    color: _getActionColor(_currentAction!),
-                    size: 30,
-                  ),
-                ),
+class CardContent extends ConsumerWidget {
+  final CreditCardModel card;
+  final BankModel bank;
+  final bool showLogPaymentButton;
+
+  const CardContent({
+    super.key,
+    required this.card,
+    required this.bank,
+    required this.showLogPaymentButton,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final paymentsAsync = ref.watch(paymentProvider);
+
+    return paymentsAsync.when(
+      data: (payments) {
+        final cardPayments =
+            payments.where((p) => p.cardId == card.id).toList();
+        final hasDue =
+            cardPayments.isNotEmpty && cardPayments.last.dueAmount > 0;
+
+        return Stack(
+          children: [
+            Positioned(
+              top: 16,
+              left: 16,
+              child: CardLogo(
+                bank: bank,
+                cardType: card.cardType,
+                theme: theme,
               ),
             ),
-          Transform.translate(
-            offset: Offset(_swipeOffset.clamp(-50, 50), 0),
-            child: AnimatedOpacity(
-              opacity: _currentAction != null ? 0.8 : 1.0,
-              duration: const Duration(milliseconds: 200),
-              child: SizedBox(
-                width: double.infinity,
-                child: Card(
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    children: [
-                      InkWell(
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(16),
-                        ),
-                        onTap: () => _showCardDetails(payments),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Card details
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '${widget.card.name} • ${bank.name}',
-                                      style:
-                                          Theme.of(
-                                            context,
-                                          ).textTheme.titleMedium,
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text('**** ${widget.card.last4Digits}'),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      'Limit: ${_formatCurrency(widget.card.creditLimit)}',
-                                      style:
-                                          Theme.of(
-                                            context,
-                                          ).textTheme.bodyMedium,
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      'Current Due: ${hasDue ? _formatCurrency(payments.last.dueAmount) : "--"}',
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodyMedium?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color:
-                                            isDueToday
-                                                ? Theme.of(
-                                                  context,
-                                                ).colorScheme.error
-                                                : null,
-                                      ),
-                                    ),
-                                    if (isDueToday)
-                                      ScaleTransition(
-                                        scale: Tween(
-                                          begin: 0.9,
-                                          end: 1.1,
-                                        ).animate(
-                                          CurvedAnimation(
-                                            parent: _pulseController,
-                                            curve: Curves.easeInOut,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          'Due Today!',
-                                          style: TextStyle(
-                                            color:
-                                                Theme.of(
-                                                  context,
-                                                ).colorScheme.error,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                              // Bank icon
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 12.0,
-                                  top: 4.0,
-                                ),
-                                child: Consumer(
-                                  builder: (context, ref, child) {
-                                    return bank.logoPath != null
-                                        ? SvgPicture.asset(
-                                          bank.logoPath as String,
-                                          width: 35,
-                                          height: 35,
-                                        )
-                                        : const Icon(
-                                          Icons.account_balance,
-                                          size: 35,
-                                        );
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const Divider(height: 1),
-                      TextButton(
-                        onPressed: hasDue ? _showPaymentBottomSheet : null,
-                        style: TextButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 48),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                              bottom: Radius.circular(16),
-                            ),
-                          ),
-                        ),
-                        child: const Text('LOG PAYMENT'),
-                      ),
-                    ],
-                  ),
-                ),
+            Positioned(
+              bottom: 16,
+              left: 16,
+              right: 16,
+              child: CardDetails(
+                card: card,
+                bank: bank,
+                theme: theme,
+                hasDue: hasDue,
+                dueAmount: hasDue ? cardPayments.last.dueAmount : 0,
+                showLogPaymentButton: showLogPaymentButton,
+                cardType: card.cardType,
               ),
+            ),
+          ],
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error:
+          (error, stack) => Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '${AppStrings.paymentLoadError}: $error',
+                  style: theme.textTheme.bodyLarge,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => ref.invalidate(paymentProvider),
+                  child: Text(AppStrings.retryButton),
+                ),
+              ],
             ),
           ),
-          // Action label overlay
-          if (_showActionLabel && _currentAction != null)
-            Positioned.fill(
-              child: Center(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _getActionColor(_currentAction!),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    _getActionLabel(_currentAction!),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
+    );
+  }
+}
+
+class CardLogo extends StatelessWidget {
+  final BankModel bank;
+  final CardType cardType;
+  final ThemeData theme;
+
+  const CardLogo({
+    super.key,
+    required this.bank,
+    required this.cardType,
+    required this.theme,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final bankLogo =
+        bank.logoPath != null
+            ? SvgPicture.asset(bank.logoPath as String, width: 35, height: 35)
+            : const Icon(Icons.account_balance, size: 35);
+
+    return Row(
+      children: [
+        Semantics(label: '${bank.name}', child: bankLogo),
+        const SizedBox(width: 12),
+        Text(
+          bank.name,
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class CardDetails extends ConsumerWidget {
+  final CreditCardModel card;
+  final BankModel bank;
+  final ThemeData theme;
+  final bool hasDue;
+  final double dueAmount;
+  final bool showLogPaymentButton;
+  final CardType cardType;
+
+  const CardDetails({
+    super.key,
+    required this.card,
+    required this.bank,
+    required this.theme,
+    required this.hasDue,
+    required this.dueAmount,
+    required this.showLogPaymentButton,
+    required this.cardType,
+  });
+
+  static final _currencyFormat = NumberFormat.currency(
+    locale: 'en_IN',
+    symbol: '₹',
+    decimalDigits: 0,
+  );
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cardNetworkLogo =
+        bank.logoPath != null
+            ? SvgPicture.asset(cardType.logoPath, width: 20, height: 20)
+            : const Icon(Icons.credit_card, size: 20);
+    return Semantics(
+      label: '${AppStrings.cardDetailsTitle} ${card.name}',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                card.name,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: Colors.white70,
                 ),
               ),
+              Semantics(label: '${bank.name}', child: cardNetworkLogo),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            '**** **** **** ${card.last4Digits}',
+            style: theme.textTheme.titleLarge?.copyWith(
+              color: Colors.white,
+              letterSpacing: 2.0,
+              shadows: [
+                const Shadow(
+                  offset: Offset(1, 1),
+                  blurRadius: 2,
+                  color: Colors.black54,
+                ),
+              ],
             ),
+          ),
+          const SizedBox(height: 14),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _cardInfoTile(
+                label: AppStrings.creditLimitLabel,
+                value: _currencyFormat.format(card.creditLimit),
+              ),
+              _cardInfoTile(
+                label: AppStrings.totalDue,
+                value: hasDue ? _currencyFormat.format(dueAmount) : '₹0',
+                valueColor: hasDue ? Colors.orangeAccent : Colors.greenAccent,
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
-}
 
-enum SwipeAction { delete, archive, favorite, edit }
+  Widget _cardInfoTile({
+    required String label,
+    required String value,
+    Color? valueColor,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label.toUpperCase(),
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: 11,
+            letterSpacing: 1.2,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: TextStyle(
+            color: valueColor ?? Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
+  }
+}

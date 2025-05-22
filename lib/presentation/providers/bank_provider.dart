@@ -1,82 +1,72 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
+import '../../constants/app_strings.dart';
 import '../../data/hive/models/bank_model.dart';
 import '../../data/hive/storage/bank_storage.dart';
 
-// Provider for the Hive box (dependency injection)
 final bankBoxProvider = Provider<Box<BankModel>>((ref) {
-  // Ensure the box is opened asynchronously and reused
   return BankStorage.getBox();
 });
 
-// StateNotifierProvider for managing bank state
-final bankProvider = StateNotifierProvider<BankNotifier, List<BankModel>>(
-  (ref) => BankNotifier(ref.read(bankBoxProvider))..loadBanks(),
+final bankProvider = AsyncNotifierProvider<BankNotifier, List<BankModel>>(
+  BankNotifier.new,
 );
 
-class BankNotifier extends StateNotifier<List<BankModel>> {
-  final Box<BankModel> _box;
+class BankNotifier extends AsyncNotifier<List<BankModel>> {
+  Box<BankModel> get _box => ref.read(bankBoxProvider);
 
-  BankNotifier(this._box) : super([]) {
-    // Listen to Hive box changes for real-time updates
-    _box.listenable().addListener(_onBoxChange);
-  }
-
-  // Load banks from Hive box asynchronously
-  Future<void> loadBanks() async {
+  @override
+  Future<List<BankModel>> build() async {
     try {
-      state = _box.values.toList();
+      _box.listenable().addListener(_onBoxChange);
+      final banks =
+          _box.values.toList()..sort((a, b) {
+            if (a.name == 'Other') return 1;
+            if (b.name == 'Other') return -1;
+            return a.name.compareTo(b.name);
+          });
+      return banks;
     } catch (e) {
-      // Handle errors (e.g., log or show default state)
-      state = [];
+      throw Exception('${AppStrings.bankLoadError}: $e');
     }
   }
 
-  // React to Hive box changes
   void _onBoxChange() {
-    // Only update state if data has changed to avoid unnecessary rebuilds
-    final newBanks = _box.values.toList();
-    if (newBanks != state) {
-      state = newBanks;
+    try {
+      final newBanks =
+          _box.values.toList()..sort((a, b) {
+            if (a.name == 'Other') return 1;
+            if (b.name == 'Other') return -1;
+            return a.name.compareTo(b.name);
+          });
+      if (state.valueOrNull != newBanks) {
+        state = AsyncValue.data(newBanks);
+      }
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
     }
   }
 
-  // Get bank info by name or code, with fallback to 'Other'
-  BankModel getBankInfo(String? name) {
-    if (name == null || name.trim().isEmpty) {
-      return state.firstWhere((b) => b.name == 'Other');
-    }
-
-    final normalized = name.trim().toLowerCase();
-    return state.firstWhere(
-      (b) =>
-          b.name.toLowerCase() == normalized ||
-          b.code?.toLowerCase() == normalized,
-      orElse: () => state.firstWhere((b) => b.name == 'Other'),
+  BankModel getById(String id) {
+    final banks = state.valueOrNull ?? [];
+    return banks.firstWhere(
+      (bank) => bank.id == id,
+      orElse: () => throw Exception(AppStrings.invalidBankError),
     );
   }
 
-  // Get all banks, sorted with 'Other' at the end
-  List<BankModel> getAllBanks() {
-    final sortedBanks = List<BankModel>.from(state)..sort((a, b) {
-      if (a.name == 'Other') return 1;
-      if (b.name == 'Other') return -1;
-      return a.name.compareTo(b.name);
-    });
-    return sortedBanks;
-  }
-
-  // Get bank by ID
-  BankModel getById(String id) {
-    return state.firstWhere((bank) => bank.id == id);
-  }
-
-  @override
-  void dispose() {
-    // Remove listener to prevent memory leaks
-    _box.listenable().removeListener(_onBoxChange);
-    // Note: Don't close the box here if it's shared via bankBoxProvider
-    super.dispose();
+  Future<void> refresh() async {
+    state = const AsyncValue.loading();
+    try {
+      final banks =
+          _box.values.toList()..sort((a, b) {
+            if (a.name == 'Other') return 1;
+            if (b.name == 'Other') return -1;
+            return a.name.compareTo(b.name);
+          });
+      state = AsyncValue.data(banks);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
   }
 }

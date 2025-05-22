@@ -170,30 +170,69 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                 decoration: const InputDecoration(
                   labelText: AppStrings.bankLabel,
                 ),
-                items:
-                    ref.watch(bankProvider).map((bank) {
-                      return DropdownMenuItem<String>(
-                        value: bank.id,
-                        child: Row(
-                          children: [
-                            if (bank.logoPath != null)
-                              SvgPicture.asset(
-                                bank.logoPath!,
-                                width: 20,
-                                placeholderBuilder:
-                                    (_) => const Icon(
-                                      Icons.account_balance,
-                                      size: 20,
-                                    ),
-                              )
-                            else
-                              const Icon(Icons.account_balance, size: 20),
-                            const SizedBox(width: 8),
-                            Text(bank.name),
+                items: ref
+                    .watch(bankProvider)
+                    .when(
+                      data:
+                          (banks) =>
+                              banks.map((bank) {
+                                return DropdownMenuItem<String>(
+                                  value: bank.id,
+                                  child: Row(
+                                    children: [
+                                      Semantics(
+                                        label:
+                                            '${AppStrings.bankLogo} ${bank.name}',
+                                        child:
+                                            bank.logoPath != null
+                                                ? SvgPicture.asset(
+                                                  bank.logoPath!,
+                                                  width: 20,
+                                                  placeholderBuilder:
+                                                      (_) => const Icon(
+                                                        Icons.account_balance,
+                                                        size: 20,
+                                                      ),
+                                                )
+                                                : const Icon(
+                                                  Icons.account_balance,
+                                                  size: 20,
+                                                ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(bank.name),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                      loading:
+                          () => [
+                            const DropdownMenuItem<String>(
+                              enabled: false,
+                              child: Center(child: CircularProgressIndicator()),
+                            ),
                           ],
-                        ),
-                      );
-                    }).toList(),
+                      error:
+                          (error, stack) => [
+                            DropdownMenuItem<String>(
+                              enabled: false,
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.error,
+                                    color: Colors.red,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    '${AppStrings.bankLoadError}: $error',
+                                    style: const TextStyle(color: Colors.red),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                    ),
                 onChanged:
                     _isSubmitting
                         ? null

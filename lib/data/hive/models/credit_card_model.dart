@@ -39,8 +39,11 @@ class CreditCardModel extends HiveObject {
   @HiveField(10)
   final DateTime updatedAt;
 
-  @HiveField(11)
+  @HiveField(11, defaultValue: false)
   final bool isArchived;
+
+  @HiveField(12, defaultValue: false)
+  final bool isFavorite;
 
   CreditCardModel({
     String? id,
@@ -55,6 +58,7 @@ class CreditCardModel extends HiveObject {
     DateTime? createdAt,
     DateTime? updatedAt,
     this.isArchived = false,
+    this.isFavorite = false,
   }) : id = id ?? const Uuid().v4(),
        createdAt = (createdAt ?? DateTime.now()).toUtc(),
        updatedAt = (updatedAt ?? DateTime.now()).toUtc();
@@ -69,6 +73,7 @@ class CreditCardModel extends HiveObject {
     double? creditLimit,
     double? currentUtilization,
     bool? isArchived,
+    bool? isFavorite,
   }) {
     return CreditCardModel(
       id: id,
@@ -82,6 +87,7 @@ class CreditCardModel extends HiveObject {
       currentUtilization: currentUtilization ?? this.currentUtilization,
       createdAt: createdAt,
       isArchived: isArchived ?? this.isArchived,
+      isFavorite: isFavorite ?? this.isFavorite,
     );
   }
 
@@ -122,5 +128,4 @@ class CreditCardModel extends HiveObject {
   bool get isNearDueDate => dueDate.difference(DateTime.now()).inDays <= 7;
   bool get isOverUtilized => currentUtilization > creditLimit * 0.9;
   double get utilizationPercentage => (currentUtilization / creditLimit) * 100;
-  bool get isFavorite => false;
 }

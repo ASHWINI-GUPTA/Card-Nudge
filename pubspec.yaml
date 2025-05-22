@@ -83,6 +83,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/bank_icons/
+    - assets/card_networks_icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

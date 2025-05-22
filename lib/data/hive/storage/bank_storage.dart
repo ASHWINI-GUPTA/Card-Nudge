@@ -15,7 +15,6 @@ class BankStorage {
 
   static Future<void> initHive() async {
     Hive.registerAdapter(BankModelAdapter());
-    Hive.registerAdapter(CardTypeAdapter());
 
     _box = await Hive.openBox<BankModel>('banks');
 

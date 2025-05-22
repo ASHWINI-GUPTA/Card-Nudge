@@ -26,7 +26,7 @@ class AppStrings {
   static const last4DigitsLabel = 'Last 4 Digits';
   static const billingDateLabel = 'Billing Date';
   static const dueDateLabel = 'Due Date';
-  static const creditLimitLabel = 'Credit Limit (₹)';
+  static const creditLimitLabel = 'Credit Limit';
   static const requiredFieldError = 'This field is required';
   static const last4DigitsError = 'Enter exactly 4 digits';
   static const invalidCreditLimitError = 'Enter a valid positive number';
@@ -60,9 +60,9 @@ class AppStrings {
   // Details
   static const invalidBankError = 'Invalid bank selected';
   static const cardDetailsTitle = 'Card Details';
-  static const editCard = 'Edit Card';
-  static const deleteCard = 'Delete Card';
-  static const archiveCard = 'Archive Card';
+  static const editCard = 'Edit';
+  static const deleteCard = 'Delete';
+  static const archiveCard = 'Archive';
   static const upcomingPayment = 'Upcoming Payment';
   static const noUpcomingDues = 'No upcoming dues';
   static const paymentHistory = 'Payment History';
@@ -79,4 +79,17 @@ class AppStrings {
   static const cardDeleteError = 'Failed to delete card';
   static const archiveNotImplemented = 'Archive feature not implemented';
   static const cardArchivedSuccess = 'Card archived successfully';
+
+  // Tile
+  static const bankLoadError = 'Failed to load bank details';
+  static const favoriteCard = 'Favorite';
+  static const unfavoriteCard = 'Unfavorite';
+  static const cardArchiveError = 'Failed to archive card';
+  static const cardAddedToFavorites = 'Card added to favorites';
+  static const cardRemovedFromFavorites = 'Card removed from favorites';
+  static const cardFavoriteError = 'Failed to update favorite status';
+  static const bankLogo = 'Bank Logo';
+  static const dueToday = 'Due Today';
+  static const undoButton = 'Undo';
+  static const currentDue = 'Undo';
 }

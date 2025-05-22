@@ -172,14 +172,14 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
     }
   }
 
-  // Restore a card by key
   Future<void> restoreByKey(int key, CreditCardModel card) async {
+    state = const AsyncValue.loading();
     try {
       await _box.put(key, card);
-      await _scheduleNotifications(card);
-      _onBoxChange();
-    } catch (e) {
-      print('Error restoring card: $e');
+      state = AsyncValue.data(_box.values.where((c) => !c.isArchived).toList());
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      rethrow;
     }
   }
 

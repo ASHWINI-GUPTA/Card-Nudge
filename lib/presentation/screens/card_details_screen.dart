@@ -38,23 +38,32 @@ class CardDetailsScreen extends ConsumerWidget {
                 (context) => [
                   PopupMenuItem(
                     value: 'edit',
-                    child: Semantics(
-                      label: AppStrings.editCard,
-                      child: Text(AppStrings.editCard),
+                    child: ListTile(
+                      leading: const Icon(Icons.edit),
+                      title: Semantics(
+                        label: AppStrings.editCard,
+                        child: Text(AppStrings.editCard),
+                      ),
                     ),
                   ),
                   PopupMenuItem(
                     value: 'delete',
-                    child: Semantics(
-                      label: AppStrings.deleteCard,
-                      child: Text(AppStrings.deleteCard),
+                    child: ListTile(
+                      leading: const Icon(Icons.delete),
+                      title: Semantics(
+                        label: AppStrings.deleteCard,
+                        child: Text(AppStrings.deleteCard),
+                      ),
                     ),
                   ),
                   PopupMenuItem(
                     value: 'archive',
-                    child: Semantics(
-                      label: AppStrings.archiveCard,
-                      child: Text(AppStrings.archiveCard),
+                    child: ListTile(
+                      leading: const Icon(Icons.archive),
+                      title: Semantics(
+                        label: AppStrings.archiveCard,
+                        child: Text(AppStrings.archiveCard),
+                      ),
                     ),
                   ),
                 ],
@@ -101,7 +110,10 @@ class CardDetailsScreen extends ConsumerWidget {
                   children: [
                     Semantics(
                       label: '${AppStrings.cardLabel}: ${card.name}',
-                      child: CreditCard(card: card),
+                      child: CreditCardTile(
+                        card: card,
+                        showLogPaymentButton: false,
+                      ),
                     ),
                     const SizedBox(height: 24),
                     Semantics(

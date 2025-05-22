@@ -51,7 +51,7 @@ class CardListScreen extends ConsumerWidget {
                           final card = cards[index];
                           return Semantics(
                             label: '${AppStrings.cardLabel}: ${card.name}',
-                            child: CreditCard(
+                            child: CreditCardTile(
                               key: ValueKey(card.id),
                               card: card,
                             ),
