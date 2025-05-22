@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'presentation/screens/card_list_screen.dart';
+import 'presentation/screens/cards_screen.dart';
+import 'presentation/screens/due_screen.dart';
 import 'presentation/screens/home_screen.dart';
 // import 'presentation/screens/upcoming_due_screen.dart';
 
@@ -19,12 +20,9 @@ class CreditCardApp extends StatelessWidget {
         ),
         GoRoute(
           path: '/cards',
-          builder: (context, state) => const CardListScreen(),
+          builder: (context, state) => const CardsScreen(),
         ),
-        // GoRoute(
-        //   path: '/due',
-        //   builder: (context, state) => const UpcomingDueScreen(),
-        // ),
+        GoRoute(path: '/dues', builder: (context, state) => const DueScreen()),
       ],
     );
 

@@ -1,3 +1,4 @@
+import 'package:card_nudge/presentation/screens/card_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../constants/app_strings.dart';
@@ -6,8 +7,8 @@ import '../providers/credit_card_provider.dart';
 import '../widgets/credit_card_tile.dart';
 import 'add_card_screen.dart';
 
-class CardListScreen extends ConsumerWidget {
-  const CardListScreen({super.key});
+class CardsScreen extends ConsumerWidget {
+  const CardsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,10 +44,10 @@ class CardListScreen extends ConsumerWidget {
                         ),
                       )
                       : ListView.separated(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.all(8.0),
                         physics: const BouncingScrollPhysics(),
                         itemCount: cards.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 12),
+                        separatorBuilder: (_, __) => const SizedBox(height: 0),
                         itemBuilder: (context, index) {
                           final card = cards[index];
                           return Semantics(

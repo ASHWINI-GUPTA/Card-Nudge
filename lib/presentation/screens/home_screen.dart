@@ -1,7 +1,7 @@
 // import 'package:card_nudge/presentation/screens/upcoming_due_screen.dart';
 import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
-import 'card_list_screen.dart';
+import 'cards_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,7 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _screens = [
     const DashboardScreen(),
-    const CardListScreen(),
+    const CardsScreen(),
     // const UpcomingDueScreen(),
   ];
 

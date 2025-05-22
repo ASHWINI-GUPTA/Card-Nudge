@@ -110,10 +110,7 @@ class CardDetailsScreen extends ConsumerWidget {
                   children: [
                     Semantics(
                       label: '${AppStrings.cardLabel}: ${card.name}',
-                      child: CreditCardTile(
-                        card: card,
-                        showLogPaymentButton: false,
-                      ),
+                      child: CreditCardTile(card: card),
                     ),
                     const SizedBox(height: 24),
                     Semantics(

@@ -45,7 +45,7 @@ class BankStorage {
       priority: 2,
     ),
     BankModel(
-      name: 'State Bank of India',
+      name: 'SBI Card',
       code: 'SBI',
       logoPath: 'assets/bank_icons/SBI.svg',
       supportNumber: '1800 1234',
