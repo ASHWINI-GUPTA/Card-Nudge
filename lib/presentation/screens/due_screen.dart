@@ -37,10 +37,6 @@ class DueScreen extends ConsumerWidget {
           AppStrings.upcomingPaymentsTitle,
           style: theme.textTheme.titleLarge?.copyWith(color: Colors.white),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => NavigationService.pop(context),
-        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list, color: Colors.white),

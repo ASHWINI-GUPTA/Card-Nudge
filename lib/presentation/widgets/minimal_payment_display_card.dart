@@ -12,7 +12,8 @@ class MinimalPaymentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isPaid = payment.isPaid;
-
+    final amount =
+        isPaid ? payment.paidAmount : payment.dueAmount.toStringAsFixed(2);
     return Card(
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -27,7 +28,7 @@ class MinimalPaymentCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '₹${payment.dueAmount.toStringAsFixed(2)}',
+                    '₹${amount}',
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),

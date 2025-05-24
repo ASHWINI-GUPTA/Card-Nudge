@@ -60,6 +60,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
         dueAmount: dueAmount,
         minimumDueAmount: minimumDue,
         dueDate: widget.card.dueDate,
+        statementAmount: dueAmount,
       );
 
       await ref.read(paymentProvider.notifier).save(payment);

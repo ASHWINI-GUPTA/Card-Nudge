@@ -43,8 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       body: IndexedStack(index: _selectedIndex, children: _screens),
-      backgroundColor: theme.primaryColor,
       bottomNavigationBar: NavigationBar(
+        backgroundColor: theme.primaryColor.withValues(alpha: 0.1),
         selectedIndex: _selectedIndex,
         destinations: _destinations,
         onDestinationSelected: (index) {

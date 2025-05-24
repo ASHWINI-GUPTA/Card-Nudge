@@ -35,6 +35,9 @@ class PaymentModel extends HiveObject {
   @HiveField(9)
   final DateTime dueDate;
 
+  @HiveField(10)
+  final double statementAmount;
+
   PaymentModel({
     String? id,
     required this.cardId,
@@ -46,9 +49,11 @@ class PaymentModel extends HiveObject {
     this.minimumDueAmount, // Optional field
     this.paidAmount = 0.0, // Default to 0.0
     required this.dueDate,
+    double? statementAmount,
   }) : id = id ?? const Uuid().v4(),
        createdAt = (createdAt ?? DateTime.now()).toUtc(),
-       updatedAt = (updatedAt ?? DateTime.now()).toUtc();
+       updatedAt = (updatedAt ?? DateTime.now()).toUtc(),
+       statementAmount = statementAmount ?? dueAmount;
 
   PaymentModel copyWith({
     String? cardId,
@@ -70,6 +75,7 @@ class PaymentModel extends HiveObject {
       minimumDueAmount: minimumDueAmount ?? this.minimumDueAmount,
       paidAmount: paidAmount ?? this.paidAmount,
       dueDate: dueDate ?? this.dueDate,
+      statementAmount: this.statementAmount,
     );
   }
 
@@ -94,12 +100,12 @@ class PaymentModel extends HiveObject {
         paymentDate.hashCode ^
         isPaid.hashCode ^
         paidAmount.hashCode ^
-        dueDate.hashCode;
+        dueDate.hashCode ^
+        statementAmount.hashCode;
   }
 
   // Status helpers
   bool get isOverdue => !isPaid && dueDate.isBefore(DateTime.now());
-  bool get isPartiallyPaid => paidAmount > 0 && paidAmount < dueAmount;
-  double get remainingAmount =>
-      paidAmount < dueAmount ? dueAmount - paidAmount : 0.0;
+  bool get isPartiallyPaid => remainingAmount > 0;
+  double get remainingAmount => statementAmount - paidAmount;
 }

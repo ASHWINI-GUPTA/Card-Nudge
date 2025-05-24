@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
 
 import '../../constants/app_strings.dart';
@@ -90,7 +91,7 @@ class DashboardScreen extends ConsumerWidget {
         0,
         (sum, p) => sum + p.dueAmount,
       );
-      final cardLimit = card.creditLimit ?? 0;
+      final cardLimit = card.creditLimit;
       cardUtilization[card.id] = cardLimit > 0 ? cardDue / cardLimit : 0.0;
     }
     final overUtilizedCards =
@@ -128,12 +129,12 @@ class DashboardScreen extends ConsumerWidget {
     // Monthly spend data for SpendChartWidget
     final monthlySpends = <Map<String, dynamic>>[];
     final months = List.generate(
-      6,
+      3,
       (i) => DateTime(now.year, now.month - i, 1),
     );
     for (var month in months) {
       final monthPayments =
-          nonPaidPayments
+          payments
               .where(
                 (p) =>
                     p.dueDate.year == month.year &&
@@ -142,7 +143,7 @@ class DashboardScreen extends ConsumerWidget {
               .toList();
       final amount = monthPayments.fold<double>(
         0,
-        (sum, p) => sum + p.dueAmount,
+        (sum, p) => sum + p.statementAmount,
       );
       monthlySpends.add({
         'month': DateFormat.MMM().format(month),
@@ -197,36 +198,8 @@ class DashboardScreen extends ConsumerWidget {
       padding: const EdgeInsets.all(16),
       children: [
         // Alerts
-        Text(
-          'Alerts',
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onSurface,
-          ),
-        ),
-        const SizedBox(height: 8),
-        if (alerts.isEmpty)
-          Text(
-            'No alerts at this time',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          )
-        else
-          Column(
-            children:
-                alerts
-                    .map(
-                      (alert) => DashboardAlertCard(
-                        text: alert['text'] as String,
-                        icon: alert['icon'] as IconData,
-                        color: alert['color'] as Color,
-                      ),
-                    )
-                    .toList(),
-          ),
-        const SizedBox(height: 24),
+        if (alerts.isNotEmpty) ..._buildAlert(context, alerts),
+
         // Quick Insights
         Text(
           'Quick Insights',
@@ -293,5 +266,37 @@ class DashboardScreen extends ConsumerWidget {
         const SizedBox(height: 24),
       ],
     );
+  }
+
+  List<Widget> _buildAlert(
+    BuildContext context,
+    List<Map<String, dynamic>> alerts,
+  ) {
+    final theme = Theme.of(context);
+    return [
+      Text(
+        'Alerts',
+        style: theme.textTheme.titleMedium?.copyWith(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: theme.colorScheme.onSurface,
+        ),
+      ),
+      const SizedBox(height: 8),
+      Column(
+        children:
+            alerts
+                .map(
+                  (alert) => DashboardAlertCard(
+                    text: alert['text'] as String,
+                    icon: alert['icon'] as IconData,
+                    color: alert['color'] as Color,
+                  ),
+                )
+                .toList(),
+      ),
+
+      const SizedBox(height: 24),
+    ];
   }
 }
