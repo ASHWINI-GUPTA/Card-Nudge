@@ -1,8 +1,6 @@
 import 'package:card_nudge/data/hive/models/bank_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import '../adapters/card_type_adapter.dart';
-
 class BankStorage {
   static Box<BankModel>? _box;
 

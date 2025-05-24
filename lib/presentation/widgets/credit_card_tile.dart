@@ -48,17 +48,11 @@ class CreditCardTile extends ConsumerWidget {
                 colorHex: null,
               ),
         );
-        return GestureDetector(
-          onTap:
-              () => NavigationService.navigateTo(
-                context,
-                CardDetailsScreen(cardId: card.id),
-              ),
-          child: Semantics(
-            button: true,
-            label: '${AppStrings.cardDetailsTitle} ${card.name}',
-            child: _buildCard(context, ref, theme, bank),
-          ),
+
+        return Semantics(
+          button: true,
+          label: '${AppStrings.cardDetailsTitle} ${card.name}',
+          child: _buildCard(context, ref, theme, bank),
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
