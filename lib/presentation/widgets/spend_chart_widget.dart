@@ -1,59 +1,61 @@
+import 'package:card_nudge/constants/app_strings.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class SpendChartWidget extends StatelessWidget {
-  const SpendChartWidget({super.key});
+  final List<Map<String, dynamic>>
+  data; // [{'month': 'Jan', 'amount': 5000}, ...]
+  const SpendChartWidget({super.key, this.data = const []});
 
-  List<String> getLastThreeMonths(DateTime now) {
-    final months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    List<String> result = [];
+  // Get the last 3 months (e.g., May, Apr, Mar for May 2025)
+  List<String> _getLastThreeMonths(DateTime now) {
+    final months = <String>[];
     for (int i = 2; i >= 0; i--) {
-      int monthIndex = (now.month - i - 1) % 12;
-      if (monthIndex < 0) monthIndex += 12;
-      result.add(months[monthIndex]);
+      final monthDate = DateTime(now.year, now.month - i, 1);
+      months.add(DateFormat.MMM().format(monthDate));
     }
-    return result;
+    return months;
+  }
+
+  // Get spend amounts for the last 3 months, default to 0 if missing
+  List<double> _getSpendValues(List<String> months) {
+    return months.map((month) {
+      final entry = data.firstWhere(
+        (d) => d['month'] == month,
+        orElse: () => {'amount': 0.0},
+      );
+      return (entry['amount'] as num?)?.toDouble() ?? 0.0;
+    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final quarterMonths = getLastThreeMonths(now);
-    final spendValues = [
-      40000.0,
-      35000.0,
-      28000.0,
-    ]; // Replace with actual values
-
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final now = DateTime.now();
+    final quarterMonths = _getLastThreeMonths(now);
+    final spendValues = _getSpendValues(quarterMonths);
+    const overspendThreshold = 50000.0; // ₹50,000
 
     return Card(
       margin: const EdgeInsets.all(12),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: isDark ? Colors.grey[900] : Colors.white,
+      color:
+          isDark
+              ? theme.colorScheme.surfaceContainerHighest
+              : theme.colorScheme.surface,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Spend Overview',
+              AppStrings.spendOverview,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 16),
@@ -72,7 +74,10 @@ class SpendChartWidget extends StatelessWidget {
                             (value, _) => Text(
                               '₹${(value / 1000).round()}k',
                               style: TextStyle(
-                                color: isDark ? Colors.white70 : Colors.black87,
+                                color:
+                                    isDark
+                                        ? theme.colorScheme.onSurfaceVariant
+                                        : theme.colorScheme.onSurface,
                                 fontSize: 14,
                               ),
                             ),
@@ -82,13 +87,20 @@ class SpendChartWidget extends StatelessWidget {
                       sideTitles: SideTitles(
                         showTitles: true,
                         getTitlesWidget: (value, _) {
-                          return Text(
-                            quarterMonths[value.toInt()],
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: isDark ? Colors.white : Colors.black87,
-                            ),
-                          );
+                          final index = value.toInt();
+                          if (index >= 0 && index < quarterMonths.length) {
+                            return Text(
+                              quarterMonths[index],
+                              style: TextStyle(
+                                fontSize: 12,
+                                color:
+                                    isDark
+                                        ? theme.colorScheme.onSurface
+                                        : theme.colorScheme.onSurface,
+                              ),
+                            );
+                          }
+                          return const Text('');
                         },
                         interval: 1,
                       ),
@@ -101,12 +113,16 @@ class SpendChartWidget extends StatelessWidget {
                     ),
                   ),
                   barGroups: List.generate(quarterMonths.length, (i) {
+                    final isOverspent = spendValues[i] > overspendThreshold;
                     return BarChartGroupData(
                       x: i,
                       barRods: [
                         BarChartRodData(
                           toY: spendValues[i],
-                          color: isDark ? Colors.tealAccent : Colors.teal,
+                          color:
+                              isOverspent
+                                  ? theme.colorScheme.error
+                                  : theme.colorScheme.primary,
                           borderRadius: BorderRadius.circular(6),
                           width: 18,
                         ),

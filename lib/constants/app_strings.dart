@@ -109,4 +109,12 @@ class AppStrings {
   static const editDueDateOnCard = 'Due date can be edit from Card.';
 
   static const dueAlreadyExist = 'A due already exists for this card.';
+
+  // Charts
+  static const spendOverview = 'Spend Overview';
+  static const monthOnTime = 'On Time';
+  static const monthDelayed = 'Delayed';
+  static const monthNotPaid = 'Not Paid';
+  static const monthNoData = 'No Data';
+  static const monthFuture = 'Future';
 }

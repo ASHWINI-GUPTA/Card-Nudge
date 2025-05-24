@@ -55,7 +55,7 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
         await _box.put(payment.id, payment);
       } else {
         // Add new payment
-        await _box.add(payment);
+        await _box.put(payment.id, payment);
       }
 
       // Update state with new data
@@ -86,6 +86,7 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
         isPaid: true,
         paidAmount: amount,
         dueAmount: payment.dueAmount - amount,
+        paymentDate: DateTime.now().toUtc(),
       );
 
       await _box.put(paymentId, updatedPayment);

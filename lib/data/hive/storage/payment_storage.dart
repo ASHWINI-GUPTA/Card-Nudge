@@ -14,5 +14,6 @@ class PaymentStorage {
   static Future<void> initHive() async {
     Hive.registerAdapter(PaymentModelAdapter());
     _box = await Hive.openBox<PaymentModel>('payments');
+    _box?.clear();
   }
 }

@@ -99,11 +99,7 @@ class PaymentModel extends HiveObject {
 
   // Status helpers
   bool get isOverdue => !isPaid && dueDate.isBefore(DateTime.now());
-
-  bool get isDueSoon =>
-      !isPaid && dueDate.difference(DateTime.now()).inDays <= 3;
-
   bool get isPartiallyPaid => paidAmount > 0 && paidAmount < dueAmount;
-
-  double get remainingAmount => dueAmount - paidAmount;
+  double get remainingAmount =>
+      paidAmount < dueAmount ? dueAmount - paidAmount : 0.0;
 }
