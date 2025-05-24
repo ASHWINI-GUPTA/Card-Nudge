@@ -1,4 +1,7 @@
 class AppStrings {
+  // Dashboard
+  static const dashboardTitle = "Nudge 🔔";
+
   static const cardsTitle = 'Cards';
   static const noCardsMessage = 'You have not added any cards yet.';
   static const errorLoadingCards = 'Failed to load cards. Please try again.';
@@ -92,4 +95,16 @@ class AppStrings {
   static const dueToday = 'Due Today';
   static const undoButton = 'Undo';
   static const currentDue = 'Undo';
+
+  // Upcoming Due
+  static const upcomingPaymentsTitle = 'Upcoming Payments';
+  static const noPaymentsMessage = 'No upcoming or overdue payments.';
+  static const addCardButton = 'Add Card';
+  static const addPaymentButton = 'Add Payment';
+
+  static const invalidCardError = "Invalid Card";
+
+  static const applyButton = 'Apply';
+
+  static const editDueDateOnCard = 'Due date can be edit from Card.';
 }
