@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../constants/app_strings.dart';
 import '../widgets/dashboard_alert_card.dart';
 import '../widgets/dashboard_card.dart';
 import '../widgets/dashboard_month_widget.dart';
@@ -10,8 +11,15 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Nudge'), centerTitle: true),
+      appBar: AppBar(
+        title: Text(
+          AppStrings.dashboardTitle,
+          style: theme.textTheme.titleLarge?.copyWith(color: Colors.white),
+        ),
+        backgroundColor: theme.primaryColor,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

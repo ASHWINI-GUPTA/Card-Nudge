@@ -15,7 +15,7 @@ class PaymentModel extends HiveObject {
   final double dueAmount;
 
   @HiveField(3)
-  final DateTime paymentDate;
+  DateTime? paymentDate;
 
   @HiveField(4)
   final bool isPaid;
@@ -32,16 +32,20 @@ class PaymentModel extends HiveObject {
   @HiveField(8)
   double paidAmount;
 
+  @HiveField(9)
+  final DateTime dueDate;
+
   PaymentModel({
     String? id,
     required this.cardId,
     required this.dueAmount,
-    required this.paymentDate,
+    DateTime? paymentDate,
     this.isPaid = false, // Default to false
     DateTime? createdAt,
     DateTime? updatedAt,
     this.minimumDueAmount, // Optional field
     this.paidAmount = 0.0, // Default to 0.0
+    required this.dueDate,
   }) : id = id ?? const Uuid().v4(),
        createdAt = (createdAt ?? DateTime.now()).toUtc(),
        updatedAt = (updatedAt ?? DateTime.now()).toUtc();
@@ -53,6 +57,7 @@ class PaymentModel extends HiveObject {
     bool? isPaid,
     double? minimumDueAmount,
     double? paidAmount,
+    DateTime? dueDate,
   }) {
     return PaymentModel(
       id: id,
@@ -64,6 +69,7 @@ class PaymentModel extends HiveObject {
       updatedAt: DateTime.now().toUtc(),
       minimumDueAmount: minimumDueAmount ?? this.minimumDueAmount,
       paidAmount: paidAmount ?? this.paidAmount,
+      dueDate: dueDate ?? this.dueDate,
     );
   }
 
@@ -76,7 +82,8 @@ class PaymentModel extends HiveObject {
         other.dueAmount == dueAmount &&
         other.paymentDate == paymentDate &&
         other.isPaid == isPaid &&
-        other.paidAmount == paidAmount;
+        other.paidAmount == paidAmount &&
+        other.dueDate == dueDate;
   }
 
   @override
@@ -86,13 +93,17 @@ class PaymentModel extends HiveObject {
         dueAmount.hashCode ^
         paymentDate.hashCode ^
         isPaid.hashCode ^
-        paidAmount.hashCode;
+        paidAmount.hashCode ^
+        dueDate.hashCode;
   }
 
   // Status helpers
-  bool get isOverdue => !isPaid && paymentDate.isBefore(DateTime.now());
+  bool get isOverdue => !isPaid && dueDate.isBefore(DateTime.now());
+
   bool get isDueSoon =>
-      !isPaid && paymentDate.difference(DateTime.now()).inDays <= 3;
+      !isPaid && dueDate.difference(DateTime.now()).inDays <= 3;
+
   bool get isPartiallyPaid => paidAmount > 0 && paidAmount < dueAmount;
+
   double get remainingAmount => dueAmount - paidAmount;
 }

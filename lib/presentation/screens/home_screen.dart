@@ -1,7 +1,7 @@
-// import 'package:card_nudge/presentation/screens/upcoming_due_screen.dart';
 import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
 import 'cards_screen.dart';
+import 'due_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,10 +13,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = [
-    const DashboardScreen(),
-    const CardsScreen(),
-    // const UpcomingDueScreen(),
+  final List<Widget> _screens = const [
+    DashboardScreen(),
+    CardsScreen(),
+    DueScreen(),
   ];
 
   final List<NavigationDestination> _destinations = const [
@@ -30,22 +30,26 @@ class _HomeScreenState extends State<HomeScreen> {
       selectedIcon: Icon(Icons.credit_card),
       label: 'Cards',
     ),
-    // NavigationDestination(
-    //   icon: Icon(Icons.event_note_outlined),
-    //   selectedIcon: Icon(Icons.event_note),
-    //   label: 'Due',
-    // ),
+    NavigationDestination(
+      icon: Icon(Icons.event_note_outlined),
+      selectedIcon: Icon(Icons.event_note),
+      label: 'Dues',
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       body: IndexedStack(index: _selectedIndex, children: _screens),
+      backgroundColor: theme.primaryColor,
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         destinations: _destinations,
-        onDestinationSelected:
-            (index) => setState(() => _selectedIndex = index),
+        onDestinationSelected: (index) {
+          setState(() => _selectedIndex = index);
+        },
       ),
     );
   }

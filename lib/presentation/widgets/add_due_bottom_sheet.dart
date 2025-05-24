@@ -1,3 +1,4 @@
+import 'package:card_nudge/data/hive/models/credit_card_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -7,9 +8,9 @@ import '../../services/navigation_service.dart';
 import '../providers/payment_provider.dart';
 
 class AddDueBottomSheet extends ConsumerStatefulWidget {
-  final String cardId;
+  final CreditCardModel card;
 
-  const AddDueBottomSheet({super.key, required this.cardId});
+  const AddDueBottomSheet({super.key, required this.card});
 
   @override
   ConsumerState<AddDueBottomSheet> createState() => _AddDueBottomSheetState();
@@ -20,8 +21,6 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
   final _dueAmountController = TextEditingController();
   final _minimumDueController = TextEditingController();
 
-  // AG TODO: This should be same as Card Due Date.
-  DateTime? _selectedDate;
   bool _isSubmitting = false;
 
   @override
@@ -32,15 +31,6 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
   }
 
   Future<PaymentModel?> _submit() async {
-    if (!_formKey.currentState!.validate() || _selectedDate == null) {
-      if (_selectedDate == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text(AppStrings.selectDateError)),
-        );
-      }
-      return null;
-    }
-
     setState(() => _isSubmitting = true);
 
     try {
@@ -51,13 +41,10 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
               : null;
 
       final payment = PaymentModel(
-        id: UniqueKey().toString(),
-        cardId: widget.cardId,
+        cardId: widget.card.id,
         dueAmount: dueAmount,
         minimumDueAmount: minimumDue,
-        paymentDate: _selectedDate!,
-        isPaid: false,
-        paidAmount: 0,
+        dueDate: widget.card.dueDate,
       );
 
       await ref.read(paymentProvider.notifier).save(payment);
@@ -75,20 +62,6 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
       return null;
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
-    }
-  }
-
-  Future<void> _pickDate() async {
-    final now = DateTime.now();
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: now,
-      firstDate: now,
-      lastDate: DateTime(now.year + 2),
-    );
-
-    if (picked != null && mounted) {
-      setState(() => _selectedDate = picked);
     }
   }
 
@@ -119,6 +92,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
               key: _formKey,
               child: Column(
                 children: [
+                  // Total Due
                   TextFormField(
                     controller: _dueAmountController,
                     keyboardType: const TextInputType.numberWithOptions(
@@ -136,6 +110,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
                     },
                   ),
                   const SizedBox(height: 12),
+                  // Minimum Due
                   TextFormField(
                     controller: _minimumDueController,
                     keyboardType: const TextInputType.numberWithOptions(
@@ -159,21 +134,29 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
                       return null;
                     },
                   ),
+
                   const SizedBox(height: 12),
+
                   ListTile(
+                    onTap: () {
+                      const SnackBar(
+                        content: Text(AppStrings.editDueDateOnCard),
+                      );
+                    },
                     key: const ValueKey('payment_date_picker'),
-                    onTap: _isSubmitting ? null : _pickDate,
+                    enabled: false,
                     contentPadding: EdgeInsets.zero,
-                    title: const Text(AppStrings.paymentDateLabel),
+                    title: const Text(AppStrings.dueDateLabel),
                     subtitle: Text(
-                      _selectedDate != null
-                          ? DateFormat.yMMMd().format(_selectedDate!)
-                          : AppStrings.selectDate,
+                      DateFormat.yMMMd().format(widget.card.dueDate!),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     trailing: const Icon(Icons.calendar_today),
                   ),
+
                   const SizedBox(height: 20),
+
+                  // Add Button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(

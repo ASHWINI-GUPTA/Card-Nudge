@@ -20,19 +20,20 @@ class PaymentModelAdapter extends TypeAdapter<PaymentModel> {
       id: fields[0] as String?,
       cardId: fields[1] as String,
       dueAmount: fields[2] as double,
-      paymentDate: fields[3] as DateTime,
+      paymentDate: fields[3] as DateTime?,
       isPaid: fields[4] as bool,
       createdAt: fields[5] as DateTime?,
       updatedAt: fields[6] as DateTime?,
       minimumDueAmount: fields[7] as double?,
       paidAmount: fields[8] as double,
+      dueDate: fields[9] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, PaymentModel obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -50,7 +51,9 @@ class PaymentModelAdapter extends TypeAdapter<PaymentModel> {
       ..writeByte(7)
       ..write(obj.minimumDueAmount)
       ..writeByte(8)
-      ..write(obj.paidAmount);
+      ..write(obj.paidAmount)
+      ..writeByte(9)
+      ..write(obj.dueDate);
   }
 
   @override

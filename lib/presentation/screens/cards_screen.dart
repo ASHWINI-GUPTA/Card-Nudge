@@ -13,17 +13,21 @@ class CardsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cardsAsync = ref.watch(creditCardListProvider);
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Semantics(
-          label: AppStrings.cardsTitle,
-          child: Text(
-            AppStrings.cardsTitle,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+        title: Text(
+          AppStrings.cardsTitle,
+          style: theme.textTheme.titleLarge?.copyWith(color: Colors.white),
         ),
-        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_list, color: Colors.white),
+            onPressed: () {}, // Placeholder for future filter
+          ),
+        ],
+        backgroundColor: theme.primaryColor,
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -54,7 +58,7 @@ class CardsScreen extends ConsumerWidget {
                             onTap:
                                 () => NavigationService.navigateTo(
                                   context,
-                                  CardDetailsScreen(cardId: card.id),
+                                  CardDetailsScreen(card: card),
                                 ),
                             child: Semantics(
                               label: '${AppStrings.cardLabel}: ${card.name}',

@@ -34,7 +34,7 @@ class MinimalPaymentCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Due: ${DateFormat.yMMMd().format(payment.paymentDate)}',
+                    'Due: ${DateFormat.yMMMd().format(payment.dueDate)}',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: Colors.grey[700],
                     ),

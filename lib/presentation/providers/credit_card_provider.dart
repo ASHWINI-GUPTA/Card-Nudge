@@ -138,14 +138,14 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
     }
   }
 
-  Future<void> delete(int key) async {
+  Future<void> delete(String cardId) async {
     state = const AsyncValue.loading();
     try {
-      if (!_box.containsKey(key)) {
+      if (!_box.containsKey(cardId)) {
         throw const FormatException(AppStrings.cardNotFoundError);
       }
-      final card = _box.get(key)!;
-      await _box.delete(key);
+      final card = _box.get(cardId)!;
+      await _box.delete(cardId);
       // Delete associated payments
       final payments = ref.read(paymentProvider.notifier);
       final cardPayments = payments.getPaymentsForCard(card.id);
@@ -186,13 +186,5 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
   // Get sorted cards (use state directly)
   List<CreditCardModel> get sortedOnDueDate => state.value ?? [];
 
-  // Get card by ID
-  CreditCardModel? getById(String cardId) {
-    try {
-      return _box.values.firstWhere((card) => card.id == cardId);
-    } catch (e) {
-      print('Error getting card by ID: $e');
-      return null;
-    }
-  }
+  markArchive(String cardId) {}
 }

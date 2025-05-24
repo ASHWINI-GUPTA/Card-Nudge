@@ -6,10 +6,8 @@ import '../../constants/app_strings.dart';
 import '../../data/enums/card_type.dart';
 import '../../data/hive/models/credit_card_model.dart';
 import '../../data/hive/models/bank_model.dart';
-import '../../services/navigation_service.dart';
 import '../providers/bank_provider.dart';
 import '../providers/payment_provider.dart';
-import '../screens/card_details_screen.dart';
 
 class CreditCardTile extends ConsumerWidget {
   final CreditCardModel card;
@@ -26,8 +24,6 @@ class CreditCardTile extends ConsumerWidget {
     symbol: '₹',
     decimalDigits: 0,
   );
-
-  void _showCardDetails(BuildContext context, String cardId) {}
 
   String get maskedCardNumber => '**** **** **** ${card.last4Digits}';
 
@@ -126,7 +122,12 @@ class CreditCardTile extends ConsumerWidget {
                       bottom: 16,
                       left: 16,
                       right: 16,
-                      child: _buildCardDetails(theme, bank, hasDue, dueAmount),
+                      child: _buildCardDetails(
+                        context,
+                        bank,
+                        hasDue,
+                        dueAmount,
+                      ),
                     ),
                   ],
                 ),
@@ -188,15 +189,20 @@ class CreditCardTile extends ConsumerWidget {
   }
 
   Widget _buildCardDetails(
-    ThemeData theme,
+    BuildContext context,
     BankModel bank,
     bool hasDue,
     double dueAmount,
   ) {
+    final theme = Theme.of(context);
     final cardNetworkLogo =
         bank.logoPath != null
             ? SvgPicture.asset(card.cardType.logoPath, width: 22, height: 22)
             : const Icon(Icons.credit_card, size: 30);
+
+    // AG TODO: Fix the Next Due sort.
+    // hasDue ? card.dueDate : card.dueDate.add(const Duration(days: 30));
+    final nextDueDate = card.dueDate;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,6 +235,7 @@ class CreditCardTile extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 14),
+
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -240,6 +247,13 @@ class CreditCardTile extends ConsumerWidget {
               label: AppStrings.totalDue,
               value: hasDue ? _currencyFormat.format(dueAmount) : '₹0',
               valueColor: hasDue ? Colors.orangeAccent : Colors.greenAccent,
+            ),
+            _buildInfoTile(
+              label: AppStrings.dueDateLabel,
+              value: DateFormat.MMMd(
+                Localizations.localeOf(context).toString(),
+              ).format(nextDueDate),
+              valueColor: hasDue ? Colors.redAccent : Colors.greenAccent,
             ),
           ],
         ),

@@ -1,3 +1,4 @@
+import 'package:card_nudge/data/hive/models/credit_card_model.dart';
 import 'package:card_nudge/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,14 +12,13 @@ import '../widgets/payment_log_sheet.dart';
 import 'add_card_screen.dart';
 
 class CardDetailsScreen extends ConsumerWidget {
-  final String cardId;
+  final CreditCardModel card;
 
-  const CardDetailsScreen({super.key, required this.cardId});
+  const CardDetailsScreen({super.key, required this.card});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final cardsAsync = ref.watch(creditCardListProvider);
     final paymentsAsync = ref.watch(paymentProvider);
 
     return Scaffold(
@@ -76,132 +76,98 @@ class CardDetailsScreen extends ConsumerWidget {
           onPressed:
               () => NavigationService.showBottomSheet(
                 context: context,
-                builder: (context) => AddDueBottomSheet(cardId: cardId),
+                builder: (context) => AddDueBottomSheet(card: card),
               ),
           icon: const Icon(Icons.add),
           label: Text(AppStrings.createDueButton),
           tooltip: AppStrings.createPaymentDue,
         ),
       ),
-      body: cardsAsync.when(
-        data: (cards) {
-          final card = cards.firstWhere(
-            (c) => c.id == cardId,
-            orElse: () => throw Exception(AppStrings.cardNotFoundError),
-          );
-          return paymentsAsync.when(
-            data: (payments) {
-              final upcoming =
-                  payments
-                      .where((p) => p.cardId == cardId && !p.isPaid)
-                      .toList();
-              final history =
-                  payments
-                      .where((p) => p.cardId == cardId && p.isPaid)
-                      .toList();
+      body: paymentsAsync.when(
+        data: (payments) {
+          final upcoming =
+              payments.where((p) => p.cardId == card.id && !p.isPaid).toList();
+          final history =
+              payments.where((p) => p.cardId == card.id && p.isPaid).toList();
 
-              return RefreshIndicator(
-                onRefresh: () async {
-                  ref.invalidate(paymentProvider);
-                  ref.invalidate(creditCardListProvider);
-                },
-                child: ListView(
-                  padding: const EdgeInsets.all(16),
-                  children: [
-                    Semantics(
-                      label: '${AppStrings.cardLabel}: ${card.name}',
-                      child: CreditCardTile(card: card),
-                    ),
-                    const SizedBox(height: 24),
-                    Semantics(
-                      label: AppStrings.upcomingPayment,
-                      child: Text(
-                        AppStrings.upcomingPayment,
-                        style: theme.textTheme.titleMedium,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    if (upcoming.isEmpty)
-                      Semantics(
-                        label: AppStrings.noUpcomingDues,
-                        child: Text(
-                          AppStrings.noUpcomingDues,
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                      )
-                    else
-                      Semantics(
-                        label: AppStrings.upcomingPaymentCard,
-                        child: GestureDetector(
-                          onTap:
-                              () => NavigationService.showBottomSheet(
-                                context: context,
-                                builder:
-                                    (context) => LogPaymentBottomSheet(
-                                      payment: upcoming.first,
-                                    ),
-                              ),
-                          child: MinimalPaymentCard(payment: upcoming.first),
-                        ),
-                      ),
-                    const SizedBox(height: 24),
-                    Semantics(
-                      label: AppStrings.paymentHistory,
-                      child: Text(
-                        AppStrings.paymentHistory,
-                        style: theme.textTheme.titleMedium,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    if (history.isEmpty)
-                      Semantics(
-                        label: AppStrings.noPastPayments,
-                        child: Text(
-                          AppStrings.noPastPayments,
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                      )
-                    else
-                      ListView.separated(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: history.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 8),
-                        itemBuilder: (context, index) {
-                          final payment = history[index];
-                          return Semantics(
-                            label:
-                                '${AppStrings.paymentHistoryItem}: ${payment.paidAmount}',
-                            child: MinimalPaymentCard(payment: payment),
-                          );
-                        },
-                      ),
-                  ],
-                ),
-              );
+          return RefreshIndicator(
+            onRefresh: () async {
+              ref.invalidate(paymentProvider);
+              ref.invalidate(creditCardListProvider);
             },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error:
-                (error, stack) => Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Semantics(
-                        label: AppStrings.paymentLoadError,
-                        child: Text(
-                          '${AppStrings.paymentLoadError}: $error',
-                          style: theme.textTheme.bodyLarge,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () => ref.invalidate(paymentProvider),
-                        child: Text(AppStrings.retryButton),
-                      ),
-                    ],
+            child: ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                Semantics(
+                  label: '${AppStrings.cardLabel}: ${card.name}',
+                  child: CreditCardTile(card: card),
+                ),
+                const SizedBox(height: 24),
+                Semantics(
+                  label: AppStrings.upcomingPayment,
+                  child: Text(
+                    AppStrings.upcomingPayment,
+                    style: theme.textTheme.titleMedium,
                   ),
                 ),
+                const SizedBox(height: 8),
+                if (upcoming.isEmpty)
+                  Semantics(
+                    label: AppStrings.noUpcomingDues,
+                    child: Text(
+                      AppStrings.noUpcomingDues,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  )
+                else
+                  Semantics(
+                    label: AppStrings.upcomingPaymentCard,
+                    child: GestureDetector(
+                      onTap:
+                          () => NavigationService.showBottomSheet(
+                            context: context,
+                            builder:
+                                (context) => LogPaymentBottomSheet(
+                                  payment: upcoming.first,
+                                ),
+                          ),
+                      child: MinimalPaymentCard(payment: upcoming.first),
+                    ),
+                  ),
+                const SizedBox(height: 24),
+                Semantics(
+                  label: AppStrings.paymentHistory,
+                  child: Text(
+                    AppStrings.paymentHistory,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                if (history.isEmpty)
+                  Semantics(
+                    label: AppStrings.noPastPayments,
+                    child: Text(
+                      AppStrings.noPastPayments,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  )
+                else
+                  ListView.separated(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: history.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (context, index) {
+                      final payment = history[index];
+                      return Semantics(
+                        label:
+                            '${AppStrings.paymentHistoryItem}: ${payment.paidAmount}',
+                        child: MinimalPaymentCard(payment: payment),
+                      );
+                    },
+                  ),
+              ],
+            ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -211,16 +177,16 @@ class CardDetailsScreen extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Semantics(
-                    label: AppStrings.cardLoadError,
+                    label: AppStrings.paymentLoadError,
                     child: Text(
-                      '${AppStrings.cardLoadError}: $error',
+                      '${AppStrings.paymentLoadError}: $error',
                       style: theme.textTheme.bodyLarge,
                       textAlign: TextAlign.center,
                     ),
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => ref.invalidate(creditCardListProvider),
+                    onPressed: () => ref.invalidate(paymentProvider),
                     child: Text(AppStrings.retryButton),
                   ),
                 ],
@@ -237,33 +203,13 @@ class CardDetailsScreen extends ConsumerWidget {
   ) async {
     switch (value) {
       case 'edit':
-        NavigationService.navigateTo(
-          context,
-          AddCardScreen(
-            card: ref
-                .read(creditCardListProvider)
-                .value!
-                .firstWhere(
-                  (c) => c.id == cardId,
-                  orElse: () => throw Exception(AppStrings.cardNotFoundError),
-                ),
-          ),
-        );
+        NavigationService.navigateTo(context, AddCardScreen(card: card));
         break;
       case 'delete':
         _showDeleteConfirmation(context, ref);
         break;
       case 'archive':
-        final card = ref
-            .read(creditCardListProvider)
-            .value!
-            .firstWhere(
-              (c) => c.id == cardId,
-              orElse: () => throw Exception(AppStrings.cardNotFoundError),
-            );
-        await ref
-            .read(creditCardListProvider.notifier)
-            .save(card.copyWith(isArchived: true));
+        await ref.read(creditCardListProvider.notifier).markArchive(card.id);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text(AppStrings.cardArchivedSuccess)),
         );
@@ -293,18 +239,9 @@ class CardDetailsScreen extends ConsumerWidget {
               TextButton(
                 onPressed: () async {
                   try {
-                    final card = ref
-                        .read(creditCardListProvider)
-                        .value!
-                        .firstWhere(
-                          (c) => c.id == cardId,
-                          orElse:
-                              () =>
-                                  throw Exception(AppStrings.cardNotFoundError),
-                        );
                     await ref
                         .read(creditCardListProvider.notifier)
-                        .delete(card.key);
+                        .delete(card.id);
                     if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
