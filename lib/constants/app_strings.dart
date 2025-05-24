@@ -107,4 +107,6 @@ class AppStrings {
   static const applyButton = 'Apply';
 
   static const editDueDateOnCard = 'Due date can be edit from Card.';
+
+  static const dueAlreadyExist = 'A due already exists for this card.';
 }

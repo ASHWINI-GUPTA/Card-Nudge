@@ -170,30 +170,27 @@ class _LogPaymentBottomSheetState extends ConsumerState<LogPaymentBottomSheet> {
                   ),
                 ),
               const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed:
-                    _isSubmitting
-                        ? null
-                        : () async {
-                          final payment = await _logPayment();
-                          if (payment != null) {
-                            NavigationService.pop(context);
-                          }
-                        },
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  icon: const Icon(Icons.receipt_long),
+                  onPressed:
+                      _isSubmitting
+                          ? null
+                          : () async {
+                            final payment = await _logPayment();
+                            if (payment != null) {
+                              NavigationService.pop(context);
+                            }
+                          },
+                  label:
+                      _isSubmitting
+                          ? const CircularProgressIndicator()
+                          : Text(AppStrings.logPaymentButton),
                 ),
-                child:
-                    _isSubmitting
-                        ? const CircularProgressIndicator()
-                        : Text(
-                          AppStrings.logPaymentButton,
-                          style: Theme.of(context).textTheme.labelLarge,
-                        ),
               ),
+
               const SizedBox(height: 16),
             ],
           ),

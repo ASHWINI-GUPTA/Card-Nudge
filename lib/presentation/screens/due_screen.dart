@@ -551,22 +551,27 @@ class DueCardContent extends ConsumerWidget {
                         : const Icon(Icons.account_balance, size: 30),
               ),
               const SizedBox(height: 20),
-              IconButton(
-                icon: Icon(
-                  Icons.payments_outlined,
-                  color: _dueDateColor(payment.dueDate, context),
+              Semantics(
+                label: AppStrings.logPaymentButton,
+                child: IconButton(
+                  tooltip: AppStrings.logPaymentButton,
+                  icon: Icon(
+                    Icons.payments_outlined,
+                    color: _dueDateColor(payment.dueDate, context),
+                  ),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(8),
+                  ),
+                  onPressed:
+                      () => NavigationService.showBottomSheet(
+                        context: context,
+                        builder:
+                            (context) =>
+                                LogPaymentBottomSheet(payment: payment),
+                      ),
                 ),
-                style: IconButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  shape: const CircleBorder(),
-                  padding: const EdgeInsets.all(8),
-                ),
-                onPressed:
-                    () => NavigationService.showBottomSheet(
-                      context: context,
-                      builder:
-                          (context) => LogPaymentBottomSheet(payment: payment),
-                    ),
               ),
             ],
           ),

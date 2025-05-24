@@ -34,6 +34,21 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
     setState(() => _isSubmitting = true);
 
     try {
+      // Check if unpaid payment already exists for this card
+      final payments = ref.read(paymentBoxProvider);
+      final unpaidExists = payments.values.any(
+        (p) => p.cardId == widget.card.id && p.isPaid == false,
+      );
+      if (unpaidExists) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text(AppStrings.dueAlreadyExist)),
+          );
+        }
+        NavigationService.pop(context);
+        return null;
+      }
+
       final dueAmount = double.parse(_dueAmountController.text.trim());
       final minimumDue =
           _minimumDueController.text.trim().isNotEmpty
@@ -139,8 +154,10 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
 
                   ListTile(
                     onTap: () {
-                      const SnackBar(
-                        content: Text(AppStrings.editDueDateOnCard),
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(AppStrings.editDueDateOnCard),
+                        ),
                       );
                     },
                     key: const ValueKey('payment_date_picker'),
@@ -159,7 +176,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
                   // Add Button
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton.icon(
+                    child: FilledButton.icon(
                       onPressed:
                           _isSubmitting
                               ? null
@@ -173,10 +190,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
                       label:
                           _isSubmitting
                               ? const CircularProgressIndicator()
-                              : Text(
-                                AppStrings.createDueButton,
-                                style: Theme.of(context).textTheme.labelLarge,
-                              ),
+                              : Text(AppStrings.createDueButton),
                     ),
                   ),
                   const SizedBox(height: 16),
