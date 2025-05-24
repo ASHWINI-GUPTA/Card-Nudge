@@ -165,7 +165,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
                     contentPadding: EdgeInsets.zero,
                     title: const Text(AppStrings.dueDateLabel),
                     subtitle: Text(
-                      DateFormat.yMMMd().format(widget.card.dueDate!),
+                      DateFormat.yMMMd().format(widget.card.dueDate),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     trailing: const Icon(Icons.calendar_today),

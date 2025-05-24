@@ -107,7 +107,10 @@ class CreditCardTile extends ConsumerWidget {
                   payments.where((p) => p.cardId == card.id).toList();
               final hasDue =
                   cardPayments.isNotEmpty && cardPayments.last.dueAmount > 0;
-              final dueAmount = hasDue ? cardPayments.last.dueAmount : 0.0;
+              final dueAmount = cardPayments.fold<double>(
+                0.0,
+                (sum, payment) => sum + (payment.dueAmount),
+              );
 
               return Semantics(
                 label: '${AppStrings.cardDetailsTitle} ${card.name}',
