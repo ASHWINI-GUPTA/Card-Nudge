@@ -173,4 +173,11 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
   List<CreditCardModel> get sortedOnDueDate => state.value ?? [];
 
   markArchive(String cardId) {}
+
+  reset() {
+    state = const AsyncValue.loading();
+    _box.listenable().removeListener(_onBoxChange);
+    _box.clear();
+    state = AsyncValue.data([]);
+  }
 }

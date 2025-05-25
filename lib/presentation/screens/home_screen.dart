@@ -1,3 +1,4 @@
+import 'package:card_nudge/presentation/screens/setting_screen.dart';
 import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
 import 'cards_screen.dart';
@@ -17,6 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
     DashboardScreen(),
     CardsScreen(),
     DueScreen(),
+    SettingsScreen(),
   ];
 
   final List<NavigationDestination> _destinations = const [
@@ -34,6 +36,11 @@ class _HomeScreenState extends State<HomeScreen> {
       icon: Icon(Icons.event_note_outlined),
       selectedIcon: Icon(Icons.event_note),
       label: 'Dues',
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.settings),
+      selectedIcon: Icon(Icons.settings),
+      label: 'Settings',
     ),
   ];
 

@@ -124,7 +124,7 @@ class AppStrings {
   static const dueScreenNoFilterMessage = 'No payments match your filter.';
 
   // Settings
-  static const settingsTitle = 'Settings';
+  static const settingsTitle = 'Sudo Mode';
   static const editProfile = 'Edit Profile';
   static const language = 'Language';
   static const english = 'English';
@@ -155,4 +155,13 @@ class AppStrings {
   static const cancel = 'Cancel';
   static const add = 'Add';
   static const delete = 'Delete';
+
+  static const requiredFieldsError = 'Requried';
+
+  static const bankName = 'Bank Name';
+  static const bankCode = 'Bank Code';
+  static const supportNumber = 'Support Number';
+  static const website = 'Website';
+  static const bankColor = 'Bank Color';
+  static const selectColor = 'Select Color';
 }

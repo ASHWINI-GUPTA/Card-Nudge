@@ -108,4 +108,11 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
   List<PaymentModel> getPaymentsForCard(String cardId) {
     return state.value?.where((p) => p.cardId == cardId).toList() ?? [];
   }
+
+  reset() {
+    state = const AsyncValue.loading();
+    _box.listenable().removeListener(_onBoxChange);
+    _box.clear();
+    state = AsyncValue.data([]);
+  }
 }
