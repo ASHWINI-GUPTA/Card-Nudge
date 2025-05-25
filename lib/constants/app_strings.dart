@@ -97,7 +97,7 @@ class AppStrings {
   static const currentDue = 'Undo';
 
   // Upcoming Due
-  static const upcomingPaymentsTitle = 'Upcoming Payments';
+  static const upcomingPaymentsTitle = 'Dues';
   static const noPaymentsMessage = 'No upcoming or overdue payments.';
   static const addCardButton = 'Add Card';
   static const addPaymentButton = 'Add Payment';
@@ -105,6 +105,8 @@ class AppStrings {
   static const invalidCardError = "Invalid Card";
 
   static const applyButton = 'Apply';
+  static const resetButton = 'Reset';
+  static const clearButton = 'Clear';
 
   static const editDueDateOnCard = 'Due date can be edit from Card.';
 
@@ -117,4 +119,40 @@ class AppStrings {
   static const monthNotPaid = 'Not Paid';
   static const monthNoData = 'No Data';
   static const monthFuture = 'Future';
+
+  // Filter
+  static const dueScreenNoFilterMessage = 'No payments match your filter.';
+
+  // Settings
+  static const settingsTitle = 'Settings';
+  static const editProfile = 'Edit Profile';
+  static const language = 'Language';
+  static const english = 'English';
+  static const hindi = 'Hindi';
+  static const currency = 'Currency';
+  static const theme = 'Theme';
+  static const light = 'Light';
+  static const dark = 'Dark';
+  static const system = 'System';
+  static const banks = 'Banks';
+  static const addBank = 'Add Bank';
+  static const editBank = 'Edit Bank';
+  static const deleteBank = 'Delete Bank';
+  static const deleteBankConfirm = 'Are you sure you want to delete this bank?';
+  static const paymentReminders = 'Payment Reminders';
+  static const reminderTime = 'Reminder Time';
+  static const exportData = 'Export Data';
+  static const exportDataSuccess = 'Data exported successfully';
+  static const clearData = 'Clear Data';
+  static const clearDataConfirm =
+      'Are you sure you want to clear all data? This cannot be undone.';
+  static const clearDataSuccess = 'Data cleared successfully';
+  static const appVersion = 'App Version';
+  static const termsConditions = 'Terms & Conditions';
+  static const privacyPolicy = 'Privacy Policy';
+  static const contactSupport = 'Contact Support';
+  static const save = 'Save';
+  static const cancel = 'Cancel';
+  static const add = 'Add';
+  static const delete = 'Delete';
 }

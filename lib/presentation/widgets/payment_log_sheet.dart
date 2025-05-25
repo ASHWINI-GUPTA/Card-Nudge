@@ -6,6 +6,7 @@ import '../../constants/app_strings.dart';
 import '../../data/enums/payment_option.dart';
 import '../../data/hive/models/payment_model.dart';
 import '../../services/navigation_service.dart';
+import '../providers/credit_card_provider.dart';
 import '../providers/payment_provider.dart';
 
 class LogPaymentBottomSheet extends ConsumerStatefulWidget {
@@ -59,7 +60,21 @@ class _LogPaymentBottomSheetState extends ConsumerState<LogPaymentBottomSheet> {
       final updatedPayment = widget.payment.copyWith(
         isPaid: true,
         paidAmount: amount,
+        paymentDate: DateTime.now().toUtc(),
       );
+
+      // Update the due date on Card.
+      final card = await ref
+          .read(creditCardBoxProvider)
+          .values
+          .firstWhere((c) => c.id == updatedPayment.cardId);
+
+      final updatedCard = card.copyWith(
+        dueDate: card.dueDate.add(const Duration(days: 30)),
+        billingDate: card.billingDate.add(const Duration(days: 30)),
+      );
+
+      await ref.read(creditCardListProvider.notifier).save(updatedCard);
 
       if (!mounted) return null;
       ScaffoldMessenger.of(context).showSnackBar(

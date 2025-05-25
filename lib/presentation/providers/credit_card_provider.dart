@@ -31,7 +31,7 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
     state = const AsyncValue.loading();
     try {
       if (state.value!.any((c) => c.id == card.id && c.key != card.key)) {
-        await _box.put(card.key, card);
+        await _box.put(card.id, card);
         state = AsyncValue.data([
           ...state.value!.where((c) => c.key != card.key),
           card,
@@ -121,20 +121,6 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
       _onBoxChange(); // Trigger state update
     } catch (e) {
       print('Error adding card: $e');
-    }
-  }
-
-  // Update a card by key
-  Future<void> updateByKey(int key, CreditCardModel card) async {
-    try {
-      final index = _box.values.toList().indexWhere((c) => c.key == key);
-      if (index != -1) {
-        await _box.putAt(index, card);
-        await _scheduleNotifications(card);
-        _onBoxChange();
-      }
-    } catch (e) {
-      print('Error updating card: $e');
     }
   }
 

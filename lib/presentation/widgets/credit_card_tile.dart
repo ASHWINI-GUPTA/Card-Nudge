@@ -203,9 +203,7 @@ class CreditCardTile extends ConsumerWidget {
             ? SvgPicture.asset(card.cardType.logoPath, width: 22, height: 22)
             : const Icon(Icons.credit_card, size: 30);
 
-    // AG TODO: Fix the Next Due sort.
-    // hasDue ? card.dueDate : card.dueDate.add(const Duration(days: 30));
-    final nextDueDate = card.dueDate;
+    final statmentGenerated = DateTime.now().isAfter(card.billingDate);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -251,13 +249,22 @@ class CreditCardTile extends ConsumerWidget {
               value: hasDue ? _currencyFormat.format(dueAmount) : '₹0',
               valueColor: hasDue ? Colors.orangeAccent : Colors.greenAccent,
             ),
-            _buildInfoTile(
-              label: AppStrings.dueDateLabel,
-              value: DateFormat.MMMd(
-                Localizations.localeOf(context).toString(),
-              ).format(nextDueDate),
-              valueColor: hasDue ? Colors.redAccent : Colors.greenAccent,
-            ),
+            if (statmentGenerated)
+              _buildInfoTile(
+                label: AppStrings.dueDateLabel,
+                value: DateFormat.MMMd(
+                  Localizations.localeOf(context).toString(),
+                ).format(card.dueDate),
+                valueColor: hasDue ? Colors.redAccent : Colors.greenAccent,
+              )
+            else
+              _buildInfoTile(
+                label: AppStrings.billingDateLabel,
+                value: DateFormat.MMMd(
+                  Localizations.localeOf(context).toString(),
+                ).format(card.billingDate),
+                valueColor: hasDue ? Colors.redAccent : Colors.greenAccent,
+              ),
           ],
         ),
       ],

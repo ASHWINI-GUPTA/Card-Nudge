@@ -1,3 +1,6 @@
+import 'package:card_nudge/data/enums/amount_range.dart';
+import 'package:card_nudge/data/enums/sort_order.dart';
+import 'package:card_nudge/presentation/providers/filter_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,14 +18,6 @@ import '../widgets/add_due_bottom_sheet.dart';
 import '../widgets/filter_bottom_sheet.dart';
 import '../widgets/payment_log_sheet.dart';
 
-// Filter state for amount sorting/filtering
-final amountFilterProvider = StateProvider<Map<String, dynamic>>(
-  (ref) => {
-    'sort': 'asc', // 'asc' or 'desc'
-    'range': 'all', // 'all', 'low', 'medium', 'high'
-  },
-);
-
 class DueScreen extends ConsumerWidget {
   const DueScreen({super.key});
 
@@ -30,6 +25,9 @@ class DueScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final cardsAsync = ref.watch(creditCardListProvider);
+
+    final isFilterApplied =
+        ref.watch(dueFilterProvider.notifier).isFilterApplied;
 
     return Scaffold(
       appBar: AppBar(
@@ -39,7 +37,10 @@ class DueScreen extends ConsumerWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.filter_list, color: Colors.white),
+            icon: Icon(
+              isFilterApplied ? Icons.filter_alt : Icons.filter_alt_outlined,
+              color: Colors.white,
+            ),
             onPressed: () => _showFilterBottomSheet(context, ref),
           ),
         ],
@@ -116,7 +117,7 @@ class DueScreen extends ConsumerWidget {
   ) {
     final paymentsAsync = ref.watch(paymentProvider);
     final banksAsync = ref.watch(bankProvider);
-    final filter = ref.watch(amountFilterProvider);
+    final filter = ref.watch(dueFilterProvider);
 
     return paymentsAsync.when(
       data: (payments) {
@@ -127,23 +128,25 @@ class DueScreen extends ConsumerWidget {
 
         // Apply filters
         List<PaymentModel> filteredPayments = nonPaidPayments;
-        if (filter['range'] != 'all') {
+        if (filter.range != AmountRange.all) {
           filteredPayments =
               filteredPayments.where((p) {
-                if (filter['range'] == 'low') return p.dueAmount < 5000;
-                if (filter['range'] == 'medium')
+                if (filter.range == AmountRange.low) return p.dueAmount < 5000;
+                if (filter.range == AmountRange.medium)
                   return p.dueAmount >= 5000 && p.dueAmount <= 10000;
                 return p.dueAmount > 10000;
               }).toList();
         }
         filteredPayments.sort(
           (a, b) =>
-              filter['sort'] == 'asc'
+              filter.sort == SortOrder.asc
                   ? a.dueAmount.compareTo(b.dueAmount)
                   : b.dueAmount.compareTo(a.dueAmount),
         );
 
         final groupedCards = _groupPaymentsByDueDate(filteredPayments);
+
+        if (groupedCards.isEmpty) return _buildNoFilteredPayments(context, ref);
 
         return banksAsync.when(
           data: (banks) {
@@ -309,6 +312,31 @@ class DueScreen extends ConsumerWidget {
     NavigationService.showBottomSheet(
       context: context,
       builder: (context) => FilterBottomSheet(ref: ref),
+    );
+  }
+
+  Widget _buildNoFilteredPayments(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            AppStrings.dueScreenNoFilterMessage,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {
+              ref.read(dueFilterProvider.notifier).resetFilter();
+            },
+            child: const Text(AppStrings.clearButton),
+          ),
+        ],
+      ),
     );
   }
 }

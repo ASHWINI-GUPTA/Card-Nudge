@@ -69,7 +69,9 @@ class SpendChartWidget extends StatelessWidget {
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        reservedSize: 40,
+                        maxIncluded: false,
+                        minIncluded: false,
+                        reservedSize: 50,
                         getTitlesWidget:
                             (value, _) => Text(
                               '₹${(value / 1000).round()}k',

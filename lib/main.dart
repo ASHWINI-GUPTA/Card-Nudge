@@ -24,7 +24,9 @@ void main() async {
   assert(() {
     final creditCardBox = Hive.box<CreditCardModel>('credit_cards');
     if (creditCardBox.isEmpty) {
-      creditCardBox.addAll(CardMockDataProvider.getMockCreditCards());
+      for (final card in CardMockDataProvider.getMockCreditCards()) {
+        creditCardBox.put(card.id, card);
+      }
     }
     return true;
   }());
