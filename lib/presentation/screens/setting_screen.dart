@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 import '../../constants/app_strings.dart';
 import '../../data/enums/app_theme_mode.dart';
 import '../../data/enums/currency.dart';
 import '../../data/enums/language.dart';
-import '../../data/hive/models/bank_model.dart';
-import '../providers/bank_provider.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/payment_provider.dart';
 import '../providers/setting_provider.dart';
-import '../widgets/bank_bottom_sheet.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -20,7 +16,6 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final settings = ref.watch(settingsProvider);
-    final banksAsync = ref.watch(bankProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -56,80 +51,95 @@ class SettingsScreen extends ConsumerWidget {
                 children: [
                   ListTile(
                     title: Text(AppStrings.language),
-                    trailing: DropdownButton<Language>(
-                      value: settings.language,
-                      items:
-                          Language.values.map((lang) {
-                            return DropdownMenuItem(
-                              value: lang,
-                              child: Text(
-                                lang == Language.en
-                                    ? AppStrings.english
-                                    : AppStrings.hindi,
-                              ),
-                            );
-                          }).toList(),
-                      onChanged: (value) {
-                        if (value != null) {
-                          ref
-                              .read(settingsProvider.notifier)
-                              .updateLanguage(value);
-                        }
+                    trailing: Consumer(
+                      builder: (context, ref, child) {
+                        final settings = ref.watch(settingsProvider);
+                        return DropdownButton<Language>(
+                          value: settings.language,
+                          items:
+                              Language.values.map((lang) {
+                                return DropdownMenuItem(
+                                  value: lang,
+                                  child: Text(
+                                    lang == Language.en
+                                        ? AppStrings.english
+                                        : AppStrings.hindi,
+                                  ),
+                                );
+                              }).toList(),
+                          onChanged: (value) {
+                            if (value != null) {
+                              ref
+                                  .read(settingsProvider.notifier)
+                                  .updateLanguage(value);
+                            }
+                          },
+                        );
                       },
                     ),
                   ),
                   ListTile(
                     title: Text(AppStrings.currency),
-                    trailing: DropdownButton<Currency>(
-                      value: settings.currency,
-                      items:
-                          Currency.values.map((currency) {
-                            return DropdownMenuItem(
-                              value: currency,
-                              child: Text(
-                                currency == Currency.INR
-                                    ? 'INR (₹)'
-                                    : 'USD (\$)',
-                              ),
-                            );
-                          }).toList(),
-                      onChanged: (value) {
-                        if (value != null) {
-                          ref
-                              .read(settingsProvider.notifier)
-                              .updateCurrency(value);
-                        }
+                    trailing: Consumer(
+                      builder: (context, ref, child) {
+                        final settings = ref.watch(settingsProvider);
+                        return DropdownButton<Currency>(
+                          value: settings.currency,
+                          items:
+                              Currency.values.map((currency) {
+                                return DropdownMenuItem(
+                                  value: currency,
+                                  child: Text(
+                                    currency == Currency.INR
+                                        ? 'INR (₹)'
+                                        : 'USD (\$)',
+                                  ),
+                                );
+                              }).toList(),
+                          onChanged: (value) {
+                            if (value != null) {
+                              ref
+                                  .read(settingsProvider.notifier)
+                                  .updateCurrency(value);
+                            }
+                          },
+                        );
                       },
                     ),
                   ),
                   ListTile(
                     title: Text(AppStrings.theme),
-                    trailing: DropdownButton<AppThemeMode>(
-                      value: settings.themeMode,
-                      items:
-                          AppThemeMode.values.map((mode) {
-                            String text;
-                            switch (mode) {
-                              case AppThemeMode.light:
-                                text = AppStrings.light;
-                                break;
-                              case AppThemeMode.dark:
-                                text = AppStrings.dark;
-                                break;
-                              case AppThemeMode.system:
-                                text = AppStrings.system;
+                    trailing: Consumer(
+                      builder: (context, ref, child) {
+                        final settings = ref.watch(settingsProvider);
+                        return DropdownButton<AppThemeMode>(
+                          value: settings.themeMode,
+                          items:
+                              AppThemeMode.values.map((mode) {
+                                String text;
+                                switch (mode) {
+                                  case AppThemeMode.light:
+                                    text = AppStrings.light;
+                                    break;
+                                  case AppThemeMode.dark:
+                                    text = AppStrings.dark;
+                                    break;
+                                  case AppThemeMode.system:
+                                    text = AppStrings.system;
+                                }
+                                return DropdownMenuItem(
+                                  value: mode,
+                                  child: Text(text),
+                                );
+                              }).toList(),
+                          onChanged: (value) {
+                            if (value != null) {
+                              ref
+                                  .read(settingsProvider.notifier)
+                                  .updateTheme(value);
                             }
-                            return DropdownMenuItem(
-                              value: mode,
-                              child: Text(text),
-                            );
-                          }).toList(),
-                      onChanged: (value) {
-                        if (value != null) {
-                          ref
-                              .read(settingsProvider.notifier)
-                              .updateTheme(value);
-                        }
+                          },
+                        );
                       },
                     ),
                   ),
@@ -157,7 +167,10 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   ListTile(
                     title: Text(AppStrings.reminderTime),
-                    trailing: Text(settings.reminderTime.format(context)),
+                    trailing: Text(
+                      settings.reminderTime.format(context),
+                      style: theme.textTheme.bodyLarge,
+                    ),
                     onTap: () async {
                       final time = await showTimePicker(
                         context: context,

@@ -11,8 +11,6 @@ class CreditCardApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settings = ref.watch(settingsProvider);
-
     final router = GoRouter(
       initialLocation: '/',
       routes: [
@@ -24,32 +22,37 @@ class CreditCardApp extends ConsumerWidget {
       ],
     );
 
-    return MaterialApp.router(
-      title: 'Card Nudge',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.blue,
-        brightness: Brightness.light,
-      ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.blue,
-        brightness: Brightness.dark,
-      ),
-      themeMode: switch (settings.themeMode) {
-        AppThemeMode.light => ThemeMode.light,
-        AppThemeMode.dark => ThemeMode.dark,
-        AppThemeMode.system => ThemeMode.system,
+    return Consumer(
+      builder: (context, ref, child) {
+        final settings = ref.watch(settingsProvider);
+        return MaterialApp.router(
+          title: 'Card Nudge',
+          theme: ThemeData(
+            useMaterial3: true,
+            colorSchemeSeed: Colors.blue,
+            brightness: Brightness.light,
+          ),
+          darkTheme: ThemeData(
+            useMaterial3: true,
+            colorSchemeSeed: Colors.blue,
+            brightness: Brightness.dark,
+          ),
+          themeMode: switch (settings.themeMode) {
+            AppThemeMode.light => ThemeMode.light,
+            AppThemeMode.dark => ThemeMode.dark,
+            AppThemeMode.system => ThemeMode.system,
+          },
+          locale: Locale(settings.language.name),
+          supportedLocales: const [Locale('en', 'US'), Locale('hi', 'IN')],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          debugShowCheckedModeBanner: false,
+          routerConfig: router,
+        );
       },
-      locale: Locale(settings.language.name),
-      supportedLocales: const [Locale('en', 'US'), Locale('hi', 'IN')],
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      debugShowCheckedModeBanner: false,
-      routerConfig: router,
     );
   }
 }
