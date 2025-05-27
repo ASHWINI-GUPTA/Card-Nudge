@@ -71,7 +71,7 @@ class CardDetailsScreen extends ConsumerWidget {
         ],
       ),
       floatingActionButton: Semantics(
-        label: AppStrings.createPaymentDue,
+        label: AppStrings.addPaymentDue,
         child: FloatingActionButton.extended(
           onPressed:
               () => NavigationService.showBottomSheet(
@@ -79,8 +79,8 @@ class CardDetailsScreen extends ConsumerWidget {
                 builder: (context) => AddDueBottomSheet(card: card),
               ),
           icon: const Icon(Icons.add),
-          label: Text(AppStrings.createDueButton),
-          tooltip: AppStrings.createPaymentDue,
+          label: Text(AppStrings.addDueButton),
+          tooltip: AppStrings.addPaymentDue,
         ),
       ),
       body: paymentsAsync.when(
@@ -187,7 +187,7 @@ class CardDetailsScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => ref.invalidate(paymentProvider),
-                    child: Text(AppStrings.retryButton),
+                    child: Text(AppStrings.retryButtonLabel),
                   ),
                 ],
               ),

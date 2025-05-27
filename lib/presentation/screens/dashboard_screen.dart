@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
 
 import '../../constants/app_strings.dart';
 import '../../data/hive/models/credit_card_model.dart';
 import '../../data/hive/models/payment_model.dart';
 import '../providers/credit_card_provider.dart';
+import '../providers/format_provider.dart';
 import '../providers/payment_provider.dart';
 import '../widgets/dashboard_alert_card.dart';
 import '../widgets/dashboard_card.dart';
@@ -67,13 +67,14 @@ class DashboardScreen extends ConsumerWidget {
     List<PaymentModel> payments,
   ) {
     final theme = Theme.of(context);
+    final formatHelper = ref.watch(formatHelperProvider);
     final now = DateTime.now();
     final nonPaidPayments = payments.where((p) => !p.isPaid).toList();
 
     // Calculate metrics
     final totalCreditLimit = cards.fold<double>(
       0,
-      (sum, card) => sum + (card.creditLimit ?? 0),
+      (sum, card) => sum + (card.creditLimit),
     );
     final totalDue = nonPaidPayments.fold<double>(
       0,
@@ -214,13 +215,13 @@ class DashboardScreen extends ConsumerWidget {
           children: [
             DashboardCard(
               title: 'Total Credit Limit',
-              value: currencyFormat.format(totalCreditLimit),
+              value: formatHelper.formatCurrency(totalCreditLimit),
               icon: Icons.credit_card,
               color: theme.colorScheme.primary,
             ),
             DashboardCard(
               title: 'Total Due',
-              value: currencyFormat.format(totalDue),
+              value: formatHelper.formatCurrency(totalDue),
               icon: Icons.account_balance_wallet_outlined,
               color: theme.colorScheme.error,
             ),

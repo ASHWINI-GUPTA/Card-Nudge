@@ -1,9 +1,12 @@
 import 'package:card_nudge/constants/app_strings.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-class SpendChartWidget extends StatelessWidget {
+import '../providers/format_provider.dart';
+
+class SpendChartWidget extends ConsumerWidget {
   final List<Map<String, dynamic>>
   data; // [{'month': 'Jan', 'amount': 5000}, ...]
   const SpendChartWidget({super.key, this.data = const []});
@@ -30,12 +33,15 @@ class SpendChartWidget extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final formatHelper = ref.watch(formatHelperProvider);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final now = DateTime.now();
     final quarterMonths = _getLastThreeMonths(now);
     final spendValues = _getSpendValues(quarterMonths);
+
+    // AG TODO: Get this from Settings
     const overspendThreshold = 50000.0; // ₹50,000
 
     return Card(
@@ -69,12 +75,12 @@ class SpendChartWidget extends StatelessWidget {
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        maxIncluded: false,
+                        maxIncluded: true,
                         minIncluded: false,
                         reservedSize: 50,
                         getTitlesWidget:
                             (value, _) => Text(
-                              '₹${(value / 1000).round()}k',
+                              formatHelper.formatCurrencyCompact(value),
                               style: TextStyle(
                                 color:
                                     isDark

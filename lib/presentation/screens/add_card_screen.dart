@@ -225,7 +225,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    '${AppStrings.bankLoadError}: $error',
+                                    '${AppStrings.bankDetailsLoadError}: $error',
                                     style: const TextStyle(color: Colors.red),
                                   ),
                                 ],

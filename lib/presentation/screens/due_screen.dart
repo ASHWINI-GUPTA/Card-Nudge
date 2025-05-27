@@ -74,7 +74,7 @@ class DueScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => ref.invalidate(creditCardListProvider),
-                    child: Text(AppStrings.retryButton),
+                    child: Text(AppStrings.retryButtonLabel),
                   ),
                 ],
               ),
@@ -192,14 +192,14 @@ class DueScreen extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '${AppStrings.bankLoadError}: $error',
+                      '${AppStrings.bankDetailsLoadError}: $error',
                       style: Theme.of(context).textTheme.bodyLarge,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => ref.invalidate(bankProvider),
-                      child: Text(AppStrings.retryButton),
+                      child: Text(AppStrings.retryButtonLabel),
                     ),
                   ],
                 ),
@@ -220,7 +220,7 @@ class DueScreen extends ConsumerWidget {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () => ref.invalidate(paymentProvider),
-                  child: Text(AppStrings.retryButton),
+                  child: Text(AppStrings.retryButtonLabel),
                 ),
               ],
             ),

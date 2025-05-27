@@ -5,6 +5,7 @@ import '../../constants/app_strings.dart';
 import '../../data/enums/app_theme_mode.dart';
 import '../../data/enums/currency.dart';
 import '../../data/enums/language.dart';
+import '../../services/supabase_service.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/payment_provider.dart';
 import '../providers/setting_provider.dart';
@@ -19,14 +20,13 @@ class SettingsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppStrings.settingsTitle),
+        title: Text(AppStrings.settingsScreenTitle),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Profile Section
             Card(
@@ -34,9 +34,60 @@ class SettingsScreen extends ConsumerWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: ListTile(
-                leading: CircleAvatar(child: Text('AG')),
-                title: Text('Ashwini G', style: theme.textTheme.titleMedium),
+              child: Consumer(
+                builder: (context, ref, child) {
+                  final supabase = ref.watch(supabaseServiceProvider);
+                  final user = supabase.currentUser;
+                  final name =
+                      user?.userMetadata?['name'] ??
+                      user?.email?.split('@').first ??
+                      'User';
+                  final email = user?.email ?? '';
+
+                  return ListTile(
+                    contentPadding: const EdgeInsets.fromLTRB(16, 16, 4, 16),
+                    leading: CircleAvatar(
+                      backgroundImage:
+                          user?.userMetadata?['avatar_url'] != null
+                              ? NetworkImage(user!.userMetadata!['avatar_url'])
+                              : null,
+                      child:
+                          user?.userMetadata?['avatar_url'] == null
+                              ? Text(() {
+                                final parts = name.trim().split(' ');
+                                if (parts.length >= 2) {
+                                  return (parts[0][0] + parts[1][0])
+                                      .toUpperCase();
+                                } else if (parts.isNotEmpty &&
+                                    parts[0].isNotEmpty) {
+                                  return parts[0][0].toUpperCase();
+                                }
+                                return '?';
+                              }())
+                              : null,
+                    ),
+                    title: Text(name, style: theme.textTheme.titleMedium),
+                    subtitle: Text(email),
+                    trailing: Semantics(
+                      label: AppStrings.logout,
+                      child: IconButton(
+                        tooltip: AppStrings.logout,
+                        icon: Icon(
+                          Icons.logout,
+                          color: theme.colorScheme.error,
+                        ),
+                        onPressed: () async {
+                          await supabase.signOut();
+                          if (context.mounted) {
+                            Navigator.of(
+                              context,
+                            ).popUntil((route) => route.isFirst);
+                          }
+                        },
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(height: 16),

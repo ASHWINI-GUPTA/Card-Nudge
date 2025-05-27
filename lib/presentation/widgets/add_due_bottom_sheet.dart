@@ -95,9 +95,9 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Semantics(
-              label: AppStrings.createPaymentDue,
+              label: AppStrings.addPaymentDue,
               child: Text(
-                AppStrings.createPaymentDue,
+                AppStrings.addPaymentDue,
                 style: Theme.of(
                   context,
                 ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -191,7 +191,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
                       label:
                           _isSubmitting
                               ? const CircularProgressIndicator()
-                              : Text(AppStrings.createDueButton),
+                              : Text(AppStrings.addDueButton),
                     ),
                   ),
                   const SizedBox(height: 16),

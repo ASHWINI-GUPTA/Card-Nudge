@@ -28,7 +28,7 @@ class BankNotifier extends AsyncNotifier<List<BankModel>> {
           });
       return banks;
     } catch (e) {
-      throw Exception('${AppStrings.bankLoadError}: $e');
+      throw Exception('${AppStrings.bankDetailsLoadError}: $e');
     }
   }
 

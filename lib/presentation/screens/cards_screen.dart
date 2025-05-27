@@ -87,7 +87,7 @@ class CardsScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => ref.invalidate(creditCardListProvider),
-                      child: Text(AppStrings.retryButton),
+                      child: Text(AppStrings.retryButtonLabel),
                     ),
                   ],
                 ),

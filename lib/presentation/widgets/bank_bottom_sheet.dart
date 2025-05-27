@@ -56,7 +56,7 @@ class _BankBottomSheetState extends ConsumerState<BankBottomSheet> {
     if (_nameController.text.isEmpty || _codeController.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(AppStrings.requiredFieldsError)));
+      ).showSnackBar(SnackBar(content: Text(AppStrings.requiredFieldError)));
       return;
     }
     final colorHex =
@@ -164,7 +164,7 @@ class _BankBottomSheetState extends ConsumerState<BankBottomSheet> {
                   context: context,
                   builder:
                       (context) => AlertDialog(
-                        title: Text(AppStrings.selectColor),
+                        title: Text(AppStrings.selectColorLabel),
                         content: SingleChildScrollView(
                           child: BlockPicker(
                             pickerColor: _selectedColor,

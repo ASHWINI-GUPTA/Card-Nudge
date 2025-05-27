@@ -58,14 +58,14 @@ class CreditCardTile extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '${AppStrings.bankLoadError}: $error',
+                  '${AppStrings.bankDetailsLoadError}: $error',
                   style: theme.textTheme.bodyLarge,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () => ref.invalidate(bankProvider),
-                  child: const Text(AppStrings.retryButton),
+                  child: const Text(AppStrings.retryButtonLabel),
                 ),
               ],
             ),
@@ -150,7 +150,7 @@ class CreditCardTile extends ConsumerWidget {
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () => ref.invalidate(paymentProvider),
-                        child: const Text(AppStrings.retryButton),
+                        child: const Text(AppStrings.retryButtonLabel),
                       ),
                     ],
                   ),

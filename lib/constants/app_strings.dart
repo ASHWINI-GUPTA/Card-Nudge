@@ -1,116 +1,121 @@
 class AppStrings {
+  static const appTitle = 'Card Nudge 🔔';
+
   // Dashboard
-  static const dashboardTitle = "Nudge 🔔";
+  static const dashboardTitle = 'Nudge 🔔';
 
+  // Cards
   static const cardsTitle = 'Cards';
-  static const noCardsMessage = 'You have not added any cards yet.';
-  static const errorLoadingCards = 'Failed to load cards. Please try again.';
-  static const retry = 'Retry';
-  static const addCard = 'Add a new card';
+  static const noCardsMessage = 'No cards added yet.';
+  static const errorLoadingCards = 'Couldn\'t load cards. Try again.';
+  static const retryButtonLabel = 'Retry';
+  static const addCard = 'Add New Card';
 
-  // Due Bottom Sheet
-  static const createPaymentDue = 'Create Payment Due';
+  // Payment Due Bottom Sheet
+  static const addPaymentDue = 'Add Payment Due';
   static const dueAmountLabel = 'Due Amount *';
   static const minimumDueLabel = 'Minimum Due (Optional)';
-  static const paymentDateLabel = 'Payment Date *';
-  static const selectDate = 'Select date';
-  static const selectDateError = 'Please select a payment date';
-  static const invalidAmountError = 'Enter a valid amount';
-  static const minimumDueExceedsError = 'Minimum due cannot exceed due amount';
-  static const paymentAddedSuccess = 'Payment due added successfully';
-  static const paymentAddError = 'Failed to add payment due';
-  static const createDueButton = "Add";
+  static const paymentDateLabel = 'Payment Due Date *';
+  static const selectDate = 'Select Date';
+  static const selectDateError = 'Please select a due date.';
+  static const invalidAmountError = 'Enter a valid amount.';
+  static const minimumDueExceedsError = 'Minimum due cannot exceed total due.';
+  static const paymentAddedSuccess = 'Payment due added successfully!';
+  static const paymentAddError = 'Failed to add payment due.';
+  static const addDueButton = 'Add';
 
   // Add/Update Card
   static const updateCard = 'Update Card';
-  static const cardLabel = 'Card';
+  static const cardLabel = 'Card Name';
   static const bankLabel = 'Bank';
-  static const networkLabel = 'Network';
+  static const networkLabel = 'Card Network';
   static const last4DigitsLabel = 'Last 4 Digits';
   static const billingDateLabel = 'Billing Date';
   static const dueDateLabel = 'Due Date';
   static const creditLimitLabel = 'Credit Limit';
-  static const requiredFieldError = 'This field is required';
-  static const last4DigitsError = 'Enter exactly 4 digits';
-  static const invalidCreditLimitError = 'Enter a valid positive number';
-  static const selectDatesError = 'Please select billing and due dates';
-  static const cardAddedSuccess = 'Card added successfully';
-  static const cardUpdatedSuccess = 'Card updated successfully';
-  static const cardSaveError = 'Failed to save card';
+  static const requiredFieldError = 'This field is required.';
+  static const last4DigitsError = 'Enter exactly 4 digits.';
+  static const invalidCreditLimitError = 'Enter a valid positive amount.';
+  static const selectDatesError = 'Please select billing and due dates.';
+  static const cardAddedSuccess = 'Card added successfully!';
+  static const cardUpdatedSuccess = 'Card updated successfully!';
+  static const cardSaveError = 'Failed to save card.';
 
-  static const saveButton = "Save";
+  static const saveButton = 'Save';
 
   // Log Payment Bottom Sheet
   static const logPayment = 'Log Payment';
   static const totalDue = 'Total Due';
   static const minimumDue = 'Minimum Due';
   static const customAmount = 'Custom Amount';
-  static const customAmountLabel = 'Custom Amount (₹)';
-  static const enterCustomAmount = 'Enter custom amount';
-  static const invalidCustomAmountError = 'Enter a valid positive amount';
-  static const amountExceedsDueError = 'Amount cannot exceed due amount';
-  static const paymentLoggedSuccess = 'Payment logged successfully';
-  static const paymentLogError = 'Failed to log payment';
+  static const customAmountLabel = 'Custom Amount';
+  static const enterCustomAmount = 'Enter amount';
+  static const invalidCustomAmountError = 'Enter a valid positive amount.';
+  static const amountExceedsDueError = 'Amount cannot exceed total due.';
+  static const paymentLoggedSuccess = 'Payment logged successfully!';
+  static const paymentLogError = 'Failed to log payment.';
   static const logPaymentButton = 'Log Payment';
 
-  static const navigationError = 'Navigation error';
-  static const paymentNotFoundError = 'Payment not found';
+  // Navigation and General Errors
+  static const navigationError = 'Navigation error occurred.';
+  static const paymentNotFoundError = 'Payment not found.';
 
-  // List
-  static const cardLoadError = 'Failed to load cards';
-  static const retryButton = 'Retry';
+  // Card List
+  static const cardLoadError = 'Couldn\'t load cards.';
 
-  // Details
-  static const invalidBankError = 'Invalid bank selected';
+  // Card Details
+  static const invalidBankError = 'Invalid bank selected.';
   static const cardDetailsTitle = 'Card Details';
-  static const editCard = 'Edit';
-  static const deleteCard = 'Delete';
-  static const archiveCard = 'Archive';
+  static const editCard = 'Edit Card';
+  static const deleteCard = 'Delete Card';
+  static const archiveCard = 'Archive Card';
   static const upcomingPayment = 'Upcoming Payment';
-  static const noUpcomingDues = 'No upcoming dues';
+  static const noUpcomingDues = 'No upcoming payments.';
   static const paymentHistory = 'Payment History';
-  static const noPastPayments = 'No past payments yet';
+  static const noPastPayments = 'No past payments yet.';
   static const paymentHistoryItem = 'Payment';
-  static const upcomingPaymentCard = 'Upcoming Payment Card';
-  static const cardNotFoundError = 'Card not found';
-  static const paymentLoadError = 'Failed to load payments';
-  static const deleteCardConfirmation = 'Delete Card Confirmation';
-  static const deleteCardMessage = 'Are you sure you want to delete this card?';
+  static const upcomingPaymentCard = 'Upcoming Payment';
+  static const cardNotFoundError = 'Card not found.';
+  static const paymentLoadError = 'Couldn\'t load payments.';
+  static const deleteCardConfirmation = 'Confirm Delete Card';
+  static const deleteCardMessage =
+      'Are you sure you want to delete this card? This action cannot be undone.';
   static const cancelButton = 'Cancel';
   static const deleteButton = 'Delete';
-  static const cardDeletedSuccess = 'Card deleted successfully';
-  static const cardDeleteError = 'Failed to delete card';
-  static const archiveNotImplemented = 'Archive feature not implemented';
-  static const cardArchivedSuccess = 'Card archived successfully';
+  static const cardDeletedSuccess = 'Card deleted successfully!';
+  static const cardDeleteError = 'Failed to delete card.';
+  static const archiveNotImplemented = 'Archive feature not yet available.';
+  static const cardArchivedSuccess = 'Card archived successfully!';
 
-  // Tile
-  static const bankLoadError = 'Failed to load bank details';
-  static const favoriteCard = 'Favorite';
-  static const unfavoriteCard = 'Unfavorite';
-  static const cardArchiveError = 'Failed to archive card';
-  static const cardAddedToFavorites = 'Card added to favorites';
-  static const cardRemovedFromFavorites = 'Card removed from favorites';
-  static const cardFavoriteError = 'Failed to update favorite status';
+  // Card Tile
+  static const bankDetailsLoadError = 'Couldn\'t load bank details.';
+  static const favoriteCard = 'Mark as Favorite';
+  static const unfavoriteCard = 'Remove from Favorites';
+  static const cardArchiveError = 'Failed to archive card.';
+  static const cardAddedToFavorites = 'Card added to favorites!';
+  static const cardRemovedFromFavorites = 'Card removed from favorites.';
+  static const cardFavoriteError = 'Failed to update favorite status.';
   static const bankLogo = 'Bank Logo';
   static const dueToday = 'Due Today';
   static const undoButton = 'Undo';
-  static const currentDue = 'Undo';
+  static const currentDue = 'Current Due';
 
-  // Upcoming Due
-  static const upcomingPaymentsTitle = 'Dues';
+  // Upcoming Payments
+  static const upcomingPaymentsTitle = 'Upcoming Payments';
   static const noPaymentsMessage = 'No upcoming or overdue payments.';
   static const addCardButton = 'Add Card';
   static const addPaymentButton = 'Add Payment';
 
-  static const invalidCardError = "Invalid Card";
+  static const invalidCardError = 'Invalid card selected.';
 
   static const applyButton = 'Apply';
   static const resetButton = 'Reset';
   static const clearButton = 'Clear';
 
-  static const editDueDateOnCard = 'Due date can be edit from Card.';
+  static const editDueDateOnCard =
+      'Due date can be edited from the card details.';
 
-  static const dueAlreadyExist = 'A due already exists for this card.';
+  static const dueAlreadyExist = 'A payment due already exists for this card.';
 
   // Charts
   static const spendOverview = 'Spend Overview';
@@ -121,10 +126,10 @@ class AppStrings {
   static const monthFuture = 'Future';
 
   // Filter
-  static const dueScreenNoFilterMessage = 'No payments match your filter.';
+  static const dueScreenNoFilterMessage = 'No payments match your filters.';
 
   // Settings
-  static const settingsTitle = 'Sudo Mode';
+  static const settingsScreenTitle = 'Settings';
   static const editProfile = 'Edit Profile';
   static const language = 'Language';
   static const english = 'English';
@@ -142,11 +147,11 @@ class AppStrings {
   static const paymentReminders = 'Payment Reminders';
   static const reminderTime = 'Reminder Time';
   static const exportData = 'Export Data';
-  static const exportDataSuccess = 'Data exported successfully';
-  static const clearData = 'Clear Data';
+  static const exportDataSuccess = 'Data exported successfully!';
+  static const clearData = 'Clear All Data';
   static const clearDataConfirm =
-      'Are you sure you want to clear all data? This cannot be undone.';
-  static const clearDataSuccess = 'Data cleared successfully';
+      'Are you sure you want to clear all data? This action cannot be undone.';
+  static const clearDataSuccess = 'All data cleared successfully!';
   static const appVersion = 'App Version';
   static const termsConditions = 'Terms & Conditions';
   static const privacyPolicy = 'Privacy Policy';
@@ -156,12 +161,13 @@ class AppStrings {
   static const add = 'Add';
   static const delete = 'Delete';
 
-  static const requiredFieldsError = 'Requried';
-
+  // Bank Details
   static const bankName = 'Bank Name';
   static const bankCode = 'Bank Code';
   static const supportNumber = 'Support Number';
   static const website = 'Website';
   static const bankColor = 'Bank Color';
-  static const selectColor = 'Select Color';
+  static const selectColorLabel = 'Select Color';
+
+  static const logout = 'Logout';
 }
