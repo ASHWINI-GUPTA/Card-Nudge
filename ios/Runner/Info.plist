@@ -54,5 +54,17 @@
 	<string>Card Nudge uses notifications to remind you of upcoming card dues and payment dates.</string>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>This app uses notifications to remind you about due dates.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+		<key>CFBundleTypeRole</key>
+		<string>Editor</string>
+		<key>CFBundleURLSchemes</key>
+		<array>
+			<string>in.fnlsg.card_nudge</string>
+			<string>com.googleusercontent.apps.152593912511-khvs1cltc9jlrdrrj44kpq7utropiir8</string>
+		</array>
+		</dict>
+	</array>
 </dict>
 </plist>
