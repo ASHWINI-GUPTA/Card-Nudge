@@ -1,3 +1,4 @@
+import 'package:card_nudge/data/hive/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,8 +12,9 @@ import '../providers/bank_provider.dart';
 
 class AddCardScreen extends ConsumerStatefulWidget {
   final CreditCardModel? card;
+  final UserModel user;
 
-  const AddCardScreen({super.key, this.card});
+  const AddCardScreen({super.key, required this.user, this.card});
 
   @override
   ConsumerState<AddCardScreen> createState() => _AddCardScreenState();
@@ -69,7 +71,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
       );
 
       final updatedCard = CreditCardModel(
-        id: widget.card?.id ?? UniqueKey().toString(),
+        userId: widget.user.id,
         name: _cardNameController.text.trim(),
         bankId: _bankNameController.text.trim(),
         last4Digits: _last4DigitsController.text.trim(),

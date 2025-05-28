@@ -4,49 +4,56 @@ import '../../enums/card_type.dart';
 
 part 'credit_card_model.g.dart';
 
-@HiveType(typeId: 1)
+@HiveType(typeId: 2)
 class CreditCardModel extends HiveObject {
   @HiveField(0)
-  final String id;
+  String id;
 
   @HiveField(1)
-  final String name;
+  String userId;
 
   @HiveField(2)
-  final String bankId;
+  String name;
 
   @HiveField(3)
-  final String last4Digits;
+  String? bankId;
 
   @HiveField(4)
-  final DateTime billingDate;
+  String last4Digits;
 
   @HiveField(5)
-  final DateTime dueDate;
+  DateTime billingDate;
 
   @HiveField(6)
-  final CardType cardType;
+  DateTime dueDate;
 
   @HiveField(7)
-  final double creditLimit;
+  CardType cardType;
 
   @HiveField(8)
-  final double currentUtilization;
+  double creditLimit;
 
   @HiveField(9)
-  final DateTime createdAt;
+  double currentUtilization;
 
   @HiveField(10)
-  final DateTime updatedAt;
+  DateTime createdAt;
 
-  @HiveField(11, defaultValue: false)
-  final bool isArchived;
+  @HiveField(11)
+  DateTime updatedAt;
 
   @HiveField(12, defaultValue: false)
-  final bool isFavorite;
+  bool isArchived;
+
+  @HiveField(13, defaultValue: false)
+  bool isFavorite;
+
+  @HiveField(14)
+  bool syncPending;
 
   CreditCardModel({
     String? id,
+    required this.userId,
     required this.name,
     required this.bankId,
     required this.last4Digits,
@@ -59,6 +66,7 @@ class CreditCardModel extends HiveObject {
     DateTime? updatedAt,
     this.isArchived = false,
     this.isFavorite = false,
+    this.syncPending = false,
   }) : id = id ?? const Uuid().v4(),
        createdAt = (createdAt ?? DateTime.now()).toUtc(),
        updatedAt = (updatedAt ?? DateTime.now()).toUtc();
@@ -88,43 +96,14 @@ class CreditCardModel extends HiveObject {
       createdAt: createdAt,
       isArchived: isArchived ?? this.isArchived,
       isFavorite: isFavorite ?? this.isFavorite,
+      userId: this.userId,
     );
   }
 
-  // Helper method to update utilization and automatically refresh updatedAt
   CreditCardModel updateUtilization(double newUtilization) {
     return copyWith(currentUtilization: newUtilization);
   }
 
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is CreditCardModel &&
-        other.id == id &&
-        other.name == name &&
-        other.bankId == bankId &&
-        other.last4Digits == last4Digits &&
-        other.billingDate == billingDate &&
-        other.dueDate == dueDate &&
-        other.cardType == cardType &&
-        other.creditLimit == creditLimit &&
-        other.currentUtilization == currentUtilization;
-  }
-
-  @override
-  int get hashCode {
-    return id.hashCode ^
-        name.hashCode ^
-        bankId.hashCode ^
-        last4Digits.hashCode ^
-        billingDate.hashCode ^
-        dueDate.hashCode ^
-        cardType.hashCode ^
-        creditLimit.hashCode ^
-        currentUtilization.hashCode;
-  }
-
-  // Additional helpful methods
   bool get isNearDueDate => dueDate.difference(DateTime.now()).inDays <= 7;
   bool get isOverUtilized => currentUtilization > creditLimit * 0.9;
   double get utilizationPercentage => (currentUtilization / creditLimit) * 100;

@@ -8,7 +8,7 @@ part of 'credit_card_model.dart';
 
 class CreditCardModelAdapter extends TypeAdapter<CreditCardModel> {
   @override
-  final int typeId = 1;
+  final int typeId = 2;
 
   @override
   CreditCardModel read(BinaryReader reader) {
@@ -18,51 +18,57 @@ class CreditCardModelAdapter extends TypeAdapter<CreditCardModel> {
     };
     return CreditCardModel(
       id: fields[0] as String?,
-      name: fields[1] as String,
-      bankId: fields[2] as String,
-      last4Digits: fields[3] as String,
-      billingDate: fields[4] as DateTime,
-      dueDate: fields[5] as DateTime,
-      cardType: fields[6] as CardType,
-      creditLimit: fields[7] as double,
-      currentUtilization: fields[8] as double,
-      createdAt: fields[9] as DateTime?,
-      updatedAt: fields[10] as DateTime?,
-      isArchived: fields[11] == null ? false : fields[11] as bool,
-      isFavorite: fields[12] == null ? false : fields[12] as bool,
+      userId: fields[1] as String,
+      name: fields[2] as String,
+      bankId: fields[3] as String?,
+      last4Digits: fields[4] as String,
+      billingDate: fields[5] as DateTime,
+      dueDate: fields[6] as DateTime,
+      cardType: fields[7] as CardType,
+      creditLimit: fields[8] as double,
+      currentUtilization: fields[9] as double,
+      createdAt: fields[10] as DateTime?,
+      updatedAt: fields[11] as DateTime?,
+      isArchived: fields[12] == null ? false : fields[12] as bool,
+      isFavorite: fields[13] == null ? false : fields[13] as bool,
+      syncPending: fields[14] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, CreditCardModel obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.name)
+      ..write(obj.userId)
       ..writeByte(2)
-      ..write(obj.bankId)
+      ..write(obj.name)
       ..writeByte(3)
-      ..write(obj.last4Digits)
+      ..write(obj.bankId)
       ..writeByte(4)
-      ..write(obj.billingDate)
+      ..write(obj.last4Digits)
       ..writeByte(5)
-      ..write(obj.dueDate)
+      ..write(obj.billingDate)
       ..writeByte(6)
-      ..write(obj.cardType)
+      ..write(obj.dueDate)
       ..writeByte(7)
-      ..write(obj.creditLimit)
+      ..write(obj.cardType)
       ..writeByte(8)
-      ..write(obj.currentUtilization)
+      ..write(obj.creditLimit)
       ..writeByte(9)
-      ..write(obj.createdAt)
+      ..write(obj.currentUtilization)
       ..writeByte(10)
-      ..write(obj.updatedAt)
+      ..write(obj.createdAt)
       ..writeByte(11)
-      ..write(obj.isArchived)
+      ..write(obj.updatedAt)
       ..writeByte(12)
-      ..write(obj.isFavorite);
+      ..write(obj.isArchived)
+      ..writeByte(13)
+      ..write(obj.isFavorite)
+      ..writeByte(14)
+      ..write(obj.syncPending);
   }
 
   @override

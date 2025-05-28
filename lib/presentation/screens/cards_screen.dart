@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../constants/app_strings.dart';
 import '../../services/navigation_service.dart';
 import '../providers/credit_card_provider.dart';
+import '../providers/user_provider.dart';
 import '../widgets/credit_card_tile.dart';
 import 'add_card_screen.dart';
 import 'card_details_screen.dart';
@@ -14,6 +15,7 @@ class CardsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cardsAsync = ref.watch(creditCardListProvider);
     final theme = Theme.of(context);
+    final user = ref.watch(userProvider)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -98,8 +100,10 @@ class CardsScreen extends ConsumerWidget {
         label: AppStrings.addCard,
         child: FloatingActionButton(
           onPressed:
-              () =>
-                  NavigationService.navigateTo(context, const AddCardScreen()),
+              () => NavigationService.navigateTo(
+                context,
+                AddCardScreen(user: user),
+              ),
           tooltip: AppStrings.addCard,
           child: const Icon(Icons.add),
         ),

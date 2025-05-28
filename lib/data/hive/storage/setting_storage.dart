@@ -1,0 +1,18 @@
+import 'package:card_nudge/data/hive/models/settings_model.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+class SettingStorage {
+  static Box<SettingsModel>? _box;
+
+  static Box<SettingsModel> getBox() {
+    if (_box == null || !_box!.isOpen) {
+      throw Exception('Hive box not initialized. Call initHive() first.');
+    }
+    return _box!;
+  }
+
+  static Future<void> initHive() async {
+    Hive.registerAdapter(SettingsModelAdapter());
+    _box = await Hive.openBox<SettingsModel>('settings');
+  }
+}

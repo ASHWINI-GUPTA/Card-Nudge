@@ -43,10 +43,23 @@ class DashboardScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Good $greeting $emoji ${username.isNotEmpty ? '$username' : ''}!',
-          style: theme.textTheme.titleLarge?.copyWith(
-            color: theme.colorScheme.onPrimary,
+        title: RichText(
+          text: TextSpan(
+            style: theme.textTheme.titleLarge?.copyWith(
+              color: theme.colorScheme.onPrimary,
+            ),
+            children: [
+              TextSpan(text: 'Good $greeting $emoji '),
+              if (username.isNotEmpty)
+                TextSpan(
+                  text: '$username',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onPrimary,
+                  ),
+                ),
+              TextSpan(text: '!'),
+            ],
           ),
         ),
         backgroundColor: theme.colorScheme.primary,

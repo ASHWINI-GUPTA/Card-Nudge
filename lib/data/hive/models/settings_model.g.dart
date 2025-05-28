@@ -1,67 +1,61 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'bank_model.dart';
+part of 'settings_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class BankModelAdapter extends TypeAdapter<BankModel> {
+class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
   @override
-  final int typeId = 1;
+  final int typeId = 4;
 
   @override
-  BankModel read(BinaryReader reader) {
+  SettingsModel read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return BankModel(
+    return SettingsModel(
       id: fields[0] as String?,
       userId: fields[1] as String,
-      name: fields[2] as String,
-      code: fields[3] as String?,
-      logoPath: fields[4] as String?,
-      supportNumber: fields[5] as String?,
-      website: fields[6] as String?,
-      isFavorite: fields[7] as bool,
-      colorHex: fields[8] as String?,
-      priority: fields[9] as int?,
-      createdAt: fields[10] as DateTime?,
-      updatedAt: fields[11] as DateTime?,
-      syncPending: fields[12] as bool,
+      language: fields[2] as Language,
+      currency: fields[3] as Currency,
+      themeMode: fields[4] as ThemeMode,
+      notificationsEnabled: fields[5] as bool,
+      reminderTime: fields[6] as TimeOfDay,
+      syncSettings: fields[7] as bool,
+      syncPending: fields[10] as bool,
+      createdAt: fields[8] as DateTime?,
+      updatedAt: fields[9] as DateTime?,
     );
   }
 
   @override
-  void write(BinaryWriter writer, BankModel obj) {
+  void write(BinaryWriter writer, SettingsModel obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.userId)
       ..writeByte(2)
-      ..write(obj.name)
+      ..write(obj.language)
       ..writeByte(3)
-      ..write(obj.code)
+      ..write(obj.currency)
       ..writeByte(4)
-      ..write(obj.logoPath)
+      ..write(obj.themeMode)
       ..writeByte(5)
-      ..write(obj.supportNumber)
+      ..write(obj.notificationsEnabled)
       ..writeByte(6)
-      ..write(obj.website)
+      ..write(obj.reminderTime)
       ..writeByte(7)
-      ..write(obj.isFavorite)
+      ..write(obj.syncSettings)
       ..writeByte(8)
-      ..write(obj.colorHex)
-      ..writeByte(9)
-      ..write(obj.priority)
-      ..writeByte(10)
       ..write(obj.createdAt)
-      ..writeByte(11)
+      ..writeByte(9)
       ..write(obj.updatedAt)
-      ..writeByte(12)
+      ..writeByte(10)
       ..write(obj.syncPending);
   }
 
@@ -71,7 +65,7 @@ class BankModelAdapter extends TypeAdapter<BankModel> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is BankModelAdapter &&
+      other is SettingsModelAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

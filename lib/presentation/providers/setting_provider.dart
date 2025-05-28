@@ -3,17 +3,21 @@ import 'package:card_nudge/data/enums/language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../data/enums/app_theme_mode.dart';
 import '../../data/hive/models/settings_model.dart';
+import 'user_provider.dart';
 
 final settingsProvider = StateNotifierProvider<SettingsNotifier, SettingsModel>(
   (ref) {
-    return SettingsNotifier();
+    // After Login id MUST NOT be NULL 🤪
+    final user = ref.watch(userProvider);
+    final userId =
+        user == null ? '00000000-0000-0000-0000-000000000000' : user.id;
+    return SettingsNotifier(userId);
   },
 );
 
 class SettingsNotifier extends StateNotifier<SettingsModel> {
-  SettingsNotifier() : super(SettingsModel());
+  SettingsNotifier(String userId) : super(SettingsModel(userId: userId));
 
   void updateLanguage(Language languageCode) {
     state = state.copyWith(language: languageCode);
@@ -23,7 +27,7 @@ class SettingsNotifier extends StateNotifier<SettingsModel> {
     state = state.copyWith(currency: currencyCode);
   }
 
-  void updateTheme(AppThemeMode themeMode) {
+  void updateTheme(ThemeMode themeMode) {
     state = state.copyWith(themeMode: themeMode);
   }
 

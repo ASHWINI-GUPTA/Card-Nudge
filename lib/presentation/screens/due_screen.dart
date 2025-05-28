@@ -13,6 +13,7 @@ import '../../services/navigation_service.dart';
 import '../providers/bank_provider.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/payment_provider.dart';
+import '../providers/user_provider.dart';
 import '../screens/add_card_screen.dart';
 import '../widgets/add_due_bottom_sheet.dart';
 import '../widgets/filter_bottom_sheet.dart';
@@ -85,6 +86,7 @@ class DueScreen extends ConsumerWidget {
 
   Widget _buildEmptyStateNoCards(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final user = ref.watch(userProvider)!;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -101,7 +103,7 @@ class DueScreen extends ConsumerWidget {
             onPressed:
                 () => NavigationService.navigateTo(
                   context,
-                  const AddCardScreen(),
+                  AddCardScreen(user: user),
                 ),
             child: Text(AppStrings.addCardButton),
           ),
@@ -173,6 +175,7 @@ class DueScreen extends ConsumerWidget {
                         orElse:
                             () => BankModel(
                               id: '',
+                              userId: '00000000-0000-0000-0000-000000000000',
                               name: 'Unknown Bank',
                               logoPath: null,
                               colorHex: null,

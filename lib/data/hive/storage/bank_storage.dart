@@ -32,6 +32,8 @@ class BankStorage {
       website: 'https://www.hdfcbank.com',
       colorHex: 'FF0066B2',
       priority: 1,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'ICICI Bank',
@@ -41,6 +43,8 @@ class BankStorage {
       website: 'https://www.icicibank.com',
       colorHex: 'FFFF7E00',
       priority: 2,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'SBI Card',
@@ -50,6 +54,8 @@ class BankStorage {
       website: 'https://www.onlinesbi.com',
       colorHex: 'FF1F5D36',
       priority: 3,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'Axis Bank',
@@ -59,6 +65,8 @@ class BankStorage {
       website: 'https://www.axisbank.com',
       colorHex: 'FFE91E63',
       priority: 4,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'Bank of Baroda',
@@ -68,6 +76,8 @@ class BankStorage {
       website: 'https://www.bankofbaroda.in',
       colorHex: 'FFE31937',
       priority: 5,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'Yes Bank',
@@ -77,6 +87,8 @@ class BankStorage {
       website: 'https://www.yesbank.in',
       colorHex: 'FF00AEEF',
       priority: 6,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'Kotak Mahindra Bank',
@@ -86,6 +98,8 @@ class BankStorage {
       website: 'https://www.kotak.com',
       colorHex: 'FF5D2E8E',
       priority: 7,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'IndusInd Bank',
@@ -95,6 +109,8 @@ class BankStorage {
       website: 'https://www.indusind.com',
       colorHex: 'FF003366',
       priority: 8,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'Standard Chartered',
@@ -104,6 +120,8 @@ class BankStorage {
       website: 'https://www.sc.com/in',
       colorHex: 'FF1A3E72',
       priority: 9,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'RBL Bank',
@@ -113,6 +131,8 @@ class BankStorage {
       website: 'https://www.rblbank.com',
       colorHex: 'FFE31937',
       priority: 10,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'Punjab National Bank',
@@ -122,6 +142,8 @@ class BankStorage {
       website: 'https://www.pnbindia.in',
       colorHex: 'FFD11D2B',
       priority: 11,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'Union Bank of India',
@@ -131,6 +153,8 @@ class BankStorage {
       website: 'https://www.unionbankofindia.co.in',
       colorHex: 'FF005F9E',
       priority: 12,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'HSBC',
@@ -140,6 +164,8 @@ class BankStorage {
       website: 'https://www.hsbc.co.in',
       colorHex: 'FFDB0011',
       priority: 13,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'Citi Bank',
@@ -149,6 +175,8 @@ class BankStorage {
       website: 'https://www.online.citibank.co.in',
       colorHex: 'FF003D70',
       priority: 14,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'American Express',
@@ -158,6 +186,8 @@ class BankStorage {
       website: 'https://www.americanexpress.com',
       colorHex: 'FF016FD0',
       priority: 15,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'DBS Bank',
@@ -167,6 +197,8 @@ class BankStorage {
       website: 'https://www.dbs.com/in',
       colorHex: 'FF003D70',
       priority: 16,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'IDFC First Bank',
@@ -176,6 +208,8 @@ class BankStorage {
       website: 'https://www.idfcfirstbank.com',
       colorHex: 'FFE31937',
       priority: 17,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'Bank of India',
@@ -185,6 +219,8 @@ class BankStorage {
       website: 'https://www.bankofindia.co.in',
       colorHex: 'FF0066B3',
       priority: 18,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'Canara Bank',
@@ -194,6 +230,8 @@ class BankStorage {
       website: 'https://canarabank.com',
       colorHex: 'FFF7941D',
       priority: 19,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'Federal Bank',
@@ -203,6 +241,8 @@ class BankStorage {
       website: 'https://www.federalbank.co.in',
       colorHex: 'FF0066B3',
       priority: 21,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
     BankModel(
       name: 'Bandhan Bank',
@@ -212,7 +252,16 @@ class BankStorage {
       website: 'https://www.bandhanbank.com',
       colorHex: 'FFE31937',
       priority: 22,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
     ),
-    BankModel(name: 'Other', code: 'OTHER', logoPath: null, priority: 99),
+    BankModel(
+      name: 'Other',
+      code: 'OTHER',
+      logoPath: null,
+      priority: 99,
+      userId: '00000000-0000-0000-0000-000000000000',
+      syncPending: false,
+    ),
   ];
 }

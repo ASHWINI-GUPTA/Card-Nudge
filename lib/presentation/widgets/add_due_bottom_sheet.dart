@@ -6,6 +6,7 @@ import '../../constants/app_strings.dart';
 import '../../data/hive/models/payment_model.dart';
 import '../../services/navigation_service.dart';
 import '../providers/payment_provider.dart';
+import '../providers/user_provider.dart';
 
 class AddDueBottomSheet extends ConsumerStatefulWidget {
   final CreditCardModel card;
@@ -36,6 +37,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
     try {
       // Check if unpaid payment already exists for this card
       final payments = ref.read(paymentBoxProvider);
+      final user = ref.watch(userProvider)!;
       final unpaidExists = payments.values.any(
         (p) => p.cardId == widget.card.id && p.isPaid == false,
       );
@@ -56,6 +58,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
               : null;
 
       final payment = PaymentModel(
+        userId: user.id,
         cardId: widget.card.id,
         dueAmount: dueAmount,
         minimumDueAmount: minimumDue,

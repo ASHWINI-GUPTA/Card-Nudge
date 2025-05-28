@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../constants/app_strings.dart';
-import '../../data/enums/app_theme_mode.dart';
 import '../../data/enums/currency.dart';
 import '../../data/enums/language.dart';
 import '../providers/credit_card_provider.dart';
@@ -163,19 +162,19 @@ class SettingsScreen extends ConsumerWidget {
                     trailing: Consumer(
                       builder: (context, ref, child) {
                         final settings = ref.watch(settingsProvider);
-                        return DropdownButton<AppThemeMode>(
+                        return DropdownButton<ThemeMode>(
                           value: settings.themeMode,
                           items:
-                              AppThemeMode.values.map((mode) {
+                              ThemeMode.values.map((mode) {
                                 String text;
                                 switch (mode) {
-                                  case AppThemeMode.light:
+                                  case ThemeMode.light:
                                     text = AppStrings.light;
                                     break;
-                                  case AppThemeMode.dark:
+                                  case ThemeMode.dark:
                                     text = AppStrings.dark;
                                     break;
-                                  case AppThemeMode.system:
+                                  case ThemeMode.system:
                                     text = AppStrings.system;
                                 }
                                 return DropdownMenuItem(

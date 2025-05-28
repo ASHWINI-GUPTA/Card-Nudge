@@ -1,4 +1,5 @@
 import 'package:card_nudge/data/hive/models/credit_card_model.dart';
+import 'package:card_nudge/presentation/providers/user_provider.dart';
 import 'package:card_nudge/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -201,9 +202,14 @@ class CardDetailsScreen extends ConsumerWidget {
     WidgetRef ref,
     String value,
   ) async {
+    final user = ref.watch(userProvider)!;
+
     switch (value) {
       case 'edit':
-        NavigationService.navigateTo(context, AddCardScreen(card: card));
+        NavigationService.navigateTo(
+          context,
+          AddCardScreen(card: card, user: user),
+        );
         break;
       case 'delete':
         _showDeleteConfirmation(context, ref);

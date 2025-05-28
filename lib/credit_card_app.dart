@@ -8,7 +8,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'data/enums/app_theme_mode.dart';
 import 'presentation/providers/setting_provider.dart';
 import 'presentation/screens/setting_screen.dart';
 
@@ -79,11 +78,7 @@ class CreditCardApp extends ConsumerWidget {
             colorSchemeSeed: Colors.blue,
             brightness: Brightness.dark,
           ),
-          themeMode: switch (settings.themeMode) {
-            AppThemeMode.light => ThemeMode.light,
-            AppThemeMode.dark => ThemeMode.dark,
-            AppThemeMode.system => ThemeMode.system,
-          },
+          themeMode: settings.themeMode,
           locale: Locale(settings.language.name),
           supportedLocales: [
             Locale(Language.en.name, 'US'),

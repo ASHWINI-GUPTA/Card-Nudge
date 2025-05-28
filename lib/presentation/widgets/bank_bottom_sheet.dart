@@ -1,3 +1,4 @@
+import 'package:card_nudge/data/hive/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,8 +10,9 @@ import '../providers/bank_provider.dart';
 
 class BankBottomSheet extends ConsumerStatefulWidget {
   final BankModel? bank; // Null for add, non-null for edit
+  final UserModel user;
 
-  const BankBottomSheet({super.key, this.bank});
+  const BankBottomSheet({super.key, this.bank, required this.user});
 
   @override
   _BankBottomSheetState createState() => _BankBottomSheetState();
@@ -66,6 +68,7 @@ class _BankBottomSheetState extends ConsumerState<BankBottomSheet> {
 
     if (widget.bank == null) {
       bank = BankModel(
+        userId: widget.user.id,
         name: _nameController.text,
         code: _codeController.text,
         supportNumber: _supportNumberController.text,
@@ -74,6 +77,7 @@ class _BankBottomSheetState extends ConsumerState<BankBottomSheet> {
       );
     } else {
       bank = BankModel(
+        userId: widget.user.id,
         id: widget.bank!.id,
         name: _nameController.text,
         code: _codeController.text,

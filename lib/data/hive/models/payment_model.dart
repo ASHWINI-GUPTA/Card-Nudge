@@ -3,53 +3,61 @@ import 'package:uuid/uuid.dart';
 
 part 'payment_model.g.dart';
 
-@HiveType(typeId: 2)
+@HiveType(typeId: 3)
 class PaymentModel extends HiveObject {
   @HiveField(0)
-  final String id;
+  String id;
 
   @HiveField(1)
-  final String cardId;
+  String userId;
 
   @HiveField(2)
-  final double dueAmount;
+  String cardId;
 
   @HiveField(3)
-  DateTime? paymentDate;
+  double dueAmount;
 
   @HiveField(4)
-  final bool isPaid;
+  DateTime? paymentDate;
 
   @HiveField(5)
-  final DateTime createdAt;
+  bool isPaid;
 
   @HiveField(6)
-  DateTime updatedAt;
+  DateTime createdAt;
 
   @HiveField(7)
-  final double? minimumDueAmount;
+  DateTime updatedAt;
 
   @HiveField(8)
-  double paidAmount;
+  double? minimumDueAmount;
 
   @HiveField(9)
-  final DateTime dueDate;
+  double paidAmount;
 
   @HiveField(10)
-  final double statementAmount;
+  DateTime dueDate;
+
+  @HiveField(11)
+  double statementAmount;
+
+  @HiveField(12)
+  bool syncPending;
 
   PaymentModel({
     String? id,
+    required this.userId,
     required this.cardId,
     required this.dueAmount,
     DateTime? paymentDate,
-    this.isPaid = false, // Default to false
+    this.isPaid = false,
     DateTime? createdAt,
     DateTime? updatedAt,
-    this.minimumDueAmount, // Optional field
-    this.paidAmount = 0.0, // Default to 0.0
+    this.minimumDueAmount,
+    this.paidAmount = 0.0,
     required this.dueDate,
     double? statementAmount,
+    this.syncPending = false,
   }) : id = id ?? const Uuid().v4(),
        createdAt = (createdAt ?? DateTime.now()).toUtc(),
        updatedAt = (updatedAt ?? DateTime.now()).toUtc(),
@@ -76,35 +84,10 @@ class PaymentModel extends HiveObject {
       paidAmount: paidAmount ?? this.paidAmount,
       dueDate: dueDate ?? this.dueDate,
       statementAmount: this.statementAmount,
+      userId: this.userId,
     );
   }
 
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is PaymentModel &&
-        other.id == id &&
-        other.cardId == cardId &&
-        other.dueAmount == dueAmount &&
-        other.paymentDate == paymentDate &&
-        other.isPaid == isPaid &&
-        other.paidAmount == paidAmount &&
-        other.dueDate == dueDate;
-  }
-
-  @override
-  int get hashCode {
-    return id.hashCode ^
-        cardId.hashCode ^
-        dueAmount.hashCode ^
-        paymentDate.hashCode ^
-        isPaid.hashCode ^
-        paidAmount.hashCode ^
-        dueDate.hashCode ^
-        statementAmount.hashCode;
-  }
-
-  // Status helpers
   bool get isOverdue => !isPaid && dueDate.isBefore(DateTime.now());
   bool get isPartiallyPaid => remainingAmount > 0;
   double get remainingAmount => statementAmount - paidAmount;

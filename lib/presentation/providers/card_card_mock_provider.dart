@@ -6,13 +6,13 @@ class CardMockDataProvider {
   static List<CreditCardModel> getMockCreditCards() {
     final banks = BankStorage.getBox().values.toList();
 
-    // Helper function to find bank ID by code
     String findBankIdByCode(String code) {
       return banks.firstWhere((bank) => bank.code == code).id;
     }
 
     return [
       CreditCardModel(
+        userId: '00000000-0000-0000-0000-000000000000',
         name: 'Amazon Pay ICICI',
         bankId: findBankIdByCode('ICICI'),
         last4Digits: '9012',
@@ -21,8 +21,10 @@ class CardMockDataProvider {
         cardType: CardType.Visa,
         creditLimit: 70000.0,
         currentUtilization: 0.0,
+        syncPending: false,
       ),
       CreditCardModel(
+        userId: '00000000-0000-0000-0000-000000000000',
         name: 'SBI SimplyCLICK',
         bankId: findBankIdByCode('SBI'),
         last4Digits: '2345',
@@ -31,8 +33,10 @@ class CardMockDataProvider {
         cardType: CardType.MasterCard,
         creditLimit: 100000.0,
         currentUtilization: 30000.0,
+        syncPending: false,
       ),
       CreditCardModel(
+        userId: '00000000-0000-0000-0000-000000000000',
         name: 'Axis Flipkart',
         bankId: findBankIdByCode('AXIS'),
         last4Digits: '8765',
@@ -41,8 +45,10 @@ class CardMockDataProvider {
         cardType: CardType.Visa,
         creditLimit: 80000.0,
         currentUtilization: 12000.0,
+        syncPending: false,
       ),
       CreditCardModel(
+        userId: '00000000-0000-0000-0000-000000000000',
         name: 'HDFC Millennia',
         bankId: findBankIdByCode('HDFC'),
         last4Digits: '1122',
@@ -51,8 +57,10 @@ class CardMockDataProvider {
         cardType: CardType.MasterCard,
         creditLimit: 150000.0,
         currentUtilization: 50000.0,
+        syncPending: false,
       ),
       CreditCardModel(
+        userId: '00000000-0000-0000-0000-000000000000',
         name: 'IndusInd Iconia',
         bankId: findBankIdByCode('INDUSIND'),
         last4Digits: '3344',
@@ -61,8 +69,10 @@ class CardMockDataProvider {
         cardType: CardType.Visa,
         creditLimit: 125000.0,
         currentUtilization: 20000.0,
+        syncPending: false,
       ),
       CreditCardModel(
+        userId: '00000000-0000-0000-0000-000000000000',
         name: 'Standard Chartered Manhattan',
         bankId: findBankIdByCode('SCB'),
         last4Digits: '5566',
@@ -71,8 +81,10 @@ class CardMockDataProvider {
         cardType: CardType.MasterCard,
         creditLimit: 95000.0,
         currentUtilization: 35000.0,
+        syncPending: false,
       ),
       CreditCardModel(
+        userId: '00000000-0000-0000-0000-000000000000',
         name: 'Kotak 811 #DreamDifferent',
         bankId: findBankIdByCode('KOTAK'),
         last4Digits: '7788',
@@ -81,8 +93,10 @@ class CardMockDataProvider {
         cardType: CardType.Visa,
         creditLimit: 60000.0,
         currentUtilization: 0.0,
+        syncPending: false,
       ),
       CreditCardModel(
+        userId: '00000000-0000-0000-0000-000000000000',
         name: 'ICICI Coral',
         bankId: findBankIdByCode('ICICI'),
         last4Digits: '9900',
@@ -91,8 +105,10 @@ class CardMockDataProvider {
         cardType: CardType.RuPay,
         creditLimit: 85000.0,
         currentUtilization: 25000.0,
+        syncPending: false,
       ),
       CreditCardModel(
+        userId: '00000000-0000-0000-0000-000000000000',
         name: 'YES Prosperity Edge',
         bankId: findBankIdByCode('YES'),
         last4Digits: '2233',
@@ -101,8 +117,10 @@ class CardMockDataProvider {
         cardType: CardType.MasterCard,
         creditLimit: 70000.0,
         currentUtilization: 50000.0,
+        syncPending: false,
       ),
       CreditCardModel(
+        userId: '00000000-0000-0000-0000-000000000000',
         name: 'HSBC Platinum',
         bankId: findBankIdByCode('HSBC'),
         last4Digits: '4455',
@@ -111,6 +129,7 @@ class CardMockDataProvider {
         cardType: CardType.Visa,
         creditLimit: 110000.0,
         currentUtilization: 100000.0,
+        syncPending: false,
       ),
     ];
   }

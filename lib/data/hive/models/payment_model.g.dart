@@ -8,7 +8,7 @@ part of 'payment_model.dart';
 
 class PaymentModelAdapter extends TypeAdapter<PaymentModel> {
   @override
-  final int typeId = 2;
+  final int typeId = 3;
 
   @override
   PaymentModel read(BinaryReader reader) {
@@ -18,45 +18,51 @@ class PaymentModelAdapter extends TypeAdapter<PaymentModel> {
     };
     return PaymentModel(
       id: fields[0] as String?,
-      cardId: fields[1] as String,
-      dueAmount: fields[2] as double,
-      paymentDate: fields[3] as DateTime?,
-      isPaid: fields[4] as bool,
-      createdAt: fields[5] as DateTime?,
-      updatedAt: fields[6] as DateTime?,
-      minimumDueAmount: fields[7] as double?,
-      paidAmount: fields[8] as double,
-      dueDate: fields[9] as DateTime,
-      statementAmount: fields[10] as double?,
+      userId: fields[1] as String,
+      cardId: fields[2] as String,
+      dueAmount: fields[3] as double,
+      paymentDate: fields[4] as DateTime?,
+      isPaid: fields[5] as bool,
+      createdAt: fields[6] as DateTime?,
+      updatedAt: fields[7] as DateTime?,
+      minimumDueAmount: fields[8] as double?,
+      paidAmount: fields[9] as double,
+      dueDate: fields[10] as DateTime,
+      statementAmount: fields[11] as double?,
+      syncPending: fields[12] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, PaymentModel obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.cardId)
+      ..write(obj.userId)
       ..writeByte(2)
-      ..write(obj.dueAmount)
+      ..write(obj.cardId)
       ..writeByte(3)
-      ..write(obj.paymentDate)
+      ..write(obj.dueAmount)
       ..writeByte(4)
-      ..write(obj.isPaid)
+      ..write(obj.paymentDate)
       ..writeByte(5)
-      ..write(obj.createdAt)
+      ..write(obj.isPaid)
       ..writeByte(6)
-      ..write(obj.updatedAt)
+      ..write(obj.createdAt)
       ..writeByte(7)
-      ..write(obj.minimumDueAmount)
+      ..write(obj.updatedAt)
       ..writeByte(8)
-      ..write(obj.paidAmount)
+      ..write(obj.minimumDueAmount)
       ..writeByte(9)
-      ..write(obj.dueDate)
+      ..write(obj.paidAmount)
       ..writeByte(10)
-      ..write(obj.statementAmount);
+      ..write(obj.dueDate)
+      ..writeByte(11)
+      ..write(obj.statementAmount)
+      ..writeByte(12)
+      ..write(obj.syncPending);
   }
 
   @override

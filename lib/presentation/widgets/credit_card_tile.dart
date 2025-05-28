@@ -39,6 +39,7 @@ class CreditCardTile extends ConsumerWidget {
           orElse:
               () => BankModel(
                 id: '',
+                userId: '00000000-0000-0000-0000-000000000000',
                 name: 'Unknown Bank',
                 logoPath: null,
                 colorHex: null,
