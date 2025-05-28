@@ -4,7 +4,7 @@ import '../../enums/card_type.dart';
 
 class CardTypeAdapter extends TypeAdapter<CardType> {
   @override
-  final int typeId = 3;
+  final int typeId = 10;
 
   @override
   CardType read(BinaryReader reader) {
