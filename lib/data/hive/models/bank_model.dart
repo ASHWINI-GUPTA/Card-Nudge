@@ -57,7 +57,7 @@ class BankModel {
     this.priority,
     DateTime? createdAt,
     DateTime? updatedAt,
-    this.syncPending = false,
+    this.syncPending = true,
   }) : id = id ?? const Uuid().v4(),
        createdAt = (createdAt ?? DateTime.now()).toUtc(),
        updatedAt = (updatedAt ?? DateTime.now()).toUtc();

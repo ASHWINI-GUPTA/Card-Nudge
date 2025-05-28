@@ -57,7 +57,7 @@ class PaymentModel extends HiveObject {
     this.paidAmount = 0.0,
     required this.dueDate,
     double? statementAmount,
-    this.syncPending = false,
+    this.syncPending = true,
   }) : id = id ?? const Uuid().v4(),
        createdAt = (createdAt ?? DateTime.now()).toUtc(),
        updatedAt = (updatedAt ?? DateTime.now()).toUtc(),

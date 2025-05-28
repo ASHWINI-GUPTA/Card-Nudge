@@ -50,7 +50,7 @@ class SettingsModel {
     this.notificationsEnabled = true,
     this.reminderTime = const TimeOfDay(hour: 9, minute: 0),
     this.syncSettings = true,
-    this.syncPending = false,
+    this.syncPending = true,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : id = id ?? const Uuid().v4(),
