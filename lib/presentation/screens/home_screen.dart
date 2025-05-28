@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
       label: 'Dues',
     ),
     NavigationDestination(
-      icon: Icon(Icons.settings),
+      icon: Icon(Icons.settings_outlined),
       selectedIcon: Icon(Icons.settings),
       label: 'Settings',
     ),
