@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:uuid/uuid.dart';
 import '../../constants/app_strings.dart';
 import '../../data/hive/models/bank_model.dart';
 import '../../data/hive/storage/bank_storage.dart';

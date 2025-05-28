@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../services/supabase_service.dart';
+import '../providers/supabase_provider.dart';
 
 class AuthScreen extends ConsumerWidget {
   const AuthScreen({super.key});

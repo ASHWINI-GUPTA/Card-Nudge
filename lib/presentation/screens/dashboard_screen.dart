@@ -8,6 +8,7 @@ import '../../data/hive/models/payment_model.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/format_provider.dart';
 import '../providers/payment_provider.dart';
+import '../providers/user_provider.dart';
 import '../widgets/dashboard_alert_card.dart';
 import '../widgets/dashboard_card.dart';
 import '../widgets/dashboard_month_widget.dart';
@@ -21,11 +22,29 @@ class DashboardScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final cardsAsync = ref.watch(creditCardListProvider);
     final paymentsAsync = ref.watch(paymentProvider);
+    final user = ref.watch(userProvider);
+    final hour = DateTime.now().hour;
+    String greeting;
+    String emoji;
+    if (hour >= 5 && hour < 12) {
+      greeting = 'Morning';
+      emoji = '🌅';
+    } else if (hour >= 12 && hour < 17) {
+      greeting = 'Afternoon';
+      emoji = '🌞';
+    } else if (hour >= 17 && hour < 21) {
+      greeting = 'Evening';
+      emoji = '🌇';
+    } else {
+      greeting = 'Night';
+      emoji = '🌙';
+    }
+    final username = user?.firstName ?? '';
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Hi there 👋, here\'s your credit snapshot',
+          'Good $greeting $emoji ${username.isNotEmpty ? '$username' : ''}!',
           style: theme.textTheme.titleLarge?.copyWith(
             color: theme.colorScheme.onPrimary,
           ),

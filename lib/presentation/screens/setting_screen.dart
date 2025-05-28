@@ -5,10 +5,11 @@ import '../../constants/app_strings.dart';
 import '../../data/enums/app_theme_mode.dart';
 import '../../data/enums/currency.dart';
 import '../../data/enums/language.dart';
-import '../../services/supabase_service.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/payment_provider.dart';
 import '../providers/setting_provider.dart';
+import '../providers/supabase_provider.dart';
+import '../providers/user_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -28,7 +29,6 @@ class SettingsScreen extends ConsumerWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Profile Section
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
@@ -36,23 +36,23 @@ class SettingsScreen extends ConsumerWidget {
               ),
               child: Consumer(
                 builder: (context, ref, child) {
-                  final supabase = ref.watch(supabaseServiceProvider);
-                  final user = supabase.currentUser;
+                  final user = ref.watch(userProvider);
+                  final theme = Theme.of(context);
                   final name =
-                      user?.userMetadata?['name'] ??
-                      user?.email?.split('@').first ??
-                      'User';
+                      user != null
+                          ? '${user.firstName} ${user.lastName}'.trim()
+                          : 'User';
                   final email = user?.email ?? '';
 
                   return ListTile(
                     contentPadding: const EdgeInsets.fromLTRB(16, 16, 4, 16),
                     leading: CircleAvatar(
                       backgroundImage:
-                          user?.userMetadata?['avatar_url'] != null
-                              ? NetworkImage(user!.userMetadata!['avatar_url'])
+                          user?.avatarLink != null
+                              ? NetworkImage(user!.avatarLink!)
                               : null,
                       child:
-                          user?.userMetadata?['avatar_url'] == null
+                          user?.avatarLink == null
                               ? Text(() {
                                 final parts = name.trim().split(' ');
                                 if (parts.length >= 2) {
@@ -77,7 +77,7 @@ class SettingsScreen extends ConsumerWidget {
                           color: theme.colorScheme.error,
                         ),
                         onPressed: () async {
-                          await supabase.signOut();
+                          await ref.read(supabaseServiceProvider).signOut();
                           if (context.mounted) {
                             Navigator.of(
                               context,

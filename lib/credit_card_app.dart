@@ -2,11 +2,12 @@ import 'package:card_nudge/constants/app_strings.dart';
 import 'package:card_nudge/data/enums/language.dart';
 import 'package:card_nudge/presentation/screens/auth_screen.dart';
 import 'package:card_nudge/presentation/screens/home_screen.dart';
-import 'package:card_nudge/services/supabase_service.dart';
+import 'package:card_nudge/presentation/providers/supabase_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'data/enums/app_theme_mode.dart';
 import 'presentation/providers/setting_provider.dart';
 import 'presentation/screens/setting_screen.dart';
@@ -30,8 +31,15 @@ final _router = GoRouter(
                   );
                 }
 
-                final authState = snapshot.data;
-                final isAuthenticated = authState?.session != null;
+                ref
+                    .read(supabaseServiceProvider)
+                    .syncUserDetails(
+                      snapshot.data ??
+                          AuthState(AuthChangeEvent.signedOut, null),
+                    );
+
+                final isAuthenticated =
+                    ref.watch(supabaseServiceProvider).isAuthenticated;
 
                 return isAuthenticated
                     ? const HomeScreen()
