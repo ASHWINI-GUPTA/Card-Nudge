@@ -37,6 +37,7 @@ void main() async {
 
   // Hive
   await Hive.initFlutter();
+
   await BankStorage.initHive();
   await CreditCardStorage.initHive();
   await PaymentStorage.initHive();

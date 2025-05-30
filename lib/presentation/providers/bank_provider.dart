@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../constants/app_strings.dart';
+import '../../data/enums/sync_status.dart';
 import '../../data/hive/models/bank_model.dart';
 import '../../data/hive/storage/bank_storage.dart';
+import 'sync_provider.dart';
 
 final bankBoxProvider = Provider<Box<BankModel>>((ref) {
   return BankStorage.getBox();
@@ -64,8 +66,17 @@ class BankNotifier extends AsyncNotifier<List<BankModel>> {
     try {
       await _box.put(bank.id, bank);
       _onBoxChange();
+
+      // Trigger sync if online
+      final syncService = ref.read(syncServiceProvider);
+      if (await syncService.isOnline()) {
+        ref.read(syncStatusProvider.notifier).state = SyncStatus.syncing;
+        await syncService.pushLocalChanges();
+        ref.read(syncStatusProvider.notifier).state = SyncStatus.idle;
+      }
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
+      ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
     }
   }
 

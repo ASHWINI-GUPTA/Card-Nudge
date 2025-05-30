@@ -82,6 +82,7 @@ class CreditCardModel extends HiveObject {
     double? currentUtilization,
     bool? isArchived,
     bool? isFavorite,
+    bool? syncPending,
   }) {
     return CreditCardModel(
       id: id,
@@ -97,6 +98,7 @@ class CreditCardModel extends HiveObject {
       isArchived: isArchived ?? this.isArchived,
       isFavorite: isFavorite ?? this.isFavorite,
       userId: this.userId,
+      syncPending: syncPending ?? this.syncPending,
     );
   }
 

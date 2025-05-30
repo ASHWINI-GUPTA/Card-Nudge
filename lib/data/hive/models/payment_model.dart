@@ -71,6 +71,7 @@ class PaymentModel extends HiveObject {
     double? minimumDueAmount,
     double? paidAmount,
     DateTime? dueDate,
+    bool? syncPending,
   }) {
     return PaymentModel(
       id: id,
@@ -85,6 +86,7 @@ class PaymentModel extends HiveObject {
       dueDate: dueDate ?? this.dueDate,
       statementAmount: this.statementAmount,
       userId: this.userId,
+      syncPending: syncPending ?? this.syncPending,
     );
   }
 

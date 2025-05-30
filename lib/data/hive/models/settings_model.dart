@@ -64,6 +64,7 @@ class SettingsModel {
     bool? notificationsEnabled,
     TimeOfDay? reminderTime,
     bool? syncSettings,
+    bool? syncPending,
   }) {
     return SettingsModel(
       id: this.id,
@@ -74,6 +75,7 @@ class SettingsModel {
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       reminderTime: reminderTime ?? this.reminderTime,
       syncSettings: syncSettings ?? this.syncSettings,
+      syncPending: syncPending ?? this.syncPending,
     );
   }
 }

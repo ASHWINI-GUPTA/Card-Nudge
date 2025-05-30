@@ -72,6 +72,7 @@ class BankModel {
     bool? isFavorite,
     String? colorHex,
     int? priority,
+    bool? syncPending,
   }) {
     return BankModel(
       id: id ?? this.id,
@@ -86,6 +87,7 @@ class BankModel {
       createdAt: createdAt,
       updatedAt: DateTime.now().toUtc(),
       userId: this.userId,
+      syncPending: syncPending ?? this.syncPending,
     );
   }
 }
