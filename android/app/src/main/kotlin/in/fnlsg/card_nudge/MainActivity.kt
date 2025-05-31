@@ -1,4 +1,4 @@
-package `in`.fnlsg.card_nudge
+package `in`.fnlsg.card
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -22,7 +22,7 @@ class SupabaseService {
   Future<void> signInWithGitHub() async {
     await _client.auth.signInWithOAuth(
       OAuthProvider.github,
-      redirectTo: 'in.fnlsg.card_nudge://login-callback/',
+      redirectTo: 'https://card.fnlsg.in/login-callback',
     );
   }
 
@@ -58,7 +58,7 @@ class SupabaseService {
   Future<void> signInWithApple() async {
     await _client.auth.signInWithOAuth(
       OAuthProvider.apple,
-      redirectTo: 'in.fnlsg.card_nudge://login-callback/',
+      redirectTo: 'https://card.fnlsg.in/login-callback',
     );
   }
 

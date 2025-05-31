@@ -61,7 +61,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>in.fnlsg.card_nudge</string>
+				<string>in.fnlsg.card</string>
 				<string>com.googleusercontent.apps.152593912511-khvs1cltc9jlrdrrj44kpq7utropiir8</string>
 			</array>
 		</dict>

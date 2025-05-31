@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="in.fnlsg.card_nudge">
+    package="in.fnlsg.card">
 
     <!-- Permissions for notifications -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
@@ -34,8 +34,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                android:scheme="in.fnlsg.card_nudge"
-                android:host="login-callback" />
+                    android:scheme="in.fnlsg.card"
+                    android:host="login-callback" />
+                <data
+                    android:scheme="https"
+                    android:host="card.fnlsg.in"
+                    android:pathPrefix="/login-callback" />
             </intent-filter>
         </activity>
 

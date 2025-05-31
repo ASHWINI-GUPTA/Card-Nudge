@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'presentation/providers/setting_provider.dart';
+import 'presentation/screens/error_screen.dart';
 import 'presentation/screens/setting_screen.dart';
 
 final _router = GoRouter(
@@ -54,6 +55,20 @@ final _router = GoRouter(
       name: 'settings',
       builder: (context, state) => const SettingsScreen(),
     ),
+    GoRoute(
+      path: '/login-callback',
+      redirect: (context, state) async {
+        try {
+          await Supabase.instance.client.auth.getSessionFromUrl(state.uri);
+          return '/';
+        } catch (e) {
+          print('OAuth callback error: $e');
+          return '/error';
+        }
+      },
+    ),
+    GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
+    GoRoute(path: '/error', builder: (context, state) => const ErrorScreen()),
   ],
 );
 

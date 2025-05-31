@@ -5,18 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "credit_card_manager",
+            "name": "Card Nudge",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "credit_card_manager (profile mode)",
+            "name": "Card Nudge (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "credit_card_manager (release mode)",
+            "name": "Card Nudge (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
