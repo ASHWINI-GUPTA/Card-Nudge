@@ -1,0 +1,15 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "in.fnlsg.card",
+            "sha256_cert_fingerprints": [
+                "88:C7:E6:10:6A:1F:4D:CB:62:35:73:3E:40:69:B8:B0:21:F7:15:27:53:B9:DB:7F:EB:8E:2D:6B:8C:7F:21:FA"
+            ]
+        }
+    }
+]
+
