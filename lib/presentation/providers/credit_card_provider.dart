@@ -3,10 +3,12 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 
 import '../../constants/app_strings.dart';
+import '../../data/enums/sync_status.dart';
 import '../../data/hive/models/credit_card_model.dart';
 import '../../data/hive/storage/credit_card_storage.dart';
 import '../../services/notification_service.dart';
 import 'payment_provider.dart';
+import 'sync_provider.dart';
 
 final creditCardBoxProvider = Provider<Box<CreditCardModel>>((ref) {
   return CreditCardStorage.getBox();
@@ -20,6 +22,20 @@ final creditCardListProvider =
 class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
   Box<CreditCardModel> get _box => ref.read(creditCardBoxProvider);
 
+  Future<void> _triggerSync() async {
+    final syncService = ref.read(syncServiceProvider);
+    if (await syncService.isOnline()) {
+      ref.read(syncStatusProvider.notifier).state = SyncStatus.syncing;
+      try {
+        await syncService.pushLocalChanges();
+        ref.read(syncStatusProvider.notifier).state = SyncStatus.idle;
+      } catch (e) {
+        ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
+        rethrow;
+      }
+    }
+  }
+
   @override
   Future<List<CreditCardModel>> build() async {
     _box.listenable().addListener(_onBoxChange);
@@ -29,20 +45,20 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
 
   Future<void> save(CreditCardModel card) async {
     state = const AsyncValue.loading();
+    bool cardSaved = false;
     try {
-      if (state.value!.any((c) => c.id == card.id && c.key != card.key)) {
-        await _box.put(card.id, card);
-        state = AsyncValue.data([
-          ...state.value!.where((c) => c.key != card.key),
-          card,
-        ]);
-      } else {
-        await _box.add(card);
-        state = AsyncValue.data([...state.value!, card]);
-      }
+      await _box.put(card.id, card);
+      await loadCards();
+      await _triggerSync();
+      cardSaved = true;
     } catch (e, stack) {
+      if (cardSaved) {
+        await _box.delete(card.id);
+        await loadCards();
+      }
       state = AsyncValue.error(e, stack);
-      rethrow; // Allow widgets to catch errors
+      ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
+      rethrow;
     }
   }
 
@@ -113,14 +129,16 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
     }
   }
 
-  // Add a new card
   Future<void> add(CreditCardModel card) async {
     try {
-      await _box.add(card);
+      await _box.put(card.id, card);
       await _scheduleNotifications(card);
-      _onBoxChange(); // Trigger state update
-    } catch (e) {
-      print('Error adding card: $e');
+      _onBoxChange();
+      await _triggerSync();
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
+      rethrow;
     }
   }
 
@@ -141,11 +159,11 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
       state = AsyncValue.data(_box.values.toList());
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
+      ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
       rethrow;
     }
   }
 
-  // Clear all cards
   Future<void> clearCards() async {
     try {
       for (final card in _box.values) {
@@ -153,18 +171,10 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
       }
       await _box.clear();
       _onBoxChange();
-    } catch (e) {
-      print('Error clearing cards: $e');
-    }
-  }
-
-  Future<void> restoreByKey(int key, CreditCardModel card) async {
-    state = const AsyncValue.loading();
-    try {
-      await _box.put(key, card);
-      state = AsyncValue.data(_box.values.where((c) => !c.isArchived).toList());
+      await _triggerSync();
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
+      ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
       rethrow;
     }
   }

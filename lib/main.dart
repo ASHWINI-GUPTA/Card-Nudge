@@ -45,15 +45,15 @@ void main() async {
   await SettingStorage.initHive();
 
   // Add mock data only in debug mode. Remove in production automatically.
-  assert(() {
-    final creditCardBox = Hive.box<CreditCardModel>('credit_cards');
-    if (creditCardBox.isEmpty) {
-      for (final card in CardMockDataProvider.getMockCreditCards()) {
-        creditCardBox.put(card.id, card);
-      }
-    }
-    return true;
-  }());
+  // assert(() {
+  //   final creditCardBox = Hive.box<CreditCardModel>('credit_cards');
+  //   if (creditCardBox.isEmpty) {
+  //     for (final card in CardMockDataProvider.getMockCreditCards()) {
+  //       creditCardBox.put(card.id, card);
+  //     }
+  //   }
+  //   return true;
+  // }());
 
   runApp(const ProviderScope(child: CreditCardApp()));
 }

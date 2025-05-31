@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import '../../data/enums/sync_status.dart';
 import '../../data/hive/models/payment_model.dart';
 import '../../data/hive/storage/payment_storage.dart';
 import '../../constants/app_strings.dart';
+import 'sync_provider.dart';
 
 final paymentBoxProvider = Provider<Box<PaymentModel>>((ref) {
   return PaymentStorage.getBox();
@@ -15,6 +17,20 @@ final paymentProvider =
 
 class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
   Box<PaymentModel> get _box => ref.read(paymentBoxProvider);
+
+  Future<void> _triggerSync() async {
+    final syncService = ref.read(syncServiceProvider);
+    if (await syncService.isOnline()) {
+      ref.read(syncStatusProvider.notifier).state = SyncStatus.syncing;
+      try {
+        await syncService.pushLocalChanges();
+        ref.read(syncStatusProvider.notifier).state = SyncStatus.idle;
+      } catch (e) {
+        ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
+        rethrow;
+      }
+    }
+  }
 
   @override
   Future<List<PaymentModel>> build() async {
@@ -33,6 +49,7 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
 
   Future<void> save(PaymentModel payment) async {
     state = const AsyncValue.loading();
+    bool paymentSaved = false;
     try {
       // Validate payment
       if (payment.dueAmount <= 0) {
@@ -58,12 +75,19 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
         await _box.put(payment.id, payment);
       }
 
-      // Update state with new data
       final updatedPayments = _box.values.toList();
       state = AsyncValue.data(updatedPayments);
+      await _triggerSync();
+      paymentSaved = true;
     } catch (e, stack) {
+      if (paymentSaved) {
+        await _box.delete(payment.id);
+        state = AsyncValue.data(_box.values.toList());
+      }
+
       state = AsyncValue.error(e, stack);
-      rethrow; // Allow widgets to handle errors
+      ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
+      rethrow;
     }
   }
 
@@ -91,8 +115,10 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
 
       await _box.put(paymentId, updatedPayment);
       state = AsyncValue.data(_box.values.toList());
+      await _triggerSync();
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
+      ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
       rethrow;
     }
   }

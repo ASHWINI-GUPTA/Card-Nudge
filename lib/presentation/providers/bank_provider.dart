@@ -17,6 +17,20 @@ final bankProvider = AsyncNotifierProvider<BankNotifier, List<BankModel>>(
 class BankNotifier extends AsyncNotifier<List<BankModel>> {
   Box<BankModel> get _box => ref.read(bankBoxProvider);
 
+  Future<void> _triggerSync() async {
+    final syncService = ref.read(syncServiceProvider);
+    if (await syncService.isOnline()) {
+      ref.read(syncStatusProvider.notifier).state = SyncStatus.syncing;
+      try {
+        await syncService.pushLocalChanges();
+        ref.read(syncStatusProvider.notifier).state = SyncStatus.idle;
+      } catch (e) {
+        ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
+        rethrow;
+      }
+    }
+  }
+
   @override
   Future<List<BankModel>> build() async {
     try {
@@ -63,18 +77,17 @@ class BankNotifier extends AsyncNotifier<List<BankModel>> {
 
   Future<void> save(BankModel bank) async {
     state = const AsyncValue.loading();
+    bool bankSaved = false;
     try {
       await _box.put(bank.id, bank);
       _onBoxChange();
-
-      // Trigger sync if online
-      final syncService = ref.read(syncServiceProvider);
-      if (await syncService.isOnline()) {
-        ref.read(syncStatusProvider.notifier).state = SyncStatus.syncing;
-        await syncService.pushLocalChanges();
-        ref.read(syncStatusProvider.notifier).state = SyncStatus.idle;
-      }
+      await _triggerSync();
+      bankSaved = true;
     } catch (e, stack) {
+      if (bankSaved) {
+        await _box.delete(bank.id);
+        _onBoxChange();
+      }
       state = AsyncValue.error(e, stack);
       ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
     }

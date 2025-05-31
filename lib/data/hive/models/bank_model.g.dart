@@ -30,13 +30,14 @@ class BankModelAdapter extends TypeAdapter<BankModel> {
       createdAt: fields[10] as DateTime?,
       updatedAt: fields[11] as DateTime?,
       syncPending: fields[12] as bool,
+      isDefault: fields[13] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, BankModel obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -62,7 +63,9 @@ class BankModelAdapter extends TypeAdapter<BankModel> {
       ..writeByte(11)
       ..write(obj.updatedAt)
       ..writeByte(12)
-      ..write(obj.syncPending);
+      ..write(obj.syncPending)
+      ..writeByte(13)
+      ..write(obj.isDefault);
   }
 
   @override

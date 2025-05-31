@@ -71,6 +71,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
       );
 
       final updatedCard = CreditCardModel(
+        id: widget.card?.id,
         userId: widget.user.id,
         name: _cardNameController.text.trim(),
         bankId: _bankNameController.text.trim(),

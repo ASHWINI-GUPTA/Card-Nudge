@@ -44,6 +44,9 @@ class BankModel {
   @HiveField(12)
   bool syncPending;
 
+  @HiveField(13)
+  bool isDefault;
+
   BankModel({
     String? id,
     required this.userId,
@@ -58,6 +61,7 @@ class BankModel {
     DateTime? createdAt,
     DateTime? updatedAt,
     this.syncPending = true,
+    this.isDefault = false,
   }) : id = id ?? const Uuid().v4(),
        createdAt = (createdAt ?? DateTime.now()).toUtc(),
        updatedAt = (updatedAt ?? DateTime.now()).toUtc();

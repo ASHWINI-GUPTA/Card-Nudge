@@ -1,3 +1,1 @@
-// sync_service.dart
-
-enum SyncStatus { idle, syncing, error }
+enum SyncStatus { idle, syncing, error, realtimeConnected, polling }

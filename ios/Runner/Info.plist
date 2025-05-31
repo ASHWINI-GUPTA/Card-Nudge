@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>credit_card_manager</string>
+	<string>Card Nudge</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -57,13 +57,13 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
-		<key>CFBundleTypeRole</key>
-		<string>Editor</string>
-		<key>CFBundleURLSchemes</key>
-		<array>
-			<string>in.fnlsg.card_nudge</string>
-			<string>com.googleusercontent.apps.152593912511-khvs1cltc9jlrdrrj44kpq7utropiir8</string>
-		</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>in.fnlsg.card_nudge</string>
+				<string>com.googleusercontent.apps.152593912511-khvs1cltc9jlrdrrj44kpq7utropiir8</string>
+			</array>
 		</dict>
 	</array>
 </dict>

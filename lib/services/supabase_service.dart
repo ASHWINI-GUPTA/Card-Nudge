@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../presentation/providers/sync_provider.dart';
 import '../presentation/providers/user_provider.dart';
 
 class SupabaseService {
@@ -91,6 +92,17 @@ class SupabaseService {
                 metadata['avatar_url']?.toString() ??
                 metadata['picture']?.toString(),
           );
+
+      // Start the Sync
+      final syncService = _ref.read(syncServiceProvider);
+
+      if (authState.event == AuthChangeEvent.signedIn) {
+        await syncService.initialSync(user.id);
+      }
+
+      syncService.startRealtimeSubscriptions(user.id, _ref);
+      syncService.startPolling(user.id, _ref);
+      syncService.startConnectivityListener(_ref);
     } else {
       await _ref.read(userProvider.notifier).clearUserData();
     }
