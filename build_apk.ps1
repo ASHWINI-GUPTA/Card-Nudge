@@ -1,36 +1,43 @@
-# build_apk.ps1
-param(
-    [ValidateSet("debug", "release")]
-    [string]$BuildType = "debug"
-)
+function Build-CardNudgeApp {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$false)]
+        [ValidateSet("apk", "appbundle")]
+        [string]$Format = "apk",
 
-$OutputDir = "./build/outputs"
+        [Parameter(Mandatory=$false)]
+        [ValidateSet("debug", "release")]
+        [string]$Profile = "debug"
+    )
 
-$ApkName = if ($BuildType -eq "release") { "Card-Nudge-release.apk" } else { "Card-Nudge-debug.apk" }
-$FlutterBuildOutput = if ($BuildType -eq "release") { "build/app/outputs/flutter-apk/app-release.apk" } else { "build/app/outputs/flutter-apk/app-debug.apk" }
+    $OutputDir = "./build/outputs"
 
-Write-Host "Cleaning Flutter project..." -ForegroundColor Yellow
-flutter clean
-if ($LASTEXITCODE -ne 0) { Write-Host "Error: Failed to clean project." -ForegroundColor Red; exit 1 }
+    if ($Format -eq "apk") {
+        $OutputName = if ($Profile -eq "release") { "Card-Nudge-release.apk" } else { "Card-Nudge-debug.apk" }
+        $FlutterBuildOutput = if ($Profile -eq "release") { "build/app/outputs/flutter-apk/app-release.apk" } else { "build/app/outputs/flutter-apk/app-debug.apk" }
+        $FlutterBuildCommand = "flutter build apk --$Profile"
+    } else {
+        $OutputName = if ($Profile -eq "release") { "Card-Nudge-release.aab" } else { "Card-Nudge-debug.aab" }
+        $FlutterBuildOutput = if ($Profile -eq "release") { "build/app/outputs/bundle/release/app-release.aab" } else { "build/app/outputs/bundle/debug/app-debug.aab" }
+        $FlutterBuildCommand = "flutter build appbundle --$Profile"
+    }
 
-Write-Host "Fetching dependencies..." -ForegroundColor Yellow
-flutter pub get
-if ($LASTEXITCODE -ne 0) { Write-Host "Error: Failed to fetch dependencies." -ForegroundColor Red; exit 1 }
+    Write-Host "Cleaning Flutter project..." -ForegroundColor Yellow
+    flutter clean
+    if ($LASTEXITCODE -ne 0) { Write-Host "Error: Failed to clean project." -ForegroundColor Red; exit 1 }
 
-Write-Host "Generating Hive adapters..." -ForegroundColor Yellow
-flutter packages pub run build_runner build --delete-conflicting-outputs
-if ($LASTEXITCODE -ne 0) { Write-Host "Error: Failed to generate Hive adapters." -ForegroundColor Red; exit 1 }
+    Write-Host "Fetching dependencies..." -ForegroundColor Yellow
+    Write-Host "Building $Format ($Profile)..." -ForegroundColor Yellow
+    Invoke-Expression $FlutterBuildCommand
+    if ($LASTEXITCODE -ne 0) { Write-Host "Error: Failed to build $Format." -ForegroundColor Red; exit 1 }
 
-Write-Host "Building release APK..." -ForegroundColor Yellow
-flutter build apk --$BuildType
-if ($LASTEXITCODE -ne 0) { Write-Host "Error: Failed to build release APK." -ForegroundColor Red; exit 1 }
-
-New-Item -ItemType Directory -Force -Path $OutputDir
-if (Test-Path $FlutterBuildOutput) {
-    Write-Host "APK built successfully. Renaming to $ApkName..." -ForegroundColor Green
-    Move-Item -Path $FlutterBuildOutput -Destination "$OutputDir/$ApkName" -Force
-    Write-Host "APK saved to $OutputDir/$ApkName" -ForegroundColor Green
-} else {
-    Write-Host "Error: APK not found at $FlutterBuildOutput." -ForegroundColor Red
-    exit 1
+    New-Item -ItemType Directory -Force -Path $OutputDir
+    if (Test-Path $FlutterBuildOutput) {
+        Write-Host "$Format built successfully. Renaming to $OutputName..." -ForegroundColor Green
+        Move-Item -Path $FlutterBuildOutput -Destination "$OutputDir/$OutputName" -Force
+        Write-Host "$Format saved to $OutputDir/$OutputName" -ForegroundColor Green
+    } else {
+        Write-Host "Error: $Format not found at $FlutterBuildOutput." -ForegroundColor Red
+        exit 1
+    }
 }
