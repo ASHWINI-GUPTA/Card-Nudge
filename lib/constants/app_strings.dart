@@ -40,7 +40,8 @@ class AppStrings {
   static const cardAddedSuccess = 'Card added successfully!';
   static const cardUpdatedSuccess = 'Card updated successfully!';
   static const cardSaveError = 'Failed to save card.';
-
+  static const dueDateBeforeBillingError =
+      'Due date must be after billing date';
   static const saveButton = 'Save';
 
   // Log Payment Bottom Sheet
@@ -160,6 +161,8 @@ class AppStrings {
   static const cancel = 'Cancel';
   static const add = 'Add';
   static const delete = 'Delete';
+  static const versionError = 'Error loading version';
+  static const loadingVersion = 'Loading version...';
 
   // Bank Details
   static const bankName = 'Bank Name';

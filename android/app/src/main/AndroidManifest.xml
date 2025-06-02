@@ -34,9 +34,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:scheme="in.fnlsg.card"
-                    android:host="login-callback" />
-                <data
                     android:scheme="https"
                     android:host="card.fnlsg.in"
                     android:pathPrefix="/login-callback" />

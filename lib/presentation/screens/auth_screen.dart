@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../constants/app_strings.dart';
 import '../providers/supabase_provider.dart';
+import '../widgets/credit_card_color_dot_indicator.dart';
 
 class AuthScreen extends ConsumerWidget {
   const AuthScreen({super.key});
@@ -69,15 +72,7 @@ class AuthScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _creditCardColorDot(Colors.blue[800]!),
-                    _creditCardColorDot(Colors.orange[800]!),
-                    _creditCardColorDot(Colors.red[700]!),
-                    _creditCardColorDot(Colors.green[700]!),
-                  ],
-                ),
+                const CreditCardColorDotIndicator(animate: false),
                 const SizedBox(height: 30),
 
                 // Google Sign-In Button
@@ -102,18 +97,6 @@ class AuthScreen extends ConsumerWidget {
                   ),
                   text: 'Continue with GitHub',
                 ),
-                const SizedBox(height: 20),
-
-                // Apple Sign-In Button
-                _buildExternalOAuthButton(
-                  onPressed: () => supabaseService.signInWithApple(),
-                  icon: const Icon(
-                    Icons.apple,
-                    size: 35,
-                    color: Colors.black87,
-                  ),
-                  text: 'Continue with Apple',
-                ),
                 const SizedBox(height: 30),
 
                 // Info Section
@@ -126,9 +109,31 @@ class AuthScreen extends ConsumerWidget {
                       color: Colors.black12,
                     ),
 
-                    Text(
-                      'Version 0.9.6',
-                      style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                    FutureBuilder<PackageInfo>(
+                      future: PackageInfo.fromPlatform(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Text(
+                            '${AppStrings.appVersion}: ${snapshot.data!.version}',
+                            style: TextStyle(
+                              color: Colors.grey[700],
+                              fontSize: 13,
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text(
+                            '${AppStrings.versionError}: ${snapshot.error}',
+                            style: TextStyle(
+                              color: Colors.red[700],
+                              fontSize: 13,
+                            ),
+                          );
+                        }
+                        return const Text(
+                          AppStrings.loadingVersion,
+                          style: TextStyle(color: Colors.grey, fontSize: 13),
+                        );
+                      },
                     ),
                     const SizedBox(height: 12),
                     Row(

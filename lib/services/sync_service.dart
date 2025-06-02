@@ -279,7 +279,7 @@ class SyncService {
     }
   }
 
-  void startConnectivityListener(Ref ref) {
+  void startConnectivityListener(WidgetRef ref) {
     connectivity.onConnectivityChanged.listen((connectivityResult) async {
       if (connectivityResult != ConnectivityResult.none) {
         print('Online: Triggering sync');
@@ -294,7 +294,7 @@ class SyncService {
     });
   }
 
-  void startPolling(String userId, Ref ref) {
+  void startPolling(String userId, WidgetRef ref) {
     _pollingTimer?.cancel();
     _pollingTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
       if (await isOnline()) {
@@ -344,7 +344,7 @@ class SyncService {
     _pollingTimer?.cancel();
   }
 
-  void startRealtimeSubscriptions(String userId, Ref ref) {
+  void startRealtimeSubscriptions(String userId, WidgetRef ref) {
     supabase
         .from('banks:user_id=eq.$userId')
         .stream(primaryKey: ['id'])
@@ -426,7 +426,7 @@ class SyncService {
 
   Future<void> _handleRealtimeBanks(
     List<Map<String, dynamic>> data,
-    Ref ref,
+    WidgetRef ref,
   ) async {
     for (var item in data) {
       final remote = BankModel(
@@ -454,7 +454,7 @@ class SyncService {
 
   Future<void> _handleRealtimeDefaultBanks(
     List<Map<String, dynamic>> data,
-    Ref ref,
+    WidgetRef ref,
   ) async {
     for (var item in data) {
       final remote = BankModel(
@@ -482,7 +482,7 @@ class SyncService {
 
   Future<void> _handleRealtimeCards(
     List<Map<String, dynamic>> data,
-    Ref ref,
+    WidgetRef ref,
   ) async {
     for (var item in data) {
       final remote = CreditCardModel(
@@ -513,7 +513,7 @@ class SyncService {
 
   Future<void> _handleRealtimePayments(
     List<Map<String, dynamic>> data,
-    Ref ref,
+    WidgetRef ref,
   ) async {
     for (var item in data) {
       final remote = PaymentModel(
@@ -543,7 +543,7 @@ class SyncService {
 
   Future<void> _handleRealtimeSettings(
     List<Map<String, dynamic>> data,
-    Ref ref,
+    WidgetRef ref,
   ) async {
     if (data.isNotEmpty) {
       final item = data.first;

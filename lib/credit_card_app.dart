@@ -3,6 +3,7 @@ import 'package:card_nudge/data/enums/language.dart';
 import 'package:card_nudge/presentation/screens/auth_screen.dart';
 import 'package:card_nudge/presentation/screens/home_screen.dart';
 import 'package:card_nudge/presentation/providers/supabase_provider.dart';
+import 'package:card_nudge/presentation/screens/auth_progress_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,19 +32,15 @@ final _router = GoRouter(
                   );
                 }
 
-                ref
-                    .read(supabaseServiceProvider)
-                    .syncUserDetails(
-                      snapshot.data ??
-                          AuthState(AuthChangeEvent.signedOut, null),
-                    );
-
                 final isAuthenticated =
                     ref.watch(supabaseServiceProvider).isAuthenticated;
 
-                return isAuthenticated
-                    ? const HomeScreen()
-                    : const AuthScreen();
+                // Show loading screen for setup after login
+                if (isAuthenticated) {
+                  return const AuthProgress();
+                } else {
+                  return const AuthScreen();
+                }
               },
             );
           },
@@ -52,7 +49,6 @@ final _router = GoRouter(
     ),
     GoRoute(
       path: '/settings',
-      name: 'settings',
       builder: (context, state) => const SettingsScreen(),
     ),
     GoRoute(
@@ -69,6 +65,7 @@ final _router = GoRouter(
     ),
     GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
     GoRoute(path: '/error', builder: (context, state) => const ErrorScreen()),
+    GoRoute(path: '/auth', builder: (context, state) => const AuthScreen()),
   ],
 );
 

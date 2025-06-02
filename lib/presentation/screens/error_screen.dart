@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+const _emojiSize = 48.0;
+
 class ErrorScreen extends StatelessWidget {
   const ErrorScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
+            colors: [
+              colorScheme.primaryContainer.withAlpha(26),
+              colorScheme.surface,
+            ],
           ),
         ),
         child: SafeArea(
@@ -22,11 +30,7 @@ class ErrorScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.error_outline,
-                    size: 80,
-                    color: Colors.white,
-                  ),
+                  const Text('🤦‍♀️', style: TextStyle(fontSize: _emojiSize)),
                   const SizedBox(height: 16),
                   const Text(
                     'Oops, Something Went Wrong!',

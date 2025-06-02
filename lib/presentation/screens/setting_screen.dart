@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/app_strings.dart';
 import '../../data/enums/currency.dart';
 import '../../data/enums/language.dart';
+import '../../services/navigation_service.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/payment_provider.dart';
 import '../providers/setting_provider.dart';
@@ -78,9 +81,7 @@ class SettingsScreen extends ConsumerWidget {
                         onPressed: () async {
                           await ref.read(supabaseServiceProvider).signOut();
                           if (context.mounted) {
-                            Navigator.of(
-                              context,
-                            ).popUntil((route) => route.isFirst);
+                            NavigationService.goToRoute(context, '/auth');
                           }
                         },
                       ),
@@ -248,31 +249,47 @@ class SettingsScreen extends ConsumerWidget {
                 children: [
                   ListTile(
                     title: Text(AppStrings.appVersion),
-                    subtitle: const Text('0.1.10'),
+                    subtitle: FutureBuilder<PackageInfo>(
+                      future: PackageInfo.fromPlatform(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Text(snapshot.data!.version);
+                        } else if (snapshot.hasError) {
+                          return Text(
+                            '${AppStrings.versionError}: ${snapshot.error}',
+                          );
+                        }
+                        return const Text(AppStrings.loadingVersion);
+                      },
+                    ),
                   ),
                   ListTile(
                     title: Text('Website'),
-                    subtitle: const Text('https://card-nudge.fnlsg.in'),
+                    subtitle: const Text('https://card.fnlsg.in'),
                     onTap: () {
-                      // You can use url_launcher to open the URL
-                      // launchUrl(Uri.parse('https://card-nudge.fnlsg.in'));
+                      launchUrl(Uri.parse('https://card.fnlsg.in'));
                     },
                   ),
                   ListTile(
                     title: Text('Developer Email'),
                     subtitle: const Text('ashwini@fnlsg.in'),
                     onTap: () {
-                      // You can use url_launcher to open the email app
-                      // launchUrl(Uri(scheme: 'mailto', path: 'support@fnlsg.in'));
+                      launchUrl(
+                        Uri(scheme: 'mailto', path: 'ashwini@fnlsg.in'),
+                      );
                     },
                   ),
                   ListTile(
                     title: Text(AppStrings.termsConditions),
-                    onTap: () {}, // Placeholder for URL or sub-screen
+                    onTap: () {
+                      launchUrl(Uri.parse('https://card.fnlsg.in/terms'));
+                    },
                   ),
                   ListTile(
                     title: Text(AppStrings.privacyPolicy),
-                    onTap: () {}, // Placeholder for URL or sub-screen
+                    onTap: () {
+                      launchUrl(Uri.parse('https://card.fnlsg.in/privacy'));
+                    },
                   ),
                 ],
               ),
@@ -288,8 +305,14 @@ class SettingsScreen extends ConsumerWidget {
               child: Column(
                 children: [
                   // ListTile(
-                  //   title: Text(AppStrings.exportData),
-                  //   onTap: () => _exportData(context, ref),
+                  //   title: Text(AppStrings.backupData),
+                  //   subtitle: Text(AppStrings.backupDataSubtitle),
+                  //   onTap: () {
+                  //     ref.read(supabaseServiceProvider).backupData();
+                  //     ScaffoldMessenger.of(context).showSnackBar(
+                  //       SnackBar(content: Text(AppStrings.backupSuccess)),
+                  //     );
+                  //   },
                   // ),
                   ListTile(
                     title: Text(
@@ -325,8 +348,7 @@ class SettingsScreen extends ConsumerWidget {
                   ref.watch(paymentProvider.notifier).reset();
                   ref.watch(creditCardListProvider.notifier).reset();
 
-                  // AG TODO: Reset the bank list to seed data
-                  // ref.watch(bankProvider.notifier).reset();
+                  // TODO: Clear from Supabase too?
 
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(

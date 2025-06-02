@@ -62,6 +62,15 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
       return null;
     }
 
+    // Validate due date is after billing date
+    if (_dueDate!.isBefore(_billingDate!) ||
+        _dueDate!.isAtSameMomentAs(_billingDate!)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(AppStrings.dueDateBeforeBillingError)),
+      );
+      return null;
+    }
+
     setState(() => _isSubmitting = true);
 
     try {
@@ -108,10 +117,26 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
   }
 
   Future<void> _pickDate(BuildContext context, bool isBilling) async {
+    final now = DateTime.now();
+    final DateTime firstDate;
+    final DateTime? initialDate;
+
+    if (isBilling) {
+      firstDate = DateTime(2020);
+      initialDate = _billingDate ?? now;
+    } else {
+      // Due date: firstDate is day after billingDate or now
+      firstDate =
+          _billingDate != null
+              ? _billingDate!.add(const Duration(days: 1))
+              : now;
+      initialDate = _dueDate ?? firstDate;
+    }
+
     final selected = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
+      initialDate: initialDate,
+      firstDate: firstDate,
       lastDate: DateTime(2100),
     );
 
@@ -119,6 +144,12 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
       setState(() {
         if (isBilling) {
           _billingDate = selected;
+          // Reset dueDate if it's not after the new billingDate
+          if (_dueDate != null &&
+              (_dueDate!.isBefore(selected) ||
+                  _dueDate!.isAtSameMomentAs(selected))) {
+            _dueDate = null;
+          }
         } else {
           _dueDate = selected;
         }

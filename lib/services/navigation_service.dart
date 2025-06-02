@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../constants/app_strings.dart';
 
 class NavigationService {
@@ -13,6 +14,16 @@ class NavigationService {
         SnackBar(content: Text('${AppStrings.navigationError}: $e')),
       );
       return null;
+    }
+  }
+
+  static Future<void> goToRoute(BuildContext context, String routeName) async {
+    try {
+      GoRouter.of(context).go(routeName);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${AppStrings.navigationError}: $e')),
+      );
     }
   }
 
