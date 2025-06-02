@@ -1,7 +1,7 @@
 # 💳 Card Nudge - Credit Card Manager
 
 <div align="center">
-  <img src="https://github.com/ASHWINI-GUPTA/Card-Nudge/blob/main/assets/icon/icon.png" alt="Card Nudge App Icon" height="150">
+  <img src="https://github.com/ASHWINI-GUPTA/Card-Nudge/blob/main/assets/icons/icon.png" alt="Card Nudge App Icon" height="150">
 </div>
 
 Stay ahead of your credit card dues - gently. A modern, minimal Flutter app to manage all your credit cards in one place.
