@@ -5,6 +5,7 @@ import '../../services/navigation_service.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/user_provider.dart';
 import '../widgets/credit_card_tile.dart';
+import '../widgets/empty_state_widget.dart';
 import 'add_card_screen.dart';
 import 'card_details_screen.dart';
 
@@ -42,16 +43,7 @@ class CardsScreen extends ConsumerWidget {
           data:
               (cards) =>
                   cards.isEmpty
-                      ? Center(
-                        child: Semantics(
-                          label: AppStrings.noCardsMessage,
-                          child: Text(
-                            AppStrings.noCardsMessage,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      )
+                      ? _buildEmptyStateNoCards(context, ref)
                       : ListView.separated(
                         padding: const EdgeInsets.all(8.0),
                         physics: const BouncingScrollPhysics(),
@@ -111,6 +103,17 @@ class CardsScreen extends ConsumerWidget {
           child: const Icon(Icons.add),
         ),
       ),
+    );
+  }
+
+  Widget _buildEmptyStateNoCards(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userProvider)!;
+    return EmptyStateWidget(
+      message: AppStrings.noCardsMessage,
+      buttonText: AppStrings.addCardButton,
+      onButtonPressed:
+          () =>
+              NavigationService.navigateTo(context, AddCardScreen(user: user)),
     );
   }
 }

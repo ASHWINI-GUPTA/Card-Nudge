@@ -12,10 +12,12 @@ import '../../data/hive/models/payment_model.dart';
 import '../../services/navigation_service.dart';
 import '../providers/bank_provider.dart';
 import '../providers/credit_card_provider.dart';
+import '../providers/format_provider.dart';
 import '../providers/payment_provider.dart';
 import '../providers/user_provider.dart';
 import '../screens/add_card_screen.dart';
 import '../widgets/add_due_bottom_sheet.dart';
+import '../widgets/empty_state_widget.dart';
 import '../widgets/filter_bottom_sheet.dart';
 import '../widgets/payment_log_sheet.dart';
 
@@ -85,30 +87,13 @@ class DueScreen extends ConsumerWidget {
   }
 
   Widget _buildEmptyStateNoCards(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final user = ref.watch(userProvider)!;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            AppStrings.noCardsMessage,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed:
-                () => NavigationService.navigateTo(
-                  context,
-                  AddCardScreen(user: user),
-                ),
-            child: Text(AppStrings.addCardButton),
-          ),
-        ],
-      ),
+    return EmptyStateWidget(
+      message: AppStrings.noCardsMessage,
+      buttonText: AppStrings.addCardButton,
+      onButtonPressed:
+          () =>
+              NavigationService.navigateTo(context, AddCardScreen(user: user)),
     );
   }
 
@@ -170,17 +155,7 @@ class DueScreen extends ConsumerWidget {
                         orElse:
                             () => throw Exception(AppStrings.invalidCardError),
                       );
-                      final bank = banks.firstWhere(
-                        (b) => b.id == card.bankId,
-                        orElse:
-                            () => BankModel(
-                              id: '',
-                              userId: '00000000-0000-0000-0000-000000000000',
-                              name: 'Unknown Bank',
-                              logoPath: null,
-                              colorHex: null,
-                            ),
-                      );
+                      final bank = banks.firstWhere((b) => b.id == card.bankId);
                       return DueCard(card: card, bank: bank, payment: payment);
                     }),
                   ],
@@ -319,27 +294,10 @@ class DueScreen extends ConsumerWidget {
   }
 
   Widget _buildNoFilteredPayments(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            AppStrings.dueScreenNoFilterMessage,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {
-              ref.read(dueFilterProvider.notifier).resetFilter();
-            },
-            child: const Text(AppStrings.clearButton),
-          ),
-        ],
-      ),
+    return EmptyStateWidget(
+      message: AppStrings.dueScreenNoFilterMessage,
+      buttonText: AppStrings.clearButton,
+      onButtonPressed: () => ref.read(dueFilterProvider.notifier).resetFilter(),
     );
   }
 }
@@ -471,12 +429,6 @@ class DueCardContent extends ConsumerWidget {
     required this.maxWidth,
   });
 
-  static final _currencyFormat = NumberFormat.currency(
-    locale: 'en_IN',
-    symbol: '₹',
-    decimalDigits: 0,
-  );
-
   String _getStatusMessage(DateTime dueDate) {
     final now = DateTime.now();
     final difference = dueDate.difference(now).inDays;
@@ -511,6 +463,7 @@ class DueCardContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final status = _getStatusMessage(payment.dueDate);
+    final formatHelper = ref.watch(formatHelperProvider);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 12, 16, 12),
@@ -541,7 +494,7 @@ class DueCardContent extends ConsumerWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  '${AppStrings.totalDue}: ${_currencyFormat.format(payment.dueAmount)}',
+                  '${AppStrings.totalDue}: ${formatHelper.formatCurrency(payment.dueAmount, decimalDigits: 2)}',
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: Colors.white,
                     fontSize: 14,

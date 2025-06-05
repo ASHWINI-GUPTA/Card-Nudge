@@ -1,3 +1,4 @@
+import 'package:card_nudge/presentation/providers/format_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -19,11 +20,6 @@ class CreditCardTile extends ConsumerWidget {
   static const _cardHeight = 200.0;
   static const _padding = EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0);
   static const _borderRadius = BorderRadius.all(Radius.circular(20));
-  static final _currencyFormat = NumberFormat.currency(
-    locale: 'en_IN',
-    symbol: '₹',
-    decimalDigits: 0,
-  );
 
   String get maskedCardNumber => '**** **** **** ${card.last4Digits}';
 
@@ -34,17 +30,7 @@ class CreditCardTile extends ConsumerWidget {
 
     return bankAsync.when(
       data: (banks) {
-        final bank = banks.firstWhere(
-          (b) => b.id == card.bankId,
-          orElse:
-              () => BankModel(
-                id: '',
-                userId: '00000000-0000-0000-0000-000000000000',
-                name: 'Unknown Bank',
-                logoPath: null,
-                colorHex: null,
-              ),
-        );
+        final bank = banks.firstWhere((b) => b.id == card.bankId);
 
         return Semantics(
           button: true,
@@ -81,6 +67,7 @@ class CreditCardTile extends ConsumerWidget {
     BankModel bank,
   ) {
     final paymentsAsync = ref.watch(paymentProvider);
+    final formatHelper = ref.watch(formatHelperProvider);
 
     return Padding(
       padding: _padding,
@@ -131,6 +118,7 @@ class CreditCardTile extends ConsumerWidget {
                         bank,
                         hasDue,
                         dueAmount,
+                        formatHelper,
                       ),
                     ),
                   ],
@@ -197,6 +185,7 @@ class CreditCardTile extends ConsumerWidget {
     BankModel bank,
     bool hasDue,
     double dueAmount,
+    FormatHelper formatHelper,
   ) {
     final theme = Theme.of(context);
     final cardNetworkLogo =
@@ -241,29 +230,26 @@ class CreditCardTile extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // Credit Limit
             _buildInfoTile(
               label: AppStrings.creditLimitLabel,
-              value: _currencyFormat.format(card.creditLimit),
+              value: formatHelper.formatCurrency(card.creditLimit),
             ),
             _buildInfoTile(
               label: AppStrings.totalDue,
-              value: hasDue ? _currencyFormat.format(dueAmount) : '₹0',
+              value: hasDue ? formatHelper.formatCurrency(dueAmount) : '₹0',
               valueColor: hasDue ? Colors.orangeAccent : Colors.greenAccent,
             ),
             if (statmentGenerated)
               _buildInfoTile(
                 label: AppStrings.dueDateLabel,
-                value: DateFormat.MMMd(
-                  Localizations.localeOf(context).toString(),
-                ).format(card.dueDate),
+                value: formatHelper.formatShortDate(card.dueDate),
                 valueColor: hasDue ? Colors.redAccent : Colors.greenAccent,
               )
             else
               _buildInfoTile(
                 label: AppStrings.billingDateLabel,
-                value: DateFormat.MMMd(
-                  Localizations.localeOf(context).toString(),
-                ).format(card.billingDate),
+                value: formatHelper.formatShortDate(card.billingDate),
                 valueColor: hasDue ? Colors.redAccent : Colors.greenAccent,
               ),
           ],

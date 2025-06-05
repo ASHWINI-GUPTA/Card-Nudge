@@ -20,7 +20,7 @@ class FormatHelper {
   SettingsModel get _settings => ref.watch(settingsProvider);
 
   // Get current locale
-  Language get _locale => _settings.language;
+  Language get _language => _settings.language;
 
   // Get current currency code
   Currency get _currencyCode => _settings.currency;
@@ -42,7 +42,8 @@ class FormatHelper {
     int decimalDigits = 0,
   }) {
     final formatter = NumberFormat.currency(
-      locale: _locale.name,
+      name: _currencyCode.code,
+      locale: _currencyCode.locale,
       symbol: showSymbol ? _currencySymbol : '',
       decimalDigits: decimalDigits,
     );
@@ -56,16 +57,23 @@ class FormatHelper {
     int decimalDigits = 0,
   }) {
     final formatter = NumberFormat.compactCurrency(
-      locale: _locale.name,
+      name: _currencyCode.code,
+      locale: _currencyCode.locale,
       symbol: showSymbol ? _currencySymbol : '',
       decimalDigits: decimalDigits,
     );
     return formatter.format(amount);
   }
 
+  // Format date (e.g., June 1)
+  String formatShortDate(DateTime date) {
+    final formatter = DateFormat.MMMd(_language.locale);
+    return formatter.format(date);
+  }
+
   // Format date (e.g., 25/05/2025 or 25-05-2025 based on locale)
   String formatDate(DateTime date) {
-    final formatter = DateFormat.yMd(_locale);
+    final formatter = DateFormat.yMd(_language.locale);
     return formatter.format(date);
   }
 
@@ -79,21 +87,21 @@ class FormatHelper {
       time.hour,
       time.minute,
     );
-    final formatter = DateFormat.jm(_locale);
+    final formatter = DateFormat.jm(_language.locale);
     return formatter.format(dateTime);
   }
 
   // Format datetime (e.g., 25/05/2025, 3:30 PM)
   String formatDateTime(DateTime dateTime) {
-    final dateFormatter = DateFormat.yMd(_locale);
-    final timeFormatter = DateFormat.jm(_locale);
+    final dateFormatter = DateFormat.yMd(_language.locale);
+    final timeFormatter = DateFormat.jm(_language.locale);
     return '${dateFormatter.format(dateTime)}, ${timeFormatter.format(dateTime)}';
   }
 
   // Parse date string to DateTime (expects format based on locale)
   DateTime? parseDate(String dateString) {
     try {
-      final formatter = DateFormat.yMd(_locale);
+      final formatter = DateFormat.yMd(_language.locale);
       return formatter.parse(dateString);
     } catch (e) {
       return null;
@@ -103,7 +111,7 @@ class FormatHelper {
   // Parse time string to TimeOfDay
   TimeOfDay? parseTime(String timeString) {
     try {
-      final formatter = DateFormat.jm(_locale);
+      final formatter = DateFormat.jm(_language.locale);
       final dateTime = formatter.parse(timeString);
       return TimeOfDay(hour: dateTime.hour, minute: dateTime.minute);
     } catch (e) {

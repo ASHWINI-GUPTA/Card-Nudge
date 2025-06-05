@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../data/hive/models/payment_model.dart';
+import '../providers/format_provider.dart';
 
-class MinimalPaymentCard extends StatelessWidget {
+class MinimalPaymentCard extends ConsumerWidget {
   final PaymentModel payment;
 
   const MinimalPaymentCard({super.key, required this.payment});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final formatHelper = ref.watch(formatHelperProvider);
+
     final isPaid = payment.isPaid;
-    final amount =
-        isPaid ? payment.paidAmount : payment.dueAmount.toStringAsFixed(2);
+    final amount = isPaid ? payment.paidAmount : payment.dueAmount;
     return Card(
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -28,7 +31,7 @@ class MinimalPaymentCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '₹${amount}',
+                    formatHelper.formatCurrency(amount, decimalDigits: 2),
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
