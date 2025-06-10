@@ -163,6 +163,12 @@ class AppStrings {
   static const delete = 'Delete';
   static const versionError = 'Error loading version';
   static const loadingVersion = 'Loading version...';
+  static const syncData = 'Sync Data';
+  static const syncDataSubtitle =
+      'Sync Data with the cloud to keep your information safe.';
+  static const syncDataSuccess = 'Data synced successfully!';
+  static const syncDataError = 'Failed to sync data. Please try again.';
+  static const syncDataInProgress = 'Syncing data...';
 
   // Bank Details
   static const bankName = 'Bank Name';

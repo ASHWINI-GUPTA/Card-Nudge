@@ -1,100 +1,89 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import '../../constants/app_strings.dart';
 import '../../data/enums/payment_option.dart';
 import '../../data/hive/models/payment_model.dart';
 import '../../services/navigation_service.dart';
 import '../providers/credit_card_provider.dart';
+import '../providers/format_provider.dart';
 import '../providers/payment_provider.dart';
 
-class LogPaymentBottomSheet extends ConsumerStatefulWidget {
+final selectedOptionProvider = StateProvider<PaymentOption>(
+  (ref) => PaymentOption.totalDue,
+);
+
+final isSubmittingProvider = StateProvider<bool>((ref) => false);
+
+class LogPaymentBottomSheet extends ConsumerWidget {
   final PaymentModel payment;
 
   const LogPaymentBottomSheet({super.key, required this.payment});
 
-  @override
-  ConsumerState<LogPaymentBottomSheet> createState() =>
-      _LogPaymentBottomSheetState();
-}
+  Future<void> _logPayment(WidgetRef ref, BuildContext context) async {
+    final formKey = GlobalKey<FormState>();
+    final customAmountController = TextEditingController();
 
-class _LogPaymentBottomSheetState extends ConsumerState<LogPaymentBottomSheet> {
-  PaymentOption _selectedOption = PaymentOption.totalDue;
-  final TextEditingController _customAmountController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
-  bool _isSubmitting = false;
-
-  @override
-  void dispose() {
-    _customAmountController.dispose();
-    super.dispose();
-  }
-
-  Future<PaymentModel?> _logPayment() async {
-    if (_selectedOption == PaymentOption.custom &&
-        !_formKey.currentState!.validate()) {
+    final selectedOption = ref.read(selectedOptionProvider);
+    if (selectedOption == PaymentOption.custom &&
+        !formKey.currentState!.validate()) {
       return null;
     }
 
-    setState(() => _isSubmitting = true);
+    ref.read(isSubmittingProvider.notifier).state = true;
 
     try {
       double amount;
-      switch (_selectedOption) {
+      switch (selectedOption) {
         case PaymentOption.totalDue:
-          amount = widget.payment.dueAmount;
+          amount = payment.dueAmount;
           break;
         case PaymentOption.minDue:
-          amount = widget.payment.minimumDueAmount ?? widget.payment.dueAmount;
+          amount = payment.minimumDueAmount ?? payment.dueAmount;
           break;
         case PaymentOption.custom:
-          amount = double.parse(_customAmountController.text.trim());
+          amount = double.parse(customAmountController.text.trim());
           break;
       }
 
-      await ref
-          .read(paymentProvider.notifier)
-          .markAsPaid(widget.payment.id, amount);
-
-      final updatedPayment = widget.payment.copyWith(
-        isPaid: true,
-        paidAmount: amount,
-        paymentDate: DateTime.now().toUtc(),
-      );
+      await ref.read(paymentProvider.notifier).markAsPaid(payment.id, amount);
 
       // Update the due date on Card.
       final card = await ref
           .read(creditCardBoxProvider)
           .values
-          .firstWhere((c) => c.id == updatedPayment.cardId);
+          .firstWhere((c) => c.id == payment.cardId);
 
       final updatedCard = card.copyWith(
         dueDate: card.dueDate.add(const Duration(days: 30)),
         billingDate: card.billingDate.add(const Duration(days: 30)),
+        syncPending: true,
       );
 
       await ref.read(creditCardListProvider.notifier).save(updatedCard);
 
-      if (!mounted) return null;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text(AppStrings.paymentLoggedSuccess)),
       );
-      return updatedPayment;
     } catch (e) {
-      if (!mounted) return null;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${AppStrings.paymentLogError}: $e')),
       );
       return null;
     } finally {
-      if (mounted) setState(() => _isSubmitting = false);
+      ref.read(isSubmittingProvider.notifier).state = false;
+      customAmountController.dispose();
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    final currencyFormat = NumberFormat.currency(locale: 'en_IN', symbol: '₹');
+  Widget build(BuildContext context, WidgetRef ref) {
+    final formatHelper = ref.watch(formatHelperProvider);
+
+    final selectedOption = ref.watch(selectedOptionProvider);
+    final isSubmitting = ref.watch(isSubmittingProvider);
+    final formKey = GlobalKey<FormState>();
+    final customAmountController = TextEditingController();
 
     return Padding(
       padding: EdgeInsets.only(
@@ -105,7 +94,7 @@ class _LogPaymentBottomSheetState extends ConsumerState<LogPaymentBottomSheet> {
       ),
       child: SingleChildScrollView(
         child: Form(
-          key: _formKey,
+          key: formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -121,46 +110,52 @@ class _LogPaymentBottomSheetState extends ConsumerState<LogPaymentBottomSheet> {
               const SizedBox(height: 16),
               RadioListTile<PaymentOption>(
                 value: PaymentOption.totalDue,
-                groupValue: _selectedOption,
+                groupValue: selectedOption,
                 onChanged:
-                    _isSubmitting
+                    isSubmitting
                         ? null
-                        : (value) => setState(() => _selectedOption = value!),
+                        : (value) =>
+                            ref.read(selectedOptionProvider.notifier).state =
+                                value!,
                 title: Text(
-                  '${AppStrings.totalDue} (${currencyFormat.format(widget.payment.dueAmount)})',
+                  '${AppStrings.totalDue} (${formatHelper.formatCurrency(payment.dueAmount, decimalDigits: 2)})',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
-              if (widget.payment.minimumDueAmount != null)
+              if (payment.minimumDueAmount != null)
                 RadioListTile<PaymentOption>(
                   value: PaymentOption.minDue,
-                  groupValue: _selectedOption,
+                  groupValue: selectedOption,
                   onChanged:
-                      _isSubmitting
+                      isSubmitting
                           ? null
-                          : (value) => setState(() => _selectedOption = value!),
+                          : (value) =>
+                              ref.read(selectedOptionProvider.notifier).state =
+                                  value!,
                   title: Text(
-                    '${AppStrings.minimumDue} (${currencyFormat.format(widget.payment.minimumDueAmount)})',
+                    '${AppStrings.minimumDue} (${formatHelper.formatCurrency(payment.minimumDueAmount!, decimalDigits: 2)}',
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
               RadioListTile<PaymentOption>(
                 value: PaymentOption.custom,
-                groupValue: _selectedOption,
+                groupValue: selectedOption,
                 onChanged:
-                    _isSubmitting
+                    isSubmitting
                         ? null
-                        : (value) => setState(() => _selectedOption = value!),
+                        : (value) =>
+                            ref.read(selectedOptionProvider.notifier).state =
+                                value!,
                 title: Text(
                   AppStrings.customAmount,
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
-              if (_selectedOption == PaymentOption.custom)
+              if (selectedOption == PaymentOption.custom)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: TextFormField(
-                    controller: _customAmountController,
+                    controller: customAmountController,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
@@ -177,7 +172,7 @@ class _LogPaymentBottomSheetState extends ConsumerState<LogPaymentBottomSheet> {
                       if (v == null || v <= 0) {
                         return AppStrings.invalidCustomAmountError;
                       }
-                      if (v > widget.payment.dueAmount) {
+                      if (v > payment.dueAmount) {
                         return AppStrings.amountExceedsDueError;
                       }
                       return null;
@@ -185,27 +180,23 @@ class _LogPaymentBottomSheetState extends ConsumerState<LogPaymentBottomSheet> {
                   ),
                 ),
               const SizedBox(height: 24),
-
               SizedBox(
                 width: double.infinity,
                 child: FilledButton.icon(
                   icon: const Icon(Icons.receipt_long),
                   onPressed:
-                      _isSubmitting
+                      isSubmitting
                           ? null
                           : () async {
-                            final payment = await _logPayment();
-                            if (payment != null) {
-                              NavigationService.pop(context);
-                            }
+                            await _logPayment(ref, context);
+                            NavigationService.pop(context);
                           },
                   label:
-                      _isSubmitting
+                      isSubmitting
                           ? const CircularProgressIndicator()
                           : Text(AppStrings.logPaymentButton),
                 ),
               ),
-
               const SizedBox(height: 16),
             ],
           ),

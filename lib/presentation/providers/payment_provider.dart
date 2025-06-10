@@ -94,14 +94,12 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
   Future<void> markAsPaid(String paymentId, double amount) async {
     state = const AsyncValue.loading();
     try {
-      final payment = state.value!.firstWhere(
-        (p) => p.id == paymentId,
-        orElse:
-            () => throw const FormatException(AppStrings.paymentNotFoundError),
-      );
+      final payment = state.value!.firstWhere((p) => p.id == paymentId);
+
       if (amount <= 0) {
         throw const FormatException(AppStrings.invalidCustomAmountError);
       }
+
       if (amount > payment.dueAmount) {
         throw const FormatException(AppStrings.amountExceedsDueError);
       }
@@ -111,6 +109,7 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
         paidAmount: amount,
         dueAmount: payment.dueAmount - amount,
         paymentDate: DateTime.now().toUtc(),
+        syncPending: true,
       );
 
       await _box.put(paymentId, updatedPayment);

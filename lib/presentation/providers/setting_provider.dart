@@ -20,22 +20,22 @@ class SettingsNotifier extends StateNotifier<SettingsModel> {
   SettingsNotifier(String userId) : super(SettingsModel(userId: userId));
 
   void updateLanguage(Language languageCode) {
-    state = state.copyWith(language: languageCode);
+    state = state.copyWith(language: languageCode, syncPending: true);
   }
 
   void updateCurrency(Currency currencyCode) {
-    state = state.copyWith(currency: currencyCode);
+    state = state.copyWith(currency: currencyCode, syncPending: true);
   }
 
   void updateTheme(ThemeMode themeMode) {
-    state = state.copyWith(themeMode: themeMode);
+    state = state.copyWith(themeMode: themeMode, syncPending: true);
   }
 
   void updateNotifications(bool enabled) {
-    state = state.copyWith(notificationsEnabled: enabled);
+    state = state.copyWith(notificationsEnabled: enabled, syncPending: true);
   }
 
   void updateReminderTime(TimeOfDay time) {
-    state = state.copyWith(reminderTime: time);
+    state = state.copyWith(reminderTime: time, syncPending: true);
   }
 }

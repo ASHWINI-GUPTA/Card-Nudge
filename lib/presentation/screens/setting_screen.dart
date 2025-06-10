@@ -11,6 +11,7 @@ import '../providers/credit_card_provider.dart';
 import '../providers/payment_provider.dart';
 import '../providers/setting_provider.dart';
 import '../providers/supabase_provider.dart';
+import '../providers/sync_provider.dart';
 import '../providers/user_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -304,16 +305,18 @@ class SettingsScreen extends ConsumerWidget {
               ),
               child: Column(
                 children: [
-                  // ListTile(
-                  //   title: Text(AppStrings.backupData),
-                  //   subtitle: Text(AppStrings.backupDataSubtitle),
-                  //   onTap: () {
-                  //     ref.read(supabaseServiceProvider).backupData();
-                  //     ScaffoldMessenger.of(context).showSnackBar(
-                  //       SnackBar(content: Text(AppStrings.backupSuccess)),
-                  //     );
-                  //   },
-                  // ),
+                  ListTile(
+                    title: Text(
+                      AppStrings.syncData,
+                      style: TextStyle(color: theme.colorScheme.primary),
+                    ),
+                    onTap: () {
+                      ref.read(syncServiceProvider).syncData();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(AppStrings.syncDataSuccess)),
+                      );
+                    },
+                  ),
                   ListTile(
                     title: Text(
                       AppStrings.clearData,
