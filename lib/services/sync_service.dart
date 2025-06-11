@@ -473,24 +473,26 @@ class SyncService {
       }
 
       // Push settings
-      // final settings = settingsBox.values.firstOrNull;
-      // if (settings?.syncSettings == true && settings?.syncPending == true) {
-      //   final data = {
-      //     'id': settings.id,
-      //     'user_id': settings.userId,
-      //     'language': settings.language,
-      //     'currency': settings.currency,
-      //     'theme_mode': settings.themeMode,
-      //     'notifications_enabled': settings.notificationsEnabled,
-      //     'reminder_time': settings.reminderTime,
-      //     'sync_settings': settings.syncSettings,
-      //     'created_at': settings.createdAt.toIso8601String(),
-      //     'updated_at': settings.updatedAt.toIso8601String(),
-      //   };
-      //   await supabase.from('settings').upsert(data);
-      //   final updatedSettings = settings.copyWith(syncPending: false);
-      //   await settingsBox.put(updatedSettings.id, updatedSettings);
-      // }
+      final settings = settingsBox.values.firstOrNull;
+      if (settings != null) {
+        if (settings.syncSettings == true && settings.syncPending == true) {
+          final data = {
+            'id': settings.id,
+            'user_id': settings.userId,
+            'language': settings.language,
+            'currency': settings.currency,
+            'theme_mode': settings.themeMode,
+            'notifications_enabled': settings.notificationsEnabled,
+            'reminder_time': settings.reminderTime,
+            'sync_settings': settings.syncSettings,
+            'created_at': settings.createdAt.toIso8601String(),
+            'updated_at': settings.updatedAt.toIso8601String(),
+          };
+          await supabase.from('settings').upsert(data);
+          final updatedSettings = settings.copyWith(syncPending: false);
+          await settingsBox.put(updatedSettings.id, updatedSettings);
+        }
+      }
     } catch (e) {
       print('Push local changes error: $e');
       rethrow;
@@ -515,7 +517,7 @@ class SyncService {
   void startPolling(String userId, WidgetRef ref) {
     _pollingTimer?.cancel();
     _pollingTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
-      if (await isOnline()) {
+      if (await isOnline() && ref.context.mounted) {
         ref.read(syncStatusProvider.notifier).state = SyncStatus.polling;
         try {
           final banksData = await supabase

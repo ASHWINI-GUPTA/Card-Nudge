@@ -305,6 +305,16 @@ class SettingsScreen extends ConsumerWidget {
               ),
               child: Column(
                 children: [
+                  SwitchListTile(
+                    title: Text(AppStrings.syncPreference),
+                    value: settings.syncSettings,
+                    subtitle: Text(AppStrings.syncPreferenceSubtitle),
+                    onChanged: (value) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .updateSyncPreference(value);
+                    },
+                  ),
                   ListTile(
                     title: Text(
                       AppStrings.syncData,

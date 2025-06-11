@@ -31,7 +31,7 @@ void main() async {
   await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
 
   // Notification
-  await NotificationService.init();
+  await NotificationService().init();
 
   // Hive
   await Hive.initFlutter();

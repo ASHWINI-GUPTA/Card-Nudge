@@ -112,7 +112,7 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
   Future<void> clearCards() async {
     try {
       for (final card in _box.values) {
-        await NotificationService.cancelNotifications(card.key);
+        await NotificationService().cancelNotifications(card.id);
       }
       await _box.clear();
       _onBoxChange();

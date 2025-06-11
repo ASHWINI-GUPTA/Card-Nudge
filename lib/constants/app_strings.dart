@@ -169,6 +169,9 @@ class AppStrings {
   static const syncDataSuccess = 'Data synced successfully!';
   static const syncDataError = 'Failed to sync data. Please try again.';
   static const syncDataInProgress = 'Syncing data...';
+  static const syncPreference = 'Sync';
+  static const syncPreferenceSubtitle =
+      'Enable to sync your settings and data across devices.';
 
   // Bank Details
   static const bankName = 'Bank Name';
