@@ -52,7 +52,7 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
     bool paymentSaved = false;
     try {
       // Validate payment
-      if (payment.dueAmount <= 0) {
+      if (payment.dueAmount < 0) {
         throw const FormatException(AppStrings.invalidAmountError);
       }
       if (payment.cardId.isEmpty) {
@@ -62,9 +62,8 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
           payment.minimumDueAmount! > payment.dueAmount) {
         throw const FormatException(AppStrings.minimumDueExceedsError);
       }
-      if (payment.isPaid &&
-          (payment.paidAmount <= 0 || payment.paidAmount > payment.dueAmount)) {
-        throw const FormatException(AppStrings.invalidCustomAmountError);
+      if (!payment.isPaid && payment.dueAmount == 0) {
+        throw const FormatException(AppStrings.invalidAmountError);
       }
 
       if (_box.containsKey(payment.id)) {

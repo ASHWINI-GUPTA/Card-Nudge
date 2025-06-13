@@ -1,3 +1,4 @@
+import 'package:card_nudge/data/hive/adapters/card_type_adapter.dart';
 import 'package:card_nudge/data/hive/models/settings_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -13,6 +14,10 @@ class SettingStorage {
 
   static Future<void> initHive() async {
     Hive.registerAdapter(SettingsModelAdapter());
+    Hive.registerAdapter(CurrencyAdapter());
+    Hive.registerAdapter(LanguageAdapter());
+    Hive.registerAdapter(ThemeModeAdapter());
+    Hive.registerAdapter(TimeOfDayAdapter());
     _box = await Hive.openBox<SettingsModel>('settings');
   }
 }

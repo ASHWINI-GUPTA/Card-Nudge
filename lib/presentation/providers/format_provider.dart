@@ -16,69 +16,61 @@ class FormatHelper {
 
   FormatHelper(this.ref);
 
-  // Get current settings from settingsProvider, reactive to changes
-  SettingsModel get _settings => ref.watch(settingsProvider);
-
-  // Get current locale
-  Language get _language => _settings.language;
-
-  // Get current currency code
-  Currency get _currencyCode => _settings.currency;
-
-  // Get currency symbol based on currency code
-  String get _currencySymbol {
-    switch (_currencyCode) {
-      case Currency.INR:
-        return '₹';
-      case Currency.USD:
-        return '\$';
-    }
+  SettingsModel get _settings {
+    return ref
+        .watch(settingsProvider)
+        .maybeWhen(
+          data: (settings) => settings,
+          orElse: () => SettingsModel(userId: 'default'),
+        );
   }
 
-  // Format currency amount with locale-specific formatting
+  Language get _language => _settings.language;
+
+  Currency get _currency => _settings.currency;
+
+  String get _currencySymbol {
+    return _currency.symbol;
+  }
+
   String formatCurrency(
     double amount, {
     bool showSymbol = true,
-    int decimalDigits = 0,
+    int decimalDigits = 2,
+    String? customPattern,
   }) {
     final formatter = NumberFormat.currency(
-      name: _currencyCode.code,
-      locale: _currencyCode.locale,
+      locale: _currency.locale,
       symbol: showSymbol ? _currencySymbol : '',
       decimalDigits: decimalDigits,
+      customPattern: customPattern,
     );
     return formatter.format(amount);
   }
 
-  // Format currency amount in compact form (e.g., ₹1.2K, $5M)
   String formatCurrencyCompact(
     double amount, {
     bool showSymbol = true,
-    int decimalDigits = 0,
+    int decimalDigits = 1,
   }) {
-    final formatter = NumberFormat.compactCurrency(
-      name: _currencyCode.code,
-      locale: _currencyCode.locale,
-      symbol: showSymbol ? _currencySymbol : '',
+    final formatter = NumberFormat.compactSimpleCurrency(
+      locale: _currency.locale,
+      name: showSymbol ? _currency.code : '',
       decimalDigits: decimalDigits,
     );
     return formatter.format(amount);
   }
 
-  // Format date (e.g., June 1)
   String formatShortDate(DateTime date) {
-    final formatter = DateFormat.MMMd(_language.locale);
-    return formatter.format(date);
+    return DateFormat.MMMd(_language.locale).format(date);
   }
 
-  // Format date (e.g., 25/05/2025 or 25-05-2025 based on locale)
-  String formatDate(DateTime date) {
-    final formatter = DateFormat.yMd(_language.locale);
-    return formatter.format(date);
+  String formatDate(DateTime date, {String format = 'yMd'}) {
+    return DateFormat(format, _language.locale).format(date);
   }
 
-  // Format time (e.g., 3:30 PM or 15:30 based on locale)
   String formatTime(TimeOfDay time) {
+    final formatter = DateFormat.jm(_language.locale);
     final now = DateTime.now();
     final dateTime = DateTime(
       now.year,
@@ -87,47 +79,53 @@ class FormatHelper {
       time.hour,
       time.minute,
     );
-    final formatter = DateFormat.jm(_language.locale);
     return formatter.format(dateTime);
   }
 
-  // Format datetime (e.g., 25/05/2025, 3:30 PM)
-  String formatDateTime(DateTime dateTime) {
-    final dateFormatter = DateFormat.yMd(_language.locale);
-    final timeFormatter = DateFormat.jm(_language.locale);
-    return '${dateFormatter.format(dateTime)}, ${timeFormatter.format(dateTime)}';
+  String formatDateTime(
+    DateTime dateTime, {
+    String dateFormat = 'yMd',
+    String timeFormat = 'jm',
+  }) {
+    final dateStr = DateFormat(dateFormat, _language.locale).format(dateTime);
+    final timeStr = DateFormat(timeFormat, _language.locale).format(dateTime);
+    return '$dateStr, $timeStr';
   }
 
-  // Parse date string to DateTime (expects format based on locale)
   DateTime? parseDate(String dateString) {
-    try {
-      final formatter = DateFormat.yMd(_language.locale);
-      return formatter.parse(dateString);
-    } catch (e) {
-      return null;
+    final formats = [
+      DateFormat.yMd(_language.locale),
+      DateFormat('yyyy-MM-dd'),
+      DateFormat('dd/MM/yyyy'),
+      DateFormat('MM/dd/yyyy'),
+    ];
+
+    for (final format in formats) {
+      try {
+        return format.parse(dateString);
+      } catch (_) {}
     }
+    return null;
   }
 
-  // Parse time string to TimeOfDay
   TimeOfDay? parseTime(String timeString) {
-    try {
-      final formatter = DateFormat.jm(_language.locale);
-      final dateTime = formatter.parse(timeString);
-      return TimeOfDay(hour: dateTime.hour, minute: dateTime.minute);
-    } catch (e) {
-      return null;
+    final formats = [
+      DateFormat.jm(_language.locale),
+      DateFormat.Hm(_language.locale),
+      DateFormat('HH:mm'),
+      DateFormat('h:mm a'),
+    ];
+
+    for (final format in formats) {
+      try {
+        final dateTime = format.parse(timeString);
+        return TimeOfDay(hour: dateTime.hour, minute: dateTime.minute);
+      } catch (_) {}
     }
+    return null;
   }
 
-  // Get current date
-  DateTime getCurrentDate() => DateTime.now();
-
-  // Get current time
-  TimeOfDay getCurrentTime() {
-    final now = DateTime.now();
-    return TimeOfDay(hour: now.hour, minute: now.minute);
-  }
-
-  // Get current datetime
-  DateTime getCurrentDateTime() => DateTime.now();
+  // Extension methods for DateTime and TimeOfDay
+  String formatDateTimeExtension(DateTime dateTime) => formatDateTime(dateTime);
+  String formatTimeExtension(TimeOfDay time) => formatTime(time);
 }

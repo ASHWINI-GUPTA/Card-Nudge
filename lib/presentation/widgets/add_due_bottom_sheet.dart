@@ -21,7 +21,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
   final _formKey = GlobalKey<FormState>();
   final _dueAmountController = TextEditingController();
   final _minimumDueController = TextEditingController();
-
+bool _isNoPaymentDue = false;
   bool _isSubmitting = false;
 
   @override
@@ -39,7 +39,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
       final payments = ref.read(paymentBoxProvider);
       final user = ref.watch(userProvider)!;
       final unpaidExists = payments.values.any(
-        (p) => p.cardId == widget.card.id && p.isPaid == false,
+        (p) => p.cardId == widget.card.id && !p.isPaid,
       );
       if (unpaidExists) {
         if (mounted) {
@@ -84,6 +84,71 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
     }
   }
 
+  Future<void> _handleNoPaymentDue() async {
+    setState(() => _isSubmitting = true);
+
+    try {
+      final payments = ref.read(paymentBoxProvider);
+      final unpaidExists = payments.values.any(
+        (p) => p.cardId == widget.card.id && !p.isPaid,
+      );
+      if (unpaidExists) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text(AppStrings.dueAlreadyExist)),
+          );
+        }
+        NavigationService.pop(context);
+        return;
+      }
+      final card = widget.card;
+
+      var payment = PaymentModel(
+        userId: card.userId,
+        cardId: card.id,
+        dueAmount: 0.0,
+        minimumDueAmount: 0.0,
+        dueDate: card.dueDate,
+        statementAmount: 0.0,
+        isPaid: true,
+        paymentDate: DateTime.now(),
+        paidAmount: 0.0,
+        syncPending: true,
+      );
+
+      await ref.read(paymentProvider.notifier).save(payment);
+
+      // Update card
+      final updatedCard = card.copyWith(
+        dueDate: card.dueDate.nextDueDate,
+        billingDate: card.billingDate.nextDueDate,
+        syncPending: true,
+      );
+
+      await ref.read(creditCardListProvider.notifier).save(updatedCard);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(AppStrings.noDuePaymentAddedSuccess)),
+      );
+
+      // Trigger immediate notification check
+      final notificationService = NotificationService();
+      await notificationService.scheduleBackgroundCheck(immediate: true);
+
+      NavigationService.pop(context);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error updating due date: $e')));
+      }
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -120,7 +185,9 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
                     decoration: const InputDecoration(
                       labelText: AppStrings.dueAmountLabel,
                     ),
+enabled: !_isNoPaymentDue,
                     validator: (val) {
+if (_isNoPaymentDue) return null;
                       final v = double.tryParse(val?.trim() ?? '');
                       if (v == null || v <= 0) {
                         return AppStrings.invalidAmountError;
@@ -138,8 +205,11 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
                     decoration: const InputDecoration(
                       labelText: AppStrings.minimumDueLabel,
                     ),
+enabled: !_isNoPaymentDue,
                     validator: (val) {
-                      if (val?.trim().isEmpty ?? true) return null;
+                      if (_isNoPaymentDue || (val?.trim().isEmpty ?? true)) {
+return null;
+}
                       final v = double.tryParse(val!.trim());
                       if (v == null || v <= 0) {
                         return AppStrings.invalidAmountError;
@@ -153,9 +223,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
                       return null;
                     },
                   ),
-
                   const SizedBox(height: 12),
-
                   ListTile(
                     onTap: () {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -174,9 +242,17 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
                     ),
                     trailing: const Icon(Icons.calendar_today),
                   ),
-
+const SizedBox(height: 12),
+                  // No Payment Due Checkbox
+                  CheckboxListTile(
+                    title: const Text(AppStrings.noPaymentDue),
+                    contentPadding: EdgeInsets.zero,
+                    value: _isNoPaymentDue,
+                    onChanged: (value) {
+                      setState(() => _isNoPaymentDue = value ?? false);
+                    },
+                  ),
                   const SizedBox(height: 20),
-
                   // Add Button
                   SizedBox(
                     width: double.infinity,
@@ -185,16 +261,24 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
                           _isSubmitting
                               ? null
                               : () async {
+if (_isNoPaymentDue) {
+                                  await _handleNoPaymentDue();
+                                } else {
                                 final payment = await _submit();
                                 if (payment != null) {
                                   NavigationService.pop(context);
+}
                                 }
                               },
                       icon: const Icon(Icons.add),
                       label:
                           _isSubmitting
                               ? const CircularProgressIndicator()
-                              : Text(AppStrings.addDueButton),
+                              : Text(
+                                _isNoPaymentDue
+                                    ? 'Confirm No Payment Due'
+                                    : AppStrings.addDueButton,
+),
                     ),
                   ),
                   const SizedBox(height: 16),

@@ -21,8 +21,11 @@ class AppStrings {
   static const invalidAmountError = 'Enter a valid amount.';
   static const minimumDueExceedsError = 'Minimum due cannot exceed total due.';
   static const paymentAddedSuccess = 'Payment due added successfully!';
+  static const noDuePaymentAddedSuccess =
+      'No payment due added. You can add it later.';
   static const paymentAddError = 'Failed to add payment due.';
   static const addDueButton = 'Add';
+  static const noPaymentDue = 'No Payment Required';
 
   // Add/Update Card
   static const updateCard = 'Update Card';

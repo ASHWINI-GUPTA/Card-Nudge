@@ -1,3 +1,4 @@
+import 'package:card_nudge/helper/date_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
@@ -55,8 +56,8 @@ class LogPaymentBottomSheet extends ConsumerWidget {
           .firstWhere((c) => c.id == payment.cardId);
 
       final updatedCard = card.copyWith(
-        dueDate: card.dueDate.add(const Duration(days: 30)),
-        billingDate: card.billingDate.add(const Duration(days: 30)),
+        dueDate: card.dueDate.nextDueDate,
+        billingDate: card.billingDate.nextDueDate,
         syncPending: true,
       );
 
