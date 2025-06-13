@@ -66,9 +66,6 @@ class _AuthProgressState extends ConsumerState<AuthProgress> {
     try {
       final syncService = ref.read(syncServiceProvider);
       await syncService.initialSync(user.id);
-      syncService.startRealtimeSubscriptions(user.id, ref);
-      syncService.startPolling(user.id, ref);
-      syncService.startConnectivityListener(ref);
 
       setState(() {
         _isSyncing = false;

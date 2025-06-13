@@ -1,10 +1,12 @@
 import 'package:card_nudge/data/hive/models/credit_card_model.dart';
+import 'package:card_nudge/helper/date_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../constants/app_strings.dart';
 import '../../data/hive/models/payment_model.dart';
 import '../../services/navigation_service.dart';
+import '../providers/credit_card_provider.dart';
 import '../providers/payment_provider.dart';
 import '../providers/user_provider.dart';
 
@@ -21,7 +23,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
   final _formKey = GlobalKey<FormState>();
   final _dueAmountController = TextEditingController();
   final _minimumDueController = TextEditingController();
-bool _isNoPaymentDue = false;
+  bool _isNoPaymentDue = false;
   bool _isSubmitting = false;
 
   @override
@@ -111,7 +113,7 @@ bool _isNoPaymentDue = false;
         dueDate: card.dueDate,
         statementAmount: 0.0,
         isPaid: true,
-        paymentDate: DateTime.now(),
+        paymentDate: DateTime.now().toUtc(),
         paidAmount: 0.0,
         syncPending: true,
       );
@@ -120,8 +122,8 @@ bool _isNoPaymentDue = false;
 
       // Update card
       final updatedCard = card.copyWith(
-        dueDate: card.dueDate.nextDueDate,
-        billingDate: card.billingDate.nextDueDate,
+        dueDate: card.dueDate.next30DayCycleDate,
+        billingDate: card.billingDate.next30DayCycleDate,
         syncPending: true,
       );
 
@@ -132,10 +134,6 @@ bool _isNoPaymentDue = false;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text(AppStrings.noDuePaymentAddedSuccess)),
       );
-
-      // Trigger immediate notification check
-      final notificationService = NotificationService();
-      await notificationService.scheduleBackgroundCheck(immediate: true);
 
       NavigationService.pop(context);
     } catch (e) {
@@ -185,9 +183,9 @@ bool _isNoPaymentDue = false;
                     decoration: const InputDecoration(
                       labelText: AppStrings.dueAmountLabel,
                     ),
-enabled: !_isNoPaymentDue,
+                    enabled: !_isNoPaymentDue,
                     validator: (val) {
-if (_isNoPaymentDue) return null;
+                      if (_isNoPaymentDue) return null;
                       final v = double.tryParse(val?.trim() ?? '');
                       if (v == null || v <= 0) {
                         return AppStrings.invalidAmountError;
@@ -205,11 +203,11 @@ if (_isNoPaymentDue) return null;
                     decoration: const InputDecoration(
                       labelText: AppStrings.minimumDueLabel,
                     ),
-enabled: !_isNoPaymentDue,
+                    enabled: !_isNoPaymentDue,
                     validator: (val) {
                       if (_isNoPaymentDue || (val?.trim().isEmpty ?? true)) {
-return null;
-}
+                        return null;
+                      }
                       final v = double.tryParse(val!.trim());
                       if (v == null || v <= 0) {
                         return AppStrings.invalidAmountError;
@@ -242,7 +240,7 @@ return null;
                     ),
                     trailing: const Icon(Icons.calendar_today),
                   ),
-const SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   // No Payment Due Checkbox
                   CheckboxListTile(
                     title: const Text(AppStrings.noPaymentDue),
@@ -261,13 +259,13 @@ const SizedBox(height: 12),
                           _isSubmitting
                               ? null
                               : () async {
-if (_isNoPaymentDue) {
+                                if (_isNoPaymentDue) {
                                   await _handleNoPaymentDue();
                                 } else {
-                                final payment = await _submit();
-                                if (payment != null) {
-                                  NavigationService.pop(context);
-}
+                                  final payment = await _submit();
+                                  if (payment != null) {
+                                    NavigationService.pop(context);
+                                  }
                                 }
                               },
                       icon: const Icon(Icons.add),
@@ -278,7 +276,7 @@ if (_isNoPaymentDue) {
                                 _isNoPaymentDue
                                     ? 'Confirm No Payment Due'
                                     : AppStrings.addDueButton,
-),
+                              ),
                     ),
                   ),
                   const SizedBox(height: 16),

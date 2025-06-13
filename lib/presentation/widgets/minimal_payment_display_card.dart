@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 import '../../data/hive/models/payment_model.dart';
 import '../providers/format_provider.dart';
@@ -17,6 +16,18 @@ class MinimalPaymentCard extends ConsumerWidget {
 
     final isPaid = payment.isPaid;
     final amount = isPaid ? payment.paidAmount : payment.dueAmount;
+    final paymentLabel = isPaid ? 'Paid' : 'Due';
+    final paymentDate =
+        isPaid
+            ? formatHelper.formatDate(payment.updatedAt)
+            : formatHelper.formatDate(payment.dueDate);
+
+    var paymentSummary = '';
+    if (isPaid && payment.dueAmount == 0) {
+      paymentSummary = '(No Payment Required)';
+    } else if (isPaid && payment.paidAmount != payment.dueAmount) {
+      paymentSummary = '(Partial Payment Made)';
+    }
     return Card(
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -25,22 +36,21 @@ class MinimalPaymentCard extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         child: Row(
           children: [
-            // Amount & Date Info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    formatHelper.formatCurrency(amount, decimalDigits: 2),
+                    '${formatHelper.formatCurrency(amount, decimalDigits: 2)} ${paymentSummary}',
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Due: ${DateFormat.yMMMd().format(payment.dueDate)}',
+                    '${paymentLabel}: ${paymentDate}',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[700],
+                      color: Colors.grey[800],
                     ),
                   ),
                 ],

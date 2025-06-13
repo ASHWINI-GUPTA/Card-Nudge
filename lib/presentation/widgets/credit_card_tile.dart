@@ -232,11 +232,14 @@ class CreditCardTile extends ConsumerWidget {
             // Credit Limit
             _buildInfoTile(
               label: AppStrings.creditLimitLabel,
-              value: formatHelper.formatCurrency(card.creditLimit),
+              value: formatHelper.formatCurrency(
+                card.creditLimit,
+                decimalDigits: 0,
+              ),
             ),
             _buildInfoTile(
               label: AppStrings.totalDue,
-              value: hasDue ? formatHelper.formatCurrency(dueAmount) : '₹0',
+              value: hasDue ? formatHelper.formatCurrency(dueAmount) : '--',
               valueColor: hasDue ? Colors.orangeAccent : Colors.greenAccent,
             ),
             if (statmentGenerated)

@@ -56,8 +56,8 @@ class LogPaymentBottomSheet extends ConsumerWidget {
           .firstWhere((c) => c.id == payment.cardId);
 
       final updatedCard = card.copyWith(
-        dueDate: card.dueDate.nextDueDate,
-        billingDate: card.billingDate.nextDueDate,
+        dueDate: card.dueDate.next30DayCycleDate,
+        billingDate: card.billingDate.next30DayCycleDate,
         syncPending: true,
       );
 

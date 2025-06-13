@@ -17,12 +17,7 @@ class FormatHelper {
   FormatHelper(this.ref);
 
   SettingsModel get _settings {
-    return ref
-        .watch(settingsProvider)
-        .maybeWhen(
-          data: (settings) => settings,
-          orElse: () => SettingsModel(userId: 'default'),
-        );
+    return ref.watch(settingsProvider);
   }
 
   Language get _language => _settings.language;
@@ -65,7 +60,7 @@ class FormatHelper {
     return DateFormat.MMMd(_language.locale).format(date);
   }
 
-  String formatDate(DateTime date, {String format = 'yMd'}) {
+  String formatDate(DateTime date, {String format = 'MMMM d, yyyy'}) {
     return DateFormat(format, _language.locale).format(date);
   }
 
