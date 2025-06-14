@@ -81,9 +81,7 @@ class SettingsScreen extends ConsumerWidget {
                         ),
                         onPressed: () async {
                           await ref.read(supabaseServiceProvider).signOut();
-                          if (context.mounted) {
-                            NavigationService.goToRoute(context, '/auth');
-                          }
+                          NavigationService.goToRoute(context, '/auth');
                         },
                       ),
                     ),

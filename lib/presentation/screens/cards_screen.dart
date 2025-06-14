@@ -18,7 +18,7 @@ class CardsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cardsAsync = ref.watch(creditCardListProvider);
     final theme = Theme.of(context);
-    final user = ref.watch(userProvider);
+    final user = ref.read(userProvider);
     if (user == null) {
       throw Exception('User not found');
     }
