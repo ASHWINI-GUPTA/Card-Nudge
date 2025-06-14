@@ -31,7 +31,6 @@ class CardDetailsScreen extends ConsumerWidget {
             style: theme.textTheme.titleLarge,
           ),
         ),
-        centerTitle: true,
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) => _handleMenuAction(context, ref, value),
@@ -48,22 +47,22 @@ class CardDetailsScreen extends ConsumerWidget {
                     ),
                   ),
                   PopupMenuItem(
-                    value: 'delete',
-                    child: ListTile(
-                      leading: const Icon(Icons.delete),
-                      title: Semantics(
-                        label: AppStrings.deleteCard,
-                        child: Text(AppStrings.deleteCard),
-                      ),
-                    ),
-                  ),
-                  PopupMenuItem(
                     value: 'archive',
                     child: ListTile(
                       leading: const Icon(Icons.archive),
                       title: Semantics(
                         label: AppStrings.archiveCard,
                         child: Text(AppStrings.archiveCard),
+                      ),
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: ListTile(
+                      leading: const Icon(Icons.delete, color: Colors.red),
+                      title: Semantics(
+                        label: AppStrings.deleteCard,
+                        child: Text(AppStrings.deleteCard),
                       ),
                     ),
                   ),
@@ -113,11 +112,28 @@ class CardDetailsScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 8),
                 if (upcoming.isEmpty)
-                  Semantics(
-                    label: AppStrings.noUpcomingDues,
-                    child: Text(
-                      AppStrings.noUpcomingDues,
-                      style: theme.textTheme.bodyMedium,
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary.withAlpha(
+                        (0.1 * 255).toInt(),
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.info, color: theme.colorScheme.primary),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Semantics(
+                            label: AppStrings.noUpcomingDues,
+                            child: Text(
+                              AppStrings.noUpcomingDues,
+                              style: theme.textTheme.bodyMedium,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   )
                 else
@@ -145,11 +161,31 @@ class CardDetailsScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 8),
                 if (history.isEmpty)
-                  Semantics(
-                    label: AppStrings.noPastPayments,
-                    child: Text(
-                      AppStrings.noPastPayments,
-                      style: theme.textTheme.bodyMedium,
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary.withAlpha(
+                        (0.1 * 255).toInt(),
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.payments_outlined,
+                          color: theme.colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Semantics(
+                            label: AppStrings.noPastPayments,
+                            child: Text(
+                              AppStrings.noPastPayments,
+                              style: theme.textTheme.bodyMedium,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   )
                 else

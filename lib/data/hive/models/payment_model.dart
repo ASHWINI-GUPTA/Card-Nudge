@@ -61,7 +61,8 @@ class PaymentModel extends HiveObject {
   }) : id = id ?? const Uuid().v4(),
        createdAt = (createdAt ?? DateTime.now()).toUtc(),
        updatedAt = (updatedAt ?? DateTime.now()).toUtc(),
-       statementAmount = statementAmount ?? dueAmount;
+       statementAmount = statementAmount ?? dueAmount,
+       paymentDate = paymentDate;
 
   PaymentModel copyWith({
     String? cardId,

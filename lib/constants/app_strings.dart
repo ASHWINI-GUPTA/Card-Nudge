@@ -70,13 +70,13 @@ class AppStrings {
   // Card Details
   static const invalidBankError = 'Invalid bank selected.';
   static const cardDetailsTitle = 'Card Details';
-  static const editCard = 'Edit Card';
-  static const deleteCard = 'Delete Card';
-  static const archiveCard = 'Archive Card';
+  static const editCard = 'Edit';
+  static const deleteCard = 'Delete';
+  static const archiveCard = 'Archive';
   static const upcomingPayment = 'Upcoming Payment';
   static const noUpcomingDues = 'No upcoming payments.';
   static const paymentHistory = 'Payment History';
-  static const noPastPayments = 'No past payments yet.';
+  static const noPastPayments = 'No past payments available.';
   static const paymentHistoryItem = 'Payment';
   static const upcomingPaymentCard = 'Upcoming Payment';
   static const cardNotFoundError = 'Card not found.';
@@ -106,9 +106,9 @@ class AppStrings {
 
   // Upcoming Payments
   static const upcomingPaymentsTitle = 'Upcoming Payments';
-  static const noPaymentsMessage = 'No upcoming or overdue payments.';
+  static const noPaymentsMessage = 'No upcoming or overdue payments available.';
   static const addCardButton = 'Add Card';
-  static const addPaymentButton = 'Add Payment';
+  static const addPaymentButton = 'Create Payment Due';
 
   static const invalidCardError = 'Invalid card selected.';
 

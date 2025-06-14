@@ -320,8 +320,8 @@ class SettingsScreen extends ConsumerWidget {
                       AppStrings.syncData,
                       style: TextStyle(color: theme.colorScheme.primary),
                     ),
-                    onTap: () {
-                      ref.read(syncServiceProvider).syncData();
+                    onTap: () async {
+                      await ref.read(syncServiceProvider).syncData();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(AppStrings.syncDataSuccess)),
                       );

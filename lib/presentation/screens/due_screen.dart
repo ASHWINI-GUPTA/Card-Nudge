@@ -212,10 +212,17 @@ class DueScreen extends ConsumerWidget {
     List<CreditCardModel> cards,
   ) {
     final theme = Theme.of(context);
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Icon(
+            Icons.event_busy_outlined,
+            size: 64,
+            color: theme.colorScheme.primary.withValues(alpha: 0.7),
+          ),
+          const SizedBox(height: 16),
           Text(
             AppStrings.noPaymentsMessage,
             style: theme.textTheme.bodyLarge?.copyWith(

@@ -16,55 +16,139 @@ class MinimalPaymentCard extends ConsumerWidget {
 
     final isPaid = payment.isPaid;
     final amount = isPaid ? payment.paidAmount : payment.dueAmount;
-    final paymentLabel = isPaid ? 'Paid' : 'Due';
-    final paymentDate =
-        isPaid
-            ? formatHelper.formatDate(payment.updatedAt)
-            : formatHelper.formatDate(payment.dueDate);
+    final date = isPaid ? payment.paymentDate : payment.dueDate;
 
-    var paymentSummary = '';
-    if (isPaid && payment.dueAmount == 0) {
-      paymentSummary = '(No Payment Required)';
-    } else if (isPaid && payment.paidAmount != payment.dueAmount) {
-      paymentSummary = '(Partial Payment Made)';
-    }
     return Card(
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: const EdgeInsets.symmetric(vertical: 6),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        child: Row(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${formatHelper.formatCurrency(amount, decimalDigits: 2)} ${paymentSummary}',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+            // Amount and Status Row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        formatHelper.formatCurrency(amount, decimalDigits: 2),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                      ),
+                      if (payment.minimumDueAmount != null && !isPaid)
+                        Text(
+                          'Min. Due: ${formatHelper.formatCurrency(payment.minimumDueAmount!)}',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
+                    ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${paymentLabel}: ${paymentDate}',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[800],
+                ),
+                _buildStatusChip(context, isPaid),
+              ],
+            ),
+            const SizedBox(height: 8),
+
+            // Payment Details
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      isPaid ? 'Paid on' : 'Due on',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                    Text(
+                      formatHelper.formatDate(date!),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Statement Amount',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    Text(
+                      formatHelper.formatCurrency(payment.statementAmount),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
 
-            // Paid / Unpaid Icon
-            Icon(
-              isPaid ? Icons.check_circle : Icons.schedule,
-              color: isPaid ? Colors.green : Colors.orange,
-              size: 24,
-            ),
+            if (payment.isPartiallyPaid)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  'Partially Paid: ${formatHelper.formatCurrency(payment.paidAmount)}',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.secondary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildStatusChip(BuildContext context, bool isPaid) {
+    final theme = Theme.of(context);
+    final backgroundColor =
+        isPaid
+            ? theme.colorScheme.primaryContainer
+            : theme.colorScheme.errorContainer;
+    final foregroundColor =
+        isPaid
+            ? theme.colorScheme.onPrimaryContainer
+            : theme.colorScheme.onErrorContainer;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isPaid ? Icons.check_circle : Icons.schedule,
+            size: 16,
+            color: foregroundColor,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            isPaid ? 'Paid' : 'Pending',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: foregroundColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }
