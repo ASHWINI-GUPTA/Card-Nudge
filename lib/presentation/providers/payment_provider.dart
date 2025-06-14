@@ -4,7 +4,10 @@ import '../../data/enums/sync_status.dart';
 import '../../data/hive/models/payment_model.dart';
 import '../../data/hive/storage/payment_storage.dart';
 import '../../constants/app_strings.dart';
+import 'credit_card_provider.dart';
+import 'setting_provider.dart';
 import 'sync_provider.dart';
+import '../../services/notification_service.dart';
 
 final paymentBoxProvider = Provider<Box<PaymentModel>>((ref) {
   return PaymentStorage.getBox();
@@ -78,6 +81,15 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
       state = AsyncValue.data(updatedPayments);
       await _triggerSync();
       paymentSaved = true;
+
+      // Reschedule notifications for this card
+      final cards = ref.read(creditCardListProvider.notifier).sortedOnDueDate;
+      final settings = ref.read(settingsProvider);
+      await NotificationService().rescheduleAllNotifications(
+        cards: cards,
+        payments: updatedPayments,
+        reminderTime: settings.reminderTime,
+      );
     } catch (e, stack) {
       if (paymentSaved) {
         await _box.delete(payment.id);
@@ -114,6 +126,15 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
       await _box.put(paymentId, updatedPayment);
       state = AsyncValue.data(_box.values.toList());
       await _triggerSync();
+
+      // Reschedule notifications for this card
+      final cards = ref.read(creditCardListProvider.notifier).sortedOnDueDate;
+      final settings = ref.read(settingsProvider);
+      await NotificationService().rescheduleAllNotifications(
+        cards: cards,
+        payments: _box.values.toList(),
+        reminderTime: settings.reminderTime,
+      );
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
       ref.read(syncStatusProvider.notifier).state = SyncStatus.error;

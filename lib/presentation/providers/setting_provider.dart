@@ -1,10 +1,13 @@
-import 'package:card_nudge/data/enums/currency.dart';
-import 'package:card_nudge/data/enums/language.dart';
-import 'package:card_nudge/data/hive/models/settings_model.dart';
-import 'package:card_nudge/data/hive/storage/setting_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/enums/currency.dart';
+import '../../data/enums/language.dart';
+import '../../data/hive/models/settings_model.dart';
+import '../../data/hive/storage/credit_card_storage.dart';
+import '../../data/hive/storage/payment_storage.dart';
+import '../../data/hive/storage/setting_storage.dart';
+import '../../services/notification_service.dart';
 import 'user_provider.dart';
 
 final settingsProvider = StateNotifierProvider<SettingsNotifier, SettingsModel>(
@@ -71,10 +74,30 @@ class SettingsNotifier extends StateNotifier<SettingsModel> {
     await _saveSettings(
       state.copyWith(notificationsEnabled: enabled, syncPending: true),
     );
+    // Cancel or reschedule notifications based on toggle
+    if (!enabled) {
+      await NotificationService().cancelAllNotifications();
+    } else {
+      final cards = CreditCardStorage.getBox().values.toList();
+      final payments = PaymentStorage.getBox().values.toList();
+      await NotificationService().rescheduleAllNotifications(
+        cards: cards,
+        payments: payments,
+        reminderTime: state.reminderTime,
+      );
+    }
   }
 
   Future<void> updateReminderTime(TimeOfDay time) async {
     await _saveSettings(state.copyWith(reminderTime: time, syncPending: true));
+    // Reschedule notifications with new time
+    final cards = CreditCardStorage.getBox().values.toList();
+    final payments = PaymentStorage.getBox().values.toList();
+    await NotificationService().rescheduleAllNotifications(
+      cards: cards,
+      payments: payments,
+      reminderTime: time,
+    );
   }
 
   Future<void> updateSyncPreference(bool syncPreference) async {

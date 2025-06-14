@@ -1,4 +1,5 @@
 import 'package:card_nudge/data/hive/models/credit_card_model.dart';
+import 'package:card_nudge/data/hive/models/payment_model.dart';
 import 'package:card_nudge/presentation/providers/user_provider.dart';
 import 'package:card_nudge/services/navigation_service.dart';
 import 'package:flutter/material.dart';
@@ -116,9 +117,7 @@ class CardDetailsScreen extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withAlpha(
-                        (0.1 * 255).toInt(),
-                      ),
+                      color: theme.colorScheme.primary.withAlpha(26),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -165,9 +164,7 @@ class CardDetailsScreen extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withAlpha(
-                        (0.1 * 255).toInt(),
-                      ),
+                      color: theme.colorScheme.primary.withAlpha(26),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -190,20 +187,7 @@ class CardDetailsScreen extends ConsumerWidget {
                     ),
                   )
                 else
-                  ListView.separated(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: history.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 8),
-                    itemBuilder: (context, index) {
-                      final payment = history[index];
-                      return Semantics(
-                        label:
-                            '${AppStrings.paymentHistoryItem}: ${payment.paidAmount}',
-                        child: MinimalPaymentCard(payment: payment),
-                      );
-                    },
-                  ),
+                  _listPayment(history),
               ],
             ),
           );
@@ -231,6 +215,22 @@ class CardDetailsScreen extends ConsumerWidget {
               ),
             ),
       ),
+    );
+  }
+
+  ListView _listPayment(List<PaymentModel> history) {
+    return ListView.separated(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: history.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 0),
+      itemBuilder: (context, index) {
+        final payment = history[index];
+        return Semantics(
+          label: '${AppStrings.paymentHistoryItem}: ${payment.paidAmount}',
+          child: MinimalPaymentCard(payment: payment),
+        );
+      },
     );
   }
 

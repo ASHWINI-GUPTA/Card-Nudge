@@ -37,7 +37,7 @@ class MinimalPaymentCard extends ConsumerWidget {
                     children: [
                       Text(
                         formatHelper.formatCurrency(amount, decimalDigits: 2),
-                        style: theme.textTheme.titleMedium?.copyWith(
+                        style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: theme.colorScheme.onSurface,
                         ),

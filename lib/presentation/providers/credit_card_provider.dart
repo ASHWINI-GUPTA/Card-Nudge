@@ -7,6 +7,7 @@ import '../../data/hive/models/credit_card_model.dart';
 import '../../data/hive/storage/credit_card_storage.dart';
 import '../../services/notification_service.dart';
 import 'payment_provider.dart';
+import 'setting_provider.dart';
 import 'sync_provider.dart';
 
 final creditCardBoxProvider = Provider<Box<CreditCardModel>>((ref) {
@@ -50,6 +51,21 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
       await loadCards();
       await _triggerSync();
       cardSaved = true;
+
+      // Schedule notifications for this card
+      final payments = ref
+          .read(paymentProvider.notifier)
+          .getPaymentsForCard(card.id);
+      final settings = ref.read(settingsProvider);
+      await NotificationService().scheduleBillingAndDueNotifications(
+        cardId: card.id,
+        cardName: card.name,
+        last4Digits: card.last4Digits,
+        billingDate: card.billingDate,
+        dueDate: card.dueDate,
+        payments: payments,
+        reminderTime: settings.reminderTime,
+      );
     } catch (e, stack) {
       if (cardSaved) {
         await _box.delete(card.id);
@@ -102,6 +118,11 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
         await ref.read(paymentBoxProvider).delete(payment.id);
       }
       state = AsyncValue.data(_box.values.toList());
+
+      // Cancel notifications for this card
+      final notification = NotificationService();
+      await notification.cancelDueNotificationsByCardId(card.id);
+      await notification.cancelBillingNotificationByCardId(card.id);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
       ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
@@ -111,9 +132,7 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
 
   Future<void> clearCards() async {
     try {
-      for (final card in _box.values) {
-        await NotificationService().cancelNotifications(card.id);
-      }
+      await NotificationService().cancelAllCardNotifications(state.value ?? []);
       await _box.clear();
       _onBoxChange();
       await _triggerSync();
@@ -127,7 +146,7 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
   // Get sorted cards (use state directly)
   List<CreditCardModel> get sortedOnDueDate => state.value ?? [];
 
-  markArchive(String cardId) {
+  markArchive(String cardId) async {
     state = const AsyncValue.loading();
     try {
       if (!_box.containsKey(cardId)) {
@@ -140,6 +159,11 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
       _onBoxChange();
       ref.read(syncStatusProvider.notifier).state = SyncStatus.syncing;
       _triggerSync();
+
+      // Cancel notifications for archived card
+      final notification = NotificationService();
+      await notification.cancelDueNotificationsByCardId(card.id);
+      await notification.cancelBillingNotificationByCardId(card.id);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
       ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
