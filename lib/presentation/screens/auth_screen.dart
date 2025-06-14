@@ -12,7 +12,7 @@ class AuthScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final supabaseService = ref.read(supabaseServiceProvider);
+    final supabaseProvider = ref.read(supabaseServiceProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -77,7 +77,7 @@ class AuthScreen extends ConsumerWidget {
 
                 // Google Sign-In Button
                 _buildExternalOAuthButton(
-                  onPressed: () => supabaseService.signInWithGoogle(),
+                  onPressed: () => supabaseProvider.signInWithGoogle(),
                   icon: SvgPicture.asset(
                     'assets/icons/google_icon.svg',
                     width: 24,
@@ -89,7 +89,7 @@ class AuthScreen extends ConsumerWidget {
 
                 // GitHub Sign-In Button
                 _buildExternalOAuthButton(
-                  onPressed: () => supabaseService.signInWithGitHub(),
+                  onPressed: () => supabaseProvider.signInWithGitHub(),
                   icon: SvgPicture.asset(
                     'assets/icons/github_icon.svg',
                     width: 24,

@@ -51,7 +51,7 @@ class UserNotifier extends StateNotifier<UserModel?> {
   }
 
   // Clear user data
-  Future<void> clearUserData() async {
+  Future<void> clearUserDetails() async {
     await UserStorage.getBox().clear();
     state = null;
   }
