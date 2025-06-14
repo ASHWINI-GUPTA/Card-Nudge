@@ -1,7 +1,9 @@
+import 'package:card_nudge/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../constants/app_strings.dart';
 import '../providers/supabase_provider.dart';
@@ -12,7 +14,28 @@ class AuthScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final supabaseProvider = ref.read(supabaseServiceProvider);
+    final supabaseProvider = ref.watch(supabaseServiceProvider);
+
+    ref.listen<AsyncValue<AuthState>>(authStateChangesProvider, (
+      previous,
+      next,
+    ) {
+      next.when(
+        data: (authState) {
+          if (authState.session != null) {
+            NavigationService.goToRoute(context, '/sync');
+          }
+        },
+        error: (error, stack) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Authentication error: $error')),
+          );
+        },
+        loading: () {
+          CreditCardColorDotIndicator();
+        },
+      );
+    });
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -38,6 +61,7 @@ class AuthScreen extends ConsumerWidget {
                       'assets/icons/card_nudge.png',
                       width: 64,
                       height: 64,
+                      semanticLabel: 'Card Nudge Logo',
                     ),
                   ),
                 ),
@@ -48,7 +72,7 @@ class AuthScreen extends ConsumerWidget {
                   child: Column(
                     children: [
                       Text(
-                        'Welcome to Card Nudge 🔔',
+                        AppStrings.welcomeTitle,
                         style: Theme.of(
                           context,
                         ).textTheme.headlineSmall?.copyWith(
@@ -56,10 +80,11 @@ class AuthScreen extends ConsumerWidget {
                           color: Colors.blueGrey[900],
                         ),
                         textAlign: TextAlign.center,
+                        semanticsLabel: AppStrings.welcomeTitle,
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Your Credit Card Companion!',
+                        AppStrings.welcomeSubtitle,
                         style: Theme.of(
                           context,
                         ).textTheme.titleMedium?.copyWith(
@@ -77,11 +102,22 @@ class AuthScreen extends ConsumerWidget {
 
                 // Google Sign-In Button
                 _buildExternalOAuthButton(
-                  onPressed: () => supabaseProvider.signInWithGoogle(),
+                  context: context,
+                  ref: ref,
+                  onPressed: () async {
+                    try {
+                      await supabaseProvider.signInWithGoogle();
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Google Sign-In failed: $e')),
+                      );
+                    }
+                  },
                   icon: SvgPicture.asset(
                     'assets/icons/google_icon.svg',
                     width: 24,
                     height: 24,
+                    semanticsLabel: 'Google Icon',
                   ),
                   text: 'Continue with Google',
                 ),
@@ -89,11 +125,22 @@ class AuthScreen extends ConsumerWidget {
 
                 // GitHub Sign-In Button
                 _buildExternalOAuthButton(
-                  onPressed: () => supabaseProvider.signInWithGitHub(),
+                  context: context,
+                  ref: ref,
+                  onPressed: () async {
+                    try {
+                      await supabaseProvider.signInWithGitHub();
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('GitHub Sign-In failed: $e')),
+                      );
+                    }
+                  },
                   icon: SvgPicture.asset(
                     'assets/icons/github_icon.svg',
                     width: 24,
                     height: 24,
+                    semanticsLabel: 'GitHub Icon',
                   ),
                   text: 'Continue with GitHub',
                 ),
@@ -108,7 +155,6 @@ class AuthScreen extends ConsumerWidget {
                       thickness: 1,
                       color: Colors.black12,
                     ),
-
                     FutureBuilder<PackageInfo>(
                       future: PackageInfo.fromPlatform(),
                       builder: (context, snapshot) {
@@ -160,12 +206,23 @@ class AuthScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 14),
                     GestureDetector(
-                      onTap:
-                          () => launchUrl(
-                            Uri.parse(
-                              'https://github.com/ASHWINI-GUPTA/Card-Nudge',
+                      onTap: () async {
+                        final url = Uri.parse(
+                          'https://github.com/ASHWINI-GUPTA/Card-Nudge',
+                        );
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(
+                            url,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Could not open GitHub link'),
                             ),
-                          ),
+                          );
+                        }
+                      },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -173,6 +230,7 @@ class AuthScreen extends ConsumerWidget {
                             'assets/icons/github_icon.svg',
                             width: 20,
                             height: 20,
+                            semanticsLabel: 'GitHub Icon',
                           ),
                           const SizedBox(width: 6),
                           Text(
@@ -197,6 +255,8 @@ class AuthScreen extends ConsumerWidget {
   }
 
   Widget _buildExternalOAuthButton({
+    required BuildContext context,
+    required WidgetRef ref,
     required VoidCallback onPressed,
     required Widget icon,
     required String text,
@@ -222,19 +282,9 @@ class AuthScreen extends ConsumerWidget {
           Text(
             text,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            semanticsLabel: text,
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _creditCardColorDot(Color color) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2.5),
-      child: Container(
-        width: 12,
-        height: 12,
-        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
       ),
     );
   }

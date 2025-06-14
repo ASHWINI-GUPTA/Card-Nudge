@@ -1,6 +1,10 @@
 class AppStrings {
   // App
   static const appTitle = 'Card Nudge 🔔';
+  static const welcomeTitle = 'Welcome to Card Nudge 🔔';
+  static const welcomeSubtitle = 'Your Credit Card Companion!';
+  static const welcomeDescription =
+      'Track your credit cards, payment dues, and never miss a payment again.';
 
   // Button
   static const buttonOk = 'OK';

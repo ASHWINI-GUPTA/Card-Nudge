@@ -32,11 +32,7 @@ final _router = GoRouter(
                   );
                 }
 
-                final isAuthenticated =
-                    ref.watch(supabaseServiceProvider).isAuthenticated;
-
-                // Show loading screen for setup after login
-                if (isAuthenticated) {
+                if (supabaseService.isAuthenticated) {
                   return const AuthProgress();
                 } else {
                   return const AuthScreen();
@@ -66,6 +62,7 @@ final _router = GoRouter(
     GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
     GoRoute(path: '/error', builder: (context, state) => const ErrorScreen()),
     GoRoute(path: '/auth', builder: (context, state) => const AuthScreen()),
+    GoRoute(path: '/sync', builder: (context, state) => const AuthProgress()),
   ],
 );
 
