@@ -13,6 +13,7 @@ class AppStrings {
   static const buttonArchive = 'Archive';
   static const buttonRetry = 'Retry';
   static const buttonUndo = 'Undo';
+  static const buttonHome = 'Home';
 
   static const buttonAddCard = 'Add Card';
   static const buttonUpdateCard = 'Update Card';
@@ -20,6 +21,10 @@ class AppStrings {
 
   // Validation Messages
   static const validationRequired = 'This field is required.';
+
+  // Error Messages
+  static const errorGeneric =
+      'An unexpected error occurred. Please try again or return to the home screen. If the problem persists, contact support.';
 
   // Cards Screen
   static const cardsScreenTitle = 'Your Cards';
