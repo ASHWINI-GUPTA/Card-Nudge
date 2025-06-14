@@ -58,7 +58,7 @@ class _BankBottomSheetState extends ConsumerState<BankBottomSheet> {
     if (_nameController.text.isEmpty || _codeController.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(AppStrings.requiredFieldError)));
+      ).showSnackBar(SnackBar(content: Text(AppStrings.validationRequired)));
       return;
     }
     final colorHex =

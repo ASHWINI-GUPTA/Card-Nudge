@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../constants/app_strings.dart';
 import '../../services/navigation_service.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/user_provider.dart';
+import '../widgets/credit_card_color_dot_indicator.dart';
 import '../widgets/credit_card_tile.dart';
-import '../widgets/empty_state_widget.dart';
+import '../widgets/no_card_available_widget.dart';
 import 'add_card_screen.dart';
 import 'card_details_screen.dart';
 
@@ -24,15 +26,9 @@ class CardsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppStrings.cardsTitle,
+          AppStrings.cardsScreenTitle,
           style: theme.textTheme.titleLarge?.copyWith(color: Colors.white),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.filter_list, color: Colors.white),
-            onPressed: () {}, // Placeholder for future filter
-          ),
-        ],
         backgroundColor: theme.primaryColor,
       ),
       body: RefreshIndicator(
@@ -43,7 +39,7 @@ class CardsScreen extends ConsumerWidget {
           data:
               (cards) =>
                   cards.isEmpty
-                      ? _buildEmptyStateNoCards(context, ref)
+                      ? NoCardAvailableWidget(context: context, ref: ref)
                       : ListView.separated(
                         padding: const EdgeInsets.all(8.0),
                         physics: const BouncingScrollPhysics(),
@@ -58,7 +54,8 @@ class CardsScreen extends ConsumerWidget {
                                   CardDetailsScreen(card: card),
                                 ),
                             child: Semantics(
-                              label: '${AppStrings.cardLabel}: ${card.name}',
+                              label:
+                                  '${AppStrings.cardsScreenTitle}: ${card.name}',
                               child: CreditCardTile(
                                 key: ValueKey(card.id),
                                 card: card,
@@ -67,16 +64,16 @@ class CardsScreen extends ConsumerWidget {
                           );
                         },
                       ),
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const Center(child: CreditCardColorDotIndicator()),
           error:
               (error, stack) => Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Semantics(
-                      label: AppStrings.cardLoadError,
+                      label: AppStrings.cardsScreenErrorTitle,
                       child: Text(
-                        '${AppStrings.cardLoadError}: $error',
+                        '${AppStrings.cardsScreenErrorTitle}: $error',
                         style: Theme.of(context).textTheme.bodyLarge,
                         textAlign: TextAlign.center,
                       ),
@@ -84,7 +81,7 @@ class CardsScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => ref.invalidate(creditCardListProvider),
-                      child: Text(AppStrings.retryButtonLabel),
+                      child: Text(AppStrings.buttonRetry),
                     ),
                   ],
                 ),
@@ -92,28 +89,17 @@ class CardsScreen extends ConsumerWidget {
         ),
       ),
       floatingActionButton: Semantics(
-        label: AppStrings.addCard,
+        label: AppStrings.buttonAddCard,
         child: FloatingActionButton(
           onPressed:
               () => NavigationService.navigateTo(
                 context,
                 AddCardScreen(user: user),
               ),
-          tooltip: AppStrings.addCard,
+          tooltip: AppStrings.buttonAddCard,
           child: const Icon(Icons.add),
         ),
       ),
-    );
-  }
-
-  Widget _buildEmptyStateNoCards(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider)!;
-    return EmptyStateWidget(
-      message: AppStrings.noCardsMessage,
-      buttonText: AppStrings.addCardButton,
-      onButtonPressed:
-          () =>
-              NavigationService.navigateTo(context, AddCardScreen(user: user)),
     );
   }
 }

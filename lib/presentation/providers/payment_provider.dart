@@ -56,7 +56,7 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
         throw const FormatException(AppStrings.invalidAmountError);
       }
       if (payment.cardId.isEmpty) {
-        throw const FormatException(AppStrings.requiredFieldError);
+        throw const FormatException(AppStrings.validationRequired);
       }
       if (payment.minimumDueAmount != null &&
           payment.minimumDueAmount! > payment.dueAmount) {

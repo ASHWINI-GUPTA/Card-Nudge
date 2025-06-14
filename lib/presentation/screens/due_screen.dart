@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+
 import '../../constants/app_strings.dart';
 import '../../data/hive/models/bank_model.dart';
 import '../../data/hive/models/credit_card_model.dart';
@@ -17,8 +18,10 @@ import '../providers/payment_provider.dart';
 import '../providers/user_provider.dart';
 import '../screens/add_card_screen.dart';
 import '../widgets/add_due_bottom_sheet.dart';
+import '../widgets/credit_card_color_dot_indicator.dart';
 import '../widgets/empty_state_widget.dart';
 import '../widgets/filter_bottom_sheet.dart';
+import '../widgets/no_card_available_widget.dart';
 import '../widgets/payment_log_sheet.dart';
 
 class DueScreen extends ConsumerWidget {
@@ -52,7 +55,7 @@ class DueScreen extends ConsumerWidget {
       body: cardsAsync.when(
         data: (cards) {
           if (cards.isEmpty) {
-            return _buildEmptyStateNoCards(context, ref);
+            return NoCardAvailableWidget(context: context, ref: ref);
           }
           return RefreshIndicator(
             onRefresh: () async {
@@ -63,21 +66,21 @@ class DueScreen extends ConsumerWidget {
             child: _buildPaymentList(context, ref, cards),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: CreditCardColorDotIndicator()),
         error:
             (error, stack) => Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '${AppStrings.cardLoadError}: $error',
+                    '${AppStrings.cardsScreenErrorTitle}: $error',
                     style: theme.textTheme.bodyLarge,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => ref.invalidate(creditCardListProvider),
-                    child: Text(AppStrings.retryButtonLabel),
+                    child: Text(AppStrings.buttonRetry),
                   ),
                 ],
               ),
@@ -89,8 +92,8 @@ class DueScreen extends ConsumerWidget {
   Widget _buildEmptyStateNoCards(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider)!;
     return EmptyStateWidget(
-      message: AppStrings.noCardsMessage,
-      buttonText: AppStrings.addCardButton,
+      message: AppStrings.cardsScreenEmptyStateTitle,
+      buttonText: AppStrings.buttonAddCard,
       onButtonPressed:
           () =>
               NavigationService.navigateTo(context, AddCardScreen(user: user)),
@@ -163,7 +166,7 @@ class DueScreen extends ConsumerWidget {
               },
             );
           },
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const Center(child: CreditCardColorDotIndicator()),
           error:
               (error, stack) => Center(
                 child: Column(
@@ -177,14 +180,14 @@ class DueScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => ref.invalidate(bankProvider),
-                      child: Text(AppStrings.retryButtonLabel),
+                      child: Text(AppStrings.buttonRetry),
                     ),
                   ],
                 ),
               ),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: CreditCardColorDotIndicator()),
       error:
           (error, stack) => Center(
             child: Column(
@@ -198,7 +201,7 @@ class DueScreen extends ConsumerWidget {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () => ref.invalidate(paymentProvider),
-                  child: Text(AppStrings.retryButtonLabel),
+                  child: Text(AppStrings.buttonRetry),
                 ),
               ],
             ),

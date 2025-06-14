@@ -9,6 +9,7 @@ import '../providers/credit_card_provider.dart';
 import '../providers/format_provider.dart';
 import '../providers/payment_provider.dart';
 import '../providers/user_provider.dart';
+import '../widgets/credit_card_color_dot_indicator.dart';
 import '../widgets/dashboard_alert_card.dart';
 import '../widgets/dashboard_card.dart';
 import '../widgets/dashboard_month_widget.dart';
@@ -69,7 +70,7 @@ class DashboardScreen extends ConsumerWidget {
             (cards) => paymentsAsync.when(
               data:
                   (payments) => _buildDashboard(context, ref, cards, payments),
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CreditCardColorDotIndicator()),
               error:
                   (error, stack) => Center(
                     child: Text(
@@ -79,11 +80,11 @@ class DashboardScreen extends ConsumerWidget {
                     ),
                   ),
             ),
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: CreditCardColorDotIndicator()),
         error:
             (error, stack) => Center(
               child: Text(
-                '${AppStrings.cardLoadError}: $error',
+                '${AppStrings.cardsScreenErrorTitle}: $error',
                 style: theme.textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),

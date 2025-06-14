@@ -174,7 +174,9 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.card == null ? AppStrings.addCard : AppStrings.updateCard,
+          widget.card == null
+              ? AppStrings.addCardScreenTitle
+              : AppStrings.updateCardScreenTitle,
           style: Theme.of(context).textTheme.titleLarge,
         ),
       ),
@@ -187,12 +189,12 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
               TextFormField(
                 controller: _cardNameController,
                 decoration: const InputDecoration(
-                  labelText: AppStrings.cardLabel,
+                  labelText: AppStrings.cardNameLabel,
                 ),
                 validator:
                     (v) =>
                         v == null || v.trim().isEmpty
-                            ? AppStrings.requiredFieldError
+                            ? AppStrings.validationRequired
                             : null,
               ),
               spacing,
@@ -278,7 +280,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                 validator:
                     (v) =>
                         v == null || v.trim().isEmpty
-                            ? AppStrings.requiredFieldError
+                            ? AppStrings.validationRequired
                             : null,
               ),
               spacing,
@@ -308,7 +310,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                 validator:
                     (v) =>
                         v == null || v.trim().isEmpty
-                            ? AppStrings.requiredFieldError
+                            ? AppStrings.validationRequired
                             : null,
               ),
               spacing,

@@ -8,6 +8,7 @@ import '../../data/hive/models/credit_card_model.dart';
 import '../../data/hive/models/bank_model.dart';
 import '../providers/bank_provider.dart';
 import '../providers/payment_provider.dart';
+import 'credit_card_color_dot_indicator.dart';
 
 class CreditCardTile extends ConsumerWidget {
   final CreditCardModel card;
@@ -37,7 +38,7 @@ class CreditCardTile extends ConsumerWidget {
           child: _buildCard(context, ref, theme, bank),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: CreditCardColorDotIndicator()),
       error:
           (error, _) => Center(
             child: Column(
@@ -51,7 +52,7 @@ class CreditCardTile extends ConsumerWidget {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () => ref.invalidate(bankProvider),
-                  child: const Text(AppStrings.retryButtonLabel),
+                  child: const Text(AppStrings.buttonRetry),
                 ),
               ],
             ),
@@ -124,7 +125,7 @@ class CreditCardTile extends ConsumerWidget {
                 ),
               );
             },
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => const Center(child: CreditCardColorDotIndicator()),
             error:
                 (error, _) => Center(
                   child: Column(
@@ -138,7 +139,7 @@ class CreditCardTile extends ConsumerWidget {
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () => ref.invalidate(paymentProvider),
-                        child: const Text(AppStrings.retryButtonLabel),
+                        child: const Text(AppStrings.buttonRetry),
                       ),
                     ],
                   ),

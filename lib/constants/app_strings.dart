@@ -1,15 +1,58 @@
 class AppStrings {
+  // App
   static const appTitle = 'Card Nudge 🔔';
 
-  // Dashboard
-  static const dashboardTitle = 'Nudge 🔔';
+  // Button
+  static const buttonOk = 'OK';
+  static const buttonCancel = 'Cancel';
+  static const buttonClose = 'Close';
+  static const buttonSave = 'Save';
+  static const buttonAdd = 'Add';
+  static const buttonDelete = 'Delete';
+  static const buttonEdit = 'Edit';
+  static const buttonArchive = 'Archive';
+  static const buttonRetry = 'Retry';
+  static const buttonUndo = 'Undo';
 
-  // Cards
-  static const cardsTitle = 'Cards';
-  static const noCardsMessage = 'No cards added yet.';
-  static const errorLoadingCards = 'Couldn\'t load cards. Try again.';
-  static const retryButtonLabel = 'Retry';
-  static const addCard = 'Add New Card';
+  static const buttonAddCard = 'Add Card';
+  static const buttonUpdateCard = 'Update Card';
+  static const buttonAddPayment = 'Create Payment Due';
+
+  // Validation Messages
+  static const validationRequired = 'This field is required.';
+
+  // Cards Screen
+  static const cardsScreenTitle = 'Your Cards';
+  static const cardsScreenSubtitle = 'Manage your credit cards and payments';
+  static const cardsScreenDescription =
+      'Keep track of your credit cards, payment dues, and upcoming payments.';
+  static const cardsScreenEmptyStateTitle = 'No Cards Added';
+  static const cardsScreenEmptyStateSubtitle =
+      'Add your credit cards to start tracking payments and dues.';
+  static const cardsScreenErrorTitle = 'Error Loading Cards';
+  static const cardsScreenErrorSubtitle =
+      'There was an error loading your cards. Please try again later.';
+
+  // Cards Details Screen
+  static const cardDetailsScreenTitle = 'Card Details';
+  static const cardDetailsScreenSubtitle = 'View and manage your card details';
+  static const cardDetailsScreenDescription =
+      'View your card details, upcoming payments, and payment history.';
+
+  // Add/Update Card Screen
+  static const addCardScreenTitle = 'Add Card';
+  static const updateCardScreenTitle = 'Update Card';
+  static const addCardScreenSubtitle = 'Add a new credit card';
+  static const updateCardScreenSubtitle = 'Update your credit card details';
+  static const addCardScreenDescription =
+      'Enter your card details to start tracking payments and dues.';
+  static const updateCardScreenDescription =
+      'Update your card details to keep your payment information current.';
+  static const cardNameLabel = 'Card Name *';
+  static const cardNameHint = 'Enter card name';
+  static const cardNameError = 'Card name is required.';
+  static const bankLabel = 'Bank *';
+  static const bankHint = 'Select your bank';
 
   // Payment Due Bottom Sheet
   static const addPaymentDue = 'Add Payment Due';
@@ -28,15 +71,13 @@ class AppStrings {
   static const noPaymentDue = 'No Payment Required';
 
   // Add/Update Card
-  static const updateCard = 'Update Card';
+
   static const cardLabel = 'Card Name';
-  static const bankLabel = 'Bank';
   static const networkLabel = 'Card Network';
   static const last4DigitsLabel = 'Last 4 Digits';
   static const billingDateLabel = 'Billing Date';
   static const dueDateLabel = 'Due Date';
   static const creditLimitLabel = 'Credit Limit';
-  static const requiredFieldError = 'This field is required.';
   static const last4DigitsError = 'Enter exactly 4 digits.';
   static const invalidCreditLimitError = 'Enter a valid positive amount.';
   static const selectDatesError = 'Please select billing and due dates.';
@@ -65,7 +106,6 @@ class AppStrings {
   static const paymentNotFoundError = 'Payment not found.';
 
   // Card List
-  static const cardLoadError = 'Couldn\'t load cards.';
 
   // Card Details
   static const invalidBankError = 'Invalid bank selected.';
@@ -106,7 +146,7 @@ class AppStrings {
 
   // Upcoming Payments
   static const upcomingPaymentsTitle = 'Upcoming Payments';
-  static const noPaymentsMessage = 'No upcoming or overdue payments available.';
+  static const noPaymentsMessage = 'No Upcoming or Overdue Payments available.';
   static const addCardButton = 'Add Card';
   static const addPaymentButton = 'Create Payment Due';
 

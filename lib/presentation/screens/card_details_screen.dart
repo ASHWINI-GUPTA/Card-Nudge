@@ -7,6 +7,7 @@ import '../../constants/app_strings.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/payment_provider.dart';
 import '../widgets/add_due_bottom_sheet.dart';
+import '../widgets/credit_card_color_dot_indicator.dart';
 import '../widgets/credit_card_tile.dart';
 import '../widgets/minimal_payment_display_card.dart';
 import '../widgets/payment_log_sheet.dart';
@@ -207,7 +208,7 @@ class CardDetailsScreen extends ConsumerWidget {
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: CreditCardColorDotIndicator()),
         error:
             (error, stack) => Center(
               child: Column(
@@ -224,7 +225,7 @@ class CardDetailsScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => ref.invalidate(paymentProvider),
-                    child: Text(AppStrings.retryButtonLabel),
+                    child: Text(AppStrings.buttonRetry),
                   ),
                 ],
               ),
