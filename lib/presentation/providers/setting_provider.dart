@@ -122,4 +122,8 @@ class SettingsNotifier extends StateNotifier<SettingsModel> {
       state.copyWith(syncSettings: syncPreference, syncPending: true),
     );
   }
+
+  void refresh() {
+    _loadSettings();
+  }
 }

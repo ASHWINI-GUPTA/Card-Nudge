@@ -4,6 +4,7 @@ import 'package:card_nudge/data/enums/currency.dart';
 import 'package:card_nudge/data/enums/language.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -12,6 +13,7 @@ import '../data/hive/models/bank_model.dart';
 import '../data/hive/models/credit_card_model.dart';
 import '../data/hive/models/payment_model.dart';
 import '../data/hive/models/settings_model.dart';
+import '../presentation/providers/setting_provider.dart';
 
 class SyncService {
   final SupabaseClient supabase;
@@ -21,6 +23,7 @@ class SyncService {
   final Box<SettingsModel> settingsBox;
   final Connectivity connectivity;
   final defaultSettingId = '00000000-0000-0000-0000-000000000000';
+  final Ref ref;
 
   SyncService({
     required this.supabase,
@@ -29,6 +32,7 @@ class SyncService {
     required this.paymentBox,
     required this.settingsBox,
     required this.connectivity,
+    required this.ref,
   });
 
   Future<bool> isOnline() async {
@@ -242,6 +246,7 @@ class SyncService {
             syncPending: false,
           );
           await settingsBox.put(defaultSettingId, setting);
+          ref.watch(settingsProvider.notifier).refresh();
         } else if (localSetting.syncPending && !localSetting.isDefaultSetting) {
           await supabase.from('settings').upsert(localSetting);
           final updatedSetting = localSetting.copyWith(syncPending: false);

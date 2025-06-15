@@ -26,5 +26,6 @@ final syncServiceProvider = Provider<SyncService>((ref) {
     paymentBox: paymentBox,
     settingsBox: settingsBox,
     connectivity: connectivity,
+    ref: ref,
   );
 });

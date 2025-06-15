@@ -1,4 +1,5 @@
 import 'package:card_nudge/presentation/screens/dashboard_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -23,9 +24,12 @@ class AppRoutes {
   static const String dashboard = '/dashboard';
 }
 
+final notificationNavigatorKey = GlobalKey<NavigatorState>();
+
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: AppRoutes.root,
+    navigatorKey: notificationNavigatorKey,
     redirect: (context, state) {
       final supabaseService = ref.read(supabaseServiceProvider);
       final isAuthenticated = supabaseService.isAuthenticated;
