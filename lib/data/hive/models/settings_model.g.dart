@@ -17,8 +17,7 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return SettingsModel(
-      id: fields[0] as String?,
-      userId: fields[1] as String,
+      userId: fields[1] as String?,
       language: fields[2] as Language,
       currency: fields[3] as Currency,
       themeMode: fields[4] as ThemeMode,
@@ -34,9 +33,7 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
   @override
   void write(BinaryWriter writer, SettingsModel obj) {
     writer
-      ..writeByte(11)
-      ..writeByte(0)
-      ..write(obj.id)
+      ..writeByte(10)
       ..writeByte(1)
       ..write(obj.userId)
       ..writeByte(2)

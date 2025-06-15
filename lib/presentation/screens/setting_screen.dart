@@ -7,6 +7,7 @@ import '../../constants/app_strings.dart';
 import '../../data/enums/currency.dart';
 import '../../data/enums/language.dart';
 import '../../services/navigation_service.dart';
+import '../../services/notification_service.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/payment_provider.dart';
 import '../providers/setting_provider.dart';
@@ -331,6 +332,16 @@ class SettingsScreen extends ConsumerWidget {
                       style: TextStyle(color: theme.colorScheme.error),
                     ),
                     onTap: () => _showClearDataDialog(context, ref),
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Demo Notfications',
+                      style: TextStyle(color: theme.colorScheme.primary),
+                    ),
+                    onTap:
+                        () => ref
+                            .read(notificationServiceProvider)
+                            .demoInsight(context: context, dueCount: 2),
                   ),
                 ],
               ),

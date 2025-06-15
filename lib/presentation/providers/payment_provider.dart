@@ -85,7 +85,8 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
       // Reschedule notifications for this card
       final cards = ref.read(creditCardListProvider.notifier).sortedOnDueDate;
       final settings = ref.read(settingsProvider);
-      await NotificationService().rescheduleAllNotifications(
+      final notificationProvider = ref.read(notificationServiceProvider);
+      await notificationProvider.rescheduleAllNotifications(
         cards: cards,
         payments: updatedPayments,
         reminderTime: settings.reminderTime,
@@ -130,7 +131,9 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
       // Reschedule notifications for this card
       final cards = ref.read(creditCardListProvider.notifier).sortedOnDueDate;
       final settings = ref.read(settingsProvider);
-      await NotificationService().rescheduleAllNotifications(
+      final notificationProvider = ref.read(notificationServiceProvider);
+
+      await notificationProvider.rescheduleAllNotifications(
         cards: cards,
         payments: _box.values.toList(),
         reminderTime: settings.reminderTime,

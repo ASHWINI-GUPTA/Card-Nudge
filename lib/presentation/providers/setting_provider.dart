@@ -13,37 +13,53 @@ import 'user_provider.dart';
 final settingsProvider = StateNotifierProvider<SettingsNotifier, SettingsModel>(
   (ref) {
     final user = ref.watch(userProvider);
-    final userId =
-        user == null ? '00000000-0000-0000-0000-000000000000' : user.id;
-    return SettingsNotifier(userId);
+    final userId = user?.id ?? '00000000-0000-0000-0000-000000000000';
+    return SettingsNotifier(ref, userId);
   },
 );
 
 class SettingsNotifier extends StateNotifier<SettingsModel> {
-  final String _userId;
+  final Ref _ref;
+  String _userId;
 
-  SettingsNotifier(this._userId) : super(SettingsModel(userId: _userId)) {
+  final defaultSettingId = '00000000-0000-0000-0000-000000000000';
+
+  SettingsNotifier(this._ref, this._userId)
+    : super(SettingsModel(userId: _userId)) {
     _loadSettings();
   }
 
   Future<void> _loadSettings() async {
     try {
       final box = SettingStorage.getBox();
-      // Adding Default Settings if box is empty
       final setting = box.values.first;
+      // Update userId in box if needed
+      if (setting.userId != _userId) {
+        setting.userId = _userId;
+        await box.put(defaultSettingId, setting);
+      }
       state = setting;
     } catch (e) {
       print('Error loading settings: $e');
     }
   }
 
+  Future<void> updateUserId(String newUserId) async {
+    _userId = newUserId;
+    final box = SettingStorage.getBox();
+    final setting = box.values.first;
+    if (setting.userId != newUserId) {
+      setting.userId = newUserId;
+      await box.put(defaultSettingId, setting);
+      state = setting;
+    }
+  }
+
   Future<void> _saveSettings(SettingsModel newState) async {
     try {
       final box = SettingStorage.getBox();
-      // Update UserId
       newState.userId = _userId;
-      // As there is only one setting in Store, newState.id will have the id of default setting.
-      await box.put(newState.id, newState);
+      await box.put(defaultSettingId, newState);
       state = newState;
     } catch (e) {
       print('Error saving settings: $e');
@@ -73,28 +89,15 @@ class SettingsNotifier extends StateNotifier<SettingsModel> {
       state.copyWith(notificationsEnabled: enabled, syncPending: true),
     );
     // Cancel or reschedule notifications based on toggle
+    final notificationProvider = _ref.read(notificationServiceProvider);
     if (!enabled) {
-      await NotificationService().cancelAllNotifications();
+      await notificationProvider.cancelAllNotifications();
     } else {
       final cards = CreditCardStorage.getBox().values.toList();
       final payments = PaymentStorage.getBox().values.toList();
-      await NotificationService().rescheduleAllNotifications(
+      await notificationProvider.rescheduleAllNotifications(
         cards: cards,
-        payments: payments,
-        reminderTime: state.reminderTime,
-      );
-      // Schedule daily insight
-      final dueCount =
-          payments
-              .where(
-                (p) =>
-                    !p.isPaid &&
-                    p.dueDate.difference(DateTime.now()).inDays >= 0 &&
-                    p.dueDate.difference(DateTime.now()).inDays <= 7,
-              )
-              .length;
-      await NotificationService().scheduleDailyInsight(
-        dueCount: dueCount,
+        payments: payments.where((p) => !p.isPaid).toList(),
         reminderTime: state.reminderTime,
       );
     }
@@ -105,23 +108,11 @@ class SettingsNotifier extends StateNotifier<SettingsModel> {
     // Reschedule notifications with new time
     final cards = CreditCardStorage.getBox().values.toList();
     final payments = PaymentStorage.getBox().values.toList();
-    await NotificationService().rescheduleAllNotifications(
+
+    final notificationProvider = _ref.read(notificationServiceProvider);
+    await notificationProvider.rescheduleAllNotifications(
       cards: cards,
-      payments: payments,
-      reminderTime: time,
-    );
-    // Schedule daily insight
-    final dueCount =
-        payments
-            .where(
-              (p) =>
-                  !p.isPaid &&
-                  p.dueDate.difference(DateTime.now()).inDays >= 0 &&
-                  p.dueDate.difference(DateTime.now()).inDays <= 7,
-            )
-            .length;
-    await NotificationService().scheduleDailyInsight(
-      dueCount: dueCount,
+      payments: payments.where((p) => !p.isPaid).toList(),
       reminderTime: time,
     );
   }

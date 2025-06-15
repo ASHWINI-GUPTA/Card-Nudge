@@ -57,7 +57,8 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
           .read(paymentProvider.notifier)
           .getPaymentsForCard(card.id);
       final settings = ref.read(settingsProvider);
-      await NotificationService().scheduleBillingAndDueNotifications(
+      final notificationProvider = ref.read(notificationServiceProvider);
+      await notificationProvider.scheduleCardNotifications(
         cardId: card.id,
         cardName: card.name,
         last4Digits: card.last4Digits,
@@ -120,9 +121,8 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
       state = AsyncValue.data(_box.values.toList());
 
       // Cancel notifications for this card
-      final notification = NotificationService();
-      await notification.cancelDueNotificationsByCardId(card.id);
-      await notification.cancelBillingNotificationByCardId(card.id);
+      final notificationProvider = ref.read(notificationServiceProvider);
+      await notificationProvider.cancelCardNotifications(card.id);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
       ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
@@ -132,7 +132,8 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
 
   Future<void> clearCards() async {
     try {
-      await NotificationService().cancelAllCardNotifications(state.value ?? []);
+      final notificationProvider = ref.read(notificationServiceProvider);
+      await notificationProvider.cancelAllCardNotifications(state.value ?? []);
       await _box.clear();
       _onBoxChange();
       await _triggerSync();
@@ -161,9 +162,8 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
       _triggerSync();
 
       // Cancel notifications for archived card
-      final notification = NotificationService();
-      await notification.cancelDueNotificationsByCardId(card.id);
-      await notification.cancelBillingNotificationByCardId(card.id);
+      final notificationProvider = ref.read(notificationServiceProvider);
+      await notificationProvider.cancelCardNotifications(card.id);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
       ref.read(syncStatusProvider.notifier).state = SyncStatus.error;

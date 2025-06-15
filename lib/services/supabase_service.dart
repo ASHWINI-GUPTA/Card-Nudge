@@ -1,3 +1,4 @@
+import 'package:card_nudge/presentation/providers/setting_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -118,6 +119,8 @@ class SupabaseService {
                 metadata['picture']?.toString() ??
                 '',
           );
+      // Update it in Setting too.
+      await _ref.read(settingsProvider.notifier).updateUserId(user.id);
     } catch (e) {
       throw AuthException('Failed to sync user details: ${e.toString()}');
     }

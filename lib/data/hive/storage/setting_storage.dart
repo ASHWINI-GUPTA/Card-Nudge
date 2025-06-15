@@ -26,18 +26,17 @@ class SettingStorage {
     _box = await Hive.openBox<SettingsModel>('settings');
 
     if (_box!.isEmpty) {
-      final uuid = const Uuid().v4();
       _box!.put(
-        uuid,
+        '00000000-0000-0000-0000-000000000000',
         SettingsModel(
-          id: uuid,
-          userId: '1',
           language: Language.en,
           currency: Currency.INR,
           themeMode: ThemeMode.system,
           notificationsEnabled: true,
           reminderTime: const TimeOfDay(hour: 9, minute: 0),
           syncSettings: false,
+          updatedAt: DateTime(2012, 12, 12),
+          createdAt: DateTime(2012, 12, 12),
         ),
       );
     }

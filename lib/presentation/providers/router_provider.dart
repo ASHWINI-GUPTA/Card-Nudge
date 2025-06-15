@@ -1,14 +1,15 @@
+import 'package:card_nudge/presentation/screens/dashboard_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../providers/supabase_provider.dart';
 import '../screens/auth_progress_screen.dart';
 import '../screens/auth_screen.dart';
-import '../screens/home_screen.dart';
 import '../screens/error_screen.dart';
 import '../screens/card_details_screen.dart';
 import '../providers/credit_card_provider.dart';
 import '../screens/setting_screen.dart';
+import '../screens/home_screen.dart';
 
 class AppRoutes {
   static const String root = '/';
@@ -19,23 +20,22 @@ class AppRoutes {
   static const String sync = '/sync';
   static const String error = '/error';
   static const String cardDetails = '/cards/:cardId';
+  static const String dashboard = '/dashboard';
 }
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: AppRoutes.root,
-    redirect: (context, state) async {
+    redirect: (context, state) {
       final supabaseService = ref.read(supabaseServiceProvider);
       final isAuthenticated = supabaseService.isAuthenticated;
       final isLoggingIn =
           state.matchedLocation == AppRoutes.auth ||
           state.matchedLocation == AppRoutes.loginCallback;
 
-      // Redirect unauthenticated users to /auth unless they're logging in
       if (!isAuthenticated && !isLoggingIn) {
         return AppRoutes.auth;
       }
-      // Redirect authenticated users from /auth to /home
       if (isAuthenticated && state.matchedLocation == AppRoutes.auth) {
         return AppRoutes.home;
       }
@@ -46,50 +46,52 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.root,
         name: 'root',
         builder: (context, state) {
-          // If authenticated, show HomeScreen; otherwise, show AuthScreen
           final isAuthenticated =
               ref.watch(supabaseServiceProvider).isAuthenticated;
-          return isAuthenticated ? const HomeScreen() : const AuthScreen();
+          return isAuthenticated ? const AuthProgress() : const AuthScreen();
         },
-        routes: [
-          GoRoute(
-            path: AppRoutes.home.replaceFirst(AppRoutes.root, ''),
-            name: 'home',
-            builder: (context, state) => const HomeScreen(),
-          ),
-          GoRoute(
-            path: AppRoutes.settings.replaceFirst(AppRoutes.root, ''),
-            name: 'settings',
-            builder: (context, state) => const SettingsScreen(),
-          ),
-          GoRoute(
-            path: AppRoutes.cardDetails.replaceFirst(AppRoutes.root, ''),
-            name: 'cardDetails',
-            builder: (context, state) {
-              final cardId = state.pathParameters['cardId']!;
-              final isAuthenticated =
-                  ref.watch(supabaseServiceProvider).isAuthenticated;
+      ),
+      GoRoute(
+        path: AppRoutes.home,
+        name: 'home',
+        builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settings,
+        name: 'settings',
+        builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.dashboard,
+        name: 'dashboard',
+        builder: (context, state) => const DashboardScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.cardDetails,
+        name: 'cardDetails',
+        builder: (context, state) {
+          final cardId = state.pathParameters['cardId']!;
+          final isAuthenticated =
+              ref.watch(supabaseServiceProvider).isAuthenticated;
 
-              if (!isAuthenticated) {
-                return const AuthScreen();
-              }
+          if (!isAuthenticated) {
+            return const AuthScreen();
+          }
 
-              final cardProvider = ref.watch(creditCardListProvider);
-              final cards = cardProvider.valueOrNull;
+          final cardProvider = ref.watch(creditCardListProvider);
+          final cards = cardProvider.valueOrNull;
 
-              if (cards == null) {
-                return const ErrorScreen(message: 'Cards not found.');
-              }
-              final card = cards.where((c) => c.id == cardId).firstOrNull;
+          if (cards == null) {
+            return const ErrorScreen(message: 'Cards not found.');
+          }
+          final card = cards.where((c) => c.id == cardId).firstOrNull;
 
-              if (card == null) {
-                return ErrorScreen(message: 'Card with ID $cardId not found.');
-              }
+          if (card == null) {
+            return ErrorScreen(message: 'Card with ID $cardId not found.');
+          }
 
-              return CardDetailsScreen(card: card);
-            },
-          ),
-        ],
+          return CardDetailsScreen(card: card);
+        },
       ),
       GoRoute(
         path: AppRoutes.auth,
@@ -106,10 +108,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             await supabaseService.syncUserDetails();
             return AppRoutes.home;
           } catch (e) {
-            return GoRouterState.of(context).uri.toString().replaceFirst(
-              AppRoutes.loginCallback,
-              AppRoutes.error,
-            );
+            return AppRoutes.error;
           }
         },
       ),

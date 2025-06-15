@@ -4,17 +4,14 @@ import 'package:card_nudge/data/enums/currency.dart';
 import 'package:card_nudge/data/enums/language.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../data/enums/card_type.dart';
-import '../data/enums/sync_status.dart';
 import '../data/hive/models/bank_model.dart';
 import '../data/hive/models/credit_card_model.dart';
 import '../data/hive/models/payment_model.dart';
 import '../data/hive/models/settings_model.dart';
-import '../presentation/providers/sync_provider.dart';
 
 class SyncService {
   final SupabaseClient supabase;
@@ -23,7 +20,7 @@ class SyncService {
   final Box<PaymentModel> paymentBox;
   final Box<SettingsModel> settingsBox;
   final Connectivity connectivity;
-  Timer? _pollingTimer;
+  final defaultSettingId = '00000000-0000-0000-0000-000000000000';
 
   SyncService({
     required this.supabase,
@@ -226,7 +223,6 @@ class SyncService {
           );
 
           final setting = SettingsModel(
-            id: serverSetting['id'],
             userId: serverSetting['user_id'],
             language: Language.values.firstWhere(
               (e) => e.name == serverSetting['language'],
@@ -245,11 +241,11 @@ class SyncService {
             updatedAt: serverUpdatedAt,
             syncPending: false,
           );
-          await settingsBox.put(setting.id, setting);
-        } else if (localSetting.syncPending) {
+          await settingsBox.put(defaultSettingId, setting);
+        } else if (localSetting.syncPending && !localSetting.isDefaultSetting) {
           await supabase.from('settings').upsert(localSetting);
           final updatedSetting = localSetting.copyWith(syncPending: false);
-          await settingsBox.put(updatedSetting.id, updatedSetting);
+          await settingsBox.put(defaultSettingId, updatedSetting);
         }
       }
     } catch (e) {
@@ -297,301 +293,15 @@ class SyncService {
           .from('settings')
           .select()
           .eq('user_id', userId);
-      if (settingsData.isEmpty) {
-        final setting = settingsBox.values.first;
+
+      final setting = settingsBox.values.first;
+
+      if (settingsData.isEmpty && !setting.isDefaultSetting) {
         await supabase.from('settings').upsert(setting);
       }
     } catch (e) {
       print('Initial sync error: $e');
       rethrow;
-    }
-  }
-
-  void startConnectivityListener(WidgetRef ref) {
-    connectivity.onConnectivityChanged.listen((connectivityResult) async {
-      if (connectivityResult != ConnectivityResult.none) {
-        print('Online: Triggering sync');
-        ref.read(syncStatusProvider.notifier).state = SyncStatus.syncing;
-        try {
-          await syncData();
-          ref.read(syncStatusProvider.notifier).state = SyncStatus.idle;
-        } catch (e) {
-          ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
-        }
-      }
-    });
-  }
-
-  void startPolling(String userId, WidgetRef ref) {
-    _pollingTimer?.cancel();
-    _pollingTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
-      if (await isOnline() && ref.context.mounted) {
-        ref.read(syncStatusProvider.notifier).state = SyncStatus.polling;
-        try {
-          final banksData = await supabase
-              .from('banks')
-              .select()
-              .eq('user_id', userId);
-          await _handleRealtimeBanks(banksData, ref);
-
-          final defaultBanksData =
-              await supabase.from('default_banks').select();
-          await _handleRealtimeDefaultBanks(defaultBanksData, ref);
-
-          final cardsData = await supabase
-              .from('cards')
-              .select()
-              .eq('user_id', userId);
-          await _handleRealtimeCards(cardsData, ref);
-
-          final paymentsData = await supabase
-              .from('payments')
-              .select()
-              .eq('user_id', userId);
-          await _handleRealtimePayments(paymentsData, ref);
-
-          final settings = settingsBox.values.firstOrNull;
-          if (settings?.syncSettings ?? true) {
-            final settingsData = await supabase
-                .from('settings')
-                .select()
-                .eq('user_id', userId);
-            await _handleRealtimeSettings(settingsData, ref);
-          }
-
-          ref.read(syncStatusProvider.notifier).state = SyncStatus.idle;
-        } catch (e) {
-          print('Polling error: $e');
-          ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
-        }
-      }
-    });
-  }
-
-  void stopPolling() {
-    _pollingTimer?.cancel();
-  }
-
-  void startRealtimeSubscriptions(String userId, WidgetRef ref) {
-    supabase
-        .from('banks:user_id=eq.$userId')
-        .stream(primaryKey: ['id'])
-        .listen(
-          (List<Map<String, dynamic>> data) async {
-            await _handleRealtimeBanks(data, ref);
-            ref.read(syncStatusProvider.notifier).state =
-                SyncStatus.realtimeConnected;
-          },
-          onError: (e) {
-            print('Banks Realtime error: $e');
-            ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
-          },
-        );
-
-    supabase
-        .from('default_banks')
-        .stream(primaryKey: ['id'])
-        .listen(
-          (List<Map<String, dynamic>> data) async {
-            await _handleRealtimeDefaultBanks(data, ref);
-            ref.read(syncStatusProvider.notifier).state =
-                SyncStatus.realtimeConnected;
-          },
-          onError: (e) {
-            print('Default Banks Realtime error: $e');
-            ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
-          },
-        );
-
-    supabase
-        .from('cards:user_id=eq.$userId')
-        .stream(primaryKey: ['id'])
-        .listen(
-          (List<Map<String, dynamic>> data) async {
-            await _handleRealtimeCards(data, ref);
-            ref.read(syncStatusProvider.notifier).state =
-                SyncStatus.realtimeConnected;
-          },
-          onError: (e) {
-            print('Cards Realtime error: $e');
-            ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
-          },
-        );
-
-    supabase
-        .from('payments:user_id=eq.$userId')
-        .stream(primaryKey: ['id'])
-        .listen(
-          (List<Map<String, dynamic>> data) async {
-            await _handleRealtimePayments(data, ref);
-            ref.read(syncStatusProvider.notifier).state =
-                SyncStatus.realtimeConnected;
-          },
-          onError: (e) {
-            print('Payments Realtime error: $e');
-            ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
-          },
-        );
-
-    final settings = settingsBox.values.firstOrNull;
-    if (settings?.syncSettings ?? true) {
-      supabase
-          .from('settings:user_id=eq.$userId')
-          .stream(primaryKey: ['id'])
-          .listen(
-            (List<Map<String, dynamic>> data) async {
-              await _handleRealtimeSettings(data, ref);
-              ref.read(syncStatusProvider.notifier).state =
-                  SyncStatus.realtimeConnected;
-            },
-            onError: (e) {
-              print('Settings Realtime error: $e');
-              ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
-            },
-          );
-    }
-  }
-
-  Future<void> _handleRealtimeBanks(
-    List<Map<String, dynamic>> data,
-    WidgetRef ref,
-  ) async {
-    for (var item in data) {
-      final remote = BankModel(
-        id: item['id'],
-        userId: item['user_id'],
-        name: item['name'],
-        code: item['code'],
-        logoPath: item['logo_path'],
-        supportNumber: item['support_number'],
-        website: item['website'],
-        isFavorite: item['is_favorite'] ?? false,
-        colorHex: item['color_hex'],
-        priority: item['priority'],
-        createdAt: DateTime.parse(item['created_at']),
-        updatedAt: DateTime.parse(item['updated_at']),
-        syncPending: false,
-        isDefault: false,
-      );
-      final local = bankBox.get(remote.id);
-      if (local == null || remote.updatedAt.isAfter(local.updatedAt)) {
-        await bankBox.put(remote.id, remote);
-      }
-    }
-  }
-
-  Future<void> _handleRealtimeDefaultBanks(
-    List<Map<String, dynamic>> data,
-    WidgetRef ref,
-  ) async {
-    for (var item in data) {
-      final remote = BankModel(
-        id: item['id'],
-        userId: '',
-        name: item['name'],
-        code: item['code'],
-        logoPath: item['logo_path'],
-        supportNumber: item['support_number'],
-        website: item['website'],
-        isFavorite: item['is_favorite'] ?? false,
-        colorHex: item['color_hex'],
-        priority: item['priority'],
-        createdAt: DateTime.parse(item['created_at']),
-        updatedAt: DateTime.parse(item['updated_at']),
-        syncPending: false,
-        isDefault: true,
-      );
-      final local = bankBox.get(remote.id);
-      if (local == null || remote.updatedAt.isAfter(local.updatedAt)) {
-        await bankBox.put(remote.id, remote);
-      }
-    }
-  }
-
-  Future<void> _handleRealtimeCards(
-    List<Map<String, dynamic>> data,
-    WidgetRef ref,
-  ) async {
-    for (var item in data) {
-      final remote = CreditCardModel(
-        id: item['id'],
-        userId: item['user_id'],
-        name: item['name'],
-        bankId: item['bank_id'],
-        last4Digits: item['last_4_digits'],
-        billingDate: DateTime.parse(item['billing_date']),
-        dueDate: DateTime.parse(item['due_date']),
-        cardType: CardType.values.firstWhere(
-          (e) => e.name == item['card_type'],
-        ),
-        creditLimit: item['credit_limit']?.toDouble(),
-        currentUtilization: item['current_utilization']?.toDouble(),
-        createdAt: DateTime.parse(item['created_at']),
-        updatedAt: DateTime.parse(item['updated_at']),
-        isArchived: item['is_archived'] ?? false,
-        isFavorite: item['is_favorite'] ?? false,
-        syncPending: false,
-      );
-      final local = cardBox.get(remote.id);
-      if (local == null || remote.updatedAt.isAfter(local.updatedAt)) {
-        await cardBox.put(remote.id, remote);
-      }
-    }
-  }
-
-  Future<void> _handleRealtimePayments(
-    List<Map<String, dynamic>> data,
-    WidgetRef ref,
-  ) async {
-    for (var item in data) {
-      final remote = PaymentModel(
-        id: item['id'],
-        userId: item['user_id'],
-        cardId: item['card_id'],
-        dueAmount: item['due_amount']?.toDouble(),
-        paymentDate:
-            item['payment_date'] != null
-                ? DateTime.parse(item['payment_date'])
-                : null,
-        isPaid: item['is_paid'] ?? false,
-        createdAt: DateTime.parse(item['created_at']),
-        updatedAt: DateTime.parse(item['updated_at']),
-        minimumDueAmount: item['minimum_due_amount']?.toDouble(),
-        paidAmount: item['paid_amount']?.toDouble(),
-        dueDate: DateTime.parse(item['due_date']),
-        statementAmount: item['statement_amount']?.toDouble(),
-        syncPending: false,
-      );
-      final local = paymentBox.get(remote.id);
-      if (local == null || remote.updatedAt.isAfter(local.updatedAt)) {
-        await paymentBox.put(remote.id, remote);
-      }
-    }
-  }
-
-  Future<void> _handleRealtimeSettings(
-    List<Map<String, dynamic>> data,
-    WidgetRef ref,
-  ) async {
-    if (data.isNotEmpty) {
-      final item = data.first;
-      final remote = SettingsModel(
-        id: item['id'],
-        userId: item['user_id'],
-        language: item['language'],
-        currency: item['currency'],
-        themeMode: item['theme_mode'],
-        notificationsEnabled: item['notifications_enabled'] ?? true,
-        reminderTime: item['reminder_time'],
-        syncSettings: item['sync_settings'] ?? true,
-        createdAt: DateTime.parse(item['created_at']),
-        updatedAt: DateTime.parse(item['updated_at']),
-        syncPending: false,
-      );
-      final local = settingsBox.get(remote.id);
-      if (local == null || remote.updatedAt.isAfter(local.updatedAt)) {
-        await settingsBox.put(remote.id, remote);
-      }
     }
   }
 }

@@ -31,11 +31,11 @@ void main() async {
 
   await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
 
-  // Notification
   // Initialize notifications with ProviderContainer
   final container = ProviderContainer();
-  await NotificationService().init();
-  await NotificationTapHandler.init(container);
+  final notificationProvider = container.read(notificationServiceProvider);
+  await notificationProvider.init();
+  await NotificationTapHandler.init();
 
   // Hive
   await Hive.initFlutter();

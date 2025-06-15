@@ -2,15 +2,11 @@ import 'package:card_nudge/data/enums/currency.dart';
 import 'package:card_nudge/data/enums/language.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:uuid/uuid.dart';
 
 part 'settings_model.g.dart';
 
 @HiveType(typeId: 4)
 class SettingsModel {
-  @HiveField(0)
-  String id;
-
   @HiveField(1)
   String userId;
 
@@ -42,8 +38,7 @@ class SettingsModel {
   bool syncPending;
 
   SettingsModel({
-    String? id,
-    required this.userId,
+    String? userId,
     this.language = Language.en,
     this.currency = Currency.INR,
     this.themeMode = ThemeMode.system,
@@ -53,7 +48,7 @@ class SettingsModel {
     this.syncPending = true,
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) : id = id ?? const Uuid().v4(),
+  }) : userId = (userId ?? '00000000-0000-0000-0000-000000000000'),
        createdAt = (createdAt ?? DateTime.now()).toUtc(),
        updatedAt = (updatedAt ?? DateTime.now()).toUtc();
 
@@ -67,7 +62,6 @@ class SettingsModel {
     bool? syncPending,
   }) {
     return SettingsModel(
-      id: this.id,
       userId: this.userId,
       language: language ?? this.language,
       currency: currency ?? this.currency,
@@ -79,9 +73,11 @@ class SettingsModel {
     );
   }
 
+  // Getter to check if userId is '00000000-0000-0000-0000-000000000000'
+  bool get isDefaultSetting => userId == '00000000-0000-0000-0000-000000000000';
+
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'user_id': userId,
       'language': language.name,
       'currency': currency.name,
