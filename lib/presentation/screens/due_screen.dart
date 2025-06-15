@@ -15,8 +15,6 @@ import '../providers/bank_provider.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/format_provider.dart';
 import '../providers/payment_provider.dart';
-import '../providers/user_provider.dart';
-import '../screens/add_card_screen.dart';
 import '../widgets/add_due_bottom_sheet.dart';
 import '../widgets/credit_card_color_dot_indicator.dart';
 import '../widgets/empty_state_widget.dart';
@@ -86,17 +84,6 @@ class DueScreen extends ConsumerWidget {
               ),
             ),
       ),
-    );
-  }
-
-  Widget _buildEmptyStateNoCards(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider)!;
-    return EmptyStateWidget(
-      message: AppStrings.cardsScreenEmptyStateTitle,
-      buttonText: AppStrings.buttonAddCard,
-      onButtonPressed:
-          () =>
-              NavigationService.navigateTo(context, AddCardScreen(user: user)),
     );
   }
 

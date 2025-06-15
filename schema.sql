@@ -85,7 +85,7 @@ CREATE TABLE settings (
   currency TEXT,
   theme_mode TEXT,
   notifications_enabled BOOLEAN DEFAULT TRUE,
-  reminder_time TEXT,
+  reminder_time TIME,
   sync_settings BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

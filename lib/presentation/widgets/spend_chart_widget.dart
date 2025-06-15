@@ -40,7 +40,6 @@ class SpendChartWidget extends ConsumerWidget {
     final now = DateTime.now();
     final quarterMonths = _getLastThreeMonths(now);
     final spendValues = _getSpendValues(quarterMonths);
-
     // AG TODO: Get this from Settings
     const overspendThreshold = 50000.0; // ₹50,000
 

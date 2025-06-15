@@ -78,4 +78,19 @@ class SettingsModel {
       syncPending: syncPending ?? this.syncPending,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'user_id': userId,
+      'language': language.name,
+      'currency': currency.name,
+      'theme_mode': themeMode.name,
+      'notifications_enabled': notificationsEnabled,
+      'reminder_time': '${reminderTime.hour}:${reminderTime.minute}',
+      'sync_settings': syncSettings,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
+    };
+  }
 }

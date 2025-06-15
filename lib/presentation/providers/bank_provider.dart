@@ -22,7 +22,7 @@ class BankNotifier extends AsyncNotifier<List<BankModel>> {
     if (await syncService.isOnline()) {
       ref.read(syncStatusProvider.notifier).state = SyncStatus.syncing;
       try {
-        await syncService.pushLocalChanges();
+        await syncService.syncData();
         ref.read(syncStatusProvider.notifier).state = SyncStatus.idle;
       } catch (e) {
         ref.read(syncStatusProvider.notifier).state = SyncStatus.error;

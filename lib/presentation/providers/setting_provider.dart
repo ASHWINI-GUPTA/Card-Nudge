@@ -12,7 +12,6 @@ import 'user_provider.dart';
 
 final settingsProvider = StateNotifierProvider<SettingsNotifier, SettingsModel>(
   (ref) {
-    // After login, user ID must not be null
     final user = ref.watch(userProvider);
     final userId =
         user == null ? '00000000-0000-0000-0000-000000000000' : user.id;
@@ -30,13 +29,9 @@ class SettingsNotifier extends StateNotifier<SettingsModel> {
   Future<void> _loadSettings() async {
     try {
       final box = SettingStorage.getBox();
-      final settings = box.get(_userId);
-      if (settings != null) {
-        state = settings;
-      } else {
-        // Initialize default settings if none exist
-        await box.put(_userId, state);
-      }
+      // Adding Default Settings if box is empty
+      final setting = box.values.first;
+      state = setting;
     } catch (e) {
       print('Error loading settings: $e');
     }
@@ -44,9 +39,12 @@ class SettingsNotifier extends StateNotifier<SettingsModel> {
 
   Future<void> _saveSettings(SettingsModel newState) async {
     try {
-      state = newState;
       final box = SettingStorage.getBox();
-      await box.put(_userId, newState);
+      // Update UserId
+      newState.userId = _userId;
+      // As there is only one setting in Store, newState.id will have the id of default setting.
+      await box.put(newState.id, newState);
+      state = newState;
     } catch (e) {
       print('Error saving settings: $e');
     }
@@ -85,6 +83,20 @@ class SettingsNotifier extends StateNotifier<SettingsModel> {
         payments: payments,
         reminderTime: state.reminderTime,
       );
+      // Schedule daily insight
+      final dueCount =
+          payments
+              .where(
+                (p) =>
+                    !p.isPaid &&
+                    p.dueDate.difference(DateTime.now()).inDays >= 0 &&
+                    p.dueDate.difference(DateTime.now()).inDays <= 7,
+              )
+              .length;
+      await NotificationService().scheduleDailyInsight(
+        dueCount: dueCount,
+        reminderTime: state.reminderTime,
+      );
     }
   }
 
@@ -96,6 +108,20 @@ class SettingsNotifier extends StateNotifier<SettingsModel> {
     await NotificationService().rescheduleAllNotifications(
       cards: cards,
       payments: payments,
+      reminderTime: time,
+    );
+    // Schedule daily insight
+    final dueCount =
+        payments
+            .where(
+              (p) =>
+                  !p.isPaid &&
+                  p.dueDate.difference(DateTime.now()).inDays >= 0 &&
+                  p.dueDate.difference(DateTime.now()).inDays <= 7,
+            )
+            .length;
+    await NotificationService().scheduleDailyInsight(
+      dueCount: dueCount,
       reminderTime: time,
     );
   }

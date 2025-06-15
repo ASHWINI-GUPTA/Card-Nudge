@@ -1,6 +1,9 @@
 // sync_service.dart
 import 'dart:async';
+import 'package:card_nudge/data/enums/currency.dart';
+import 'package:card_nudge/data/enums/language.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -211,39 +214,40 @@ class SyncService {
       // Sync settings
       if (serverSettings.isNotEmpty) {
         final serverSetting = serverSettings.first;
-        final localSetting = settingsBox.values.firstOrNull;
+        final localSetting = settingsBox.values.first;
         final serverUpdatedAt = DateTime.parse(serverSetting['updated_at']);
-        if (localSetting == null ||
-            serverUpdatedAt.isAfter(localSetting.updatedAt)) {
+        if (serverUpdatedAt.isAfter(localSetting.updatedAt)) {
+          final timeArray = serverSetting['reminder_time'].toString().split(
+            ':',
+          );
+          final reminderTime = TimeOfDay(
+            hour: int.parse(timeArray[0]),
+            minute: int.parse(timeArray[1]),
+          );
+
           final setting = SettingsModel(
             id: serverSetting['id'],
             userId: serverSetting['user_id'],
-            language: serverSetting['language'],
-            currency: serverSetting['currency'],
-            themeMode: serverSetting['theme_mode'],
+            language: Language.values.firstWhere(
+              (e) => e.name == serverSetting['language'],
+            ),
+            currency: Currency.values.firstWhere(
+              (e) => e.name == serverSetting['currency'],
+            ),
+            themeMode: ThemeMode.values.firstWhere(
+              (e) => e.name == serverSetting['theme_mode'],
+            ),
             notificationsEnabled:
                 serverSetting['notifications_enabled'] ?? true,
-            reminderTime: serverSetting['reminder_time'],
+            reminderTime: reminderTime,
             syncSettings: serverSetting['sync_settings'] ?? true,
             createdAt: DateTime.parse(serverSetting['created_at']),
             updatedAt: serverUpdatedAt,
             syncPending: false,
           );
           await settingsBox.put(setting.id, setting);
-        } else if (localSetting.syncPending == true) {
-          final data = {
-            'id': localSetting.id,
-            'user_id': localSetting.userId,
-            'language': localSetting.language,
-            'currency': localSetting.currency,
-            'theme_mode': localSetting.themeMode,
-            'notifications_enabled': localSetting.notificationsEnabled,
-            'reminder_time': localSetting.reminderTime,
-            'sync_settings': localSetting.syncSettings,
-            'created_at': localSetting.createdAt.toIso8601String(),
-            'updated_at': localSetting.updatedAt.toIso8601String(),
-          };
-          await supabase.from('settings').upsert(data);
+        } else if (localSetting.syncPending) {
+          await supabase.from('settings').upsert(localSetting);
           final updatedSetting = localSetting.copyWith(syncPending: false);
           await settingsBox.put(updatedSetting.id, updatedSetting);
         }
@@ -264,8 +268,6 @@ class SyncService {
       await bankBox.clear();
       await cardBox.clear();
       await paymentBox.clear();
-      await settingsBox.clear();
-
       // Fetch default banks
       final defaultBanksData = await supabase.from('default_banks').select();
       for (var data in defaultBanksData) {
@@ -288,213 +290,19 @@ class SyncService {
         await bankBox.put(bank.id, bank);
       }
 
-      // Fetch user banks
-      final userBanksData = await supabase
-          .from('banks')
-          .select()
-          .eq('user_id', userId);
-      for (var data in userBanksData) {
-        final bank = BankModel(
-          id: data['id'],
-          userId: userId,
-          name: data['name'],
-          code: data['code'],
-          logoPath: data['logo_path'],
-          supportNumber: data['support_number'],
-          website: data['website'],
-          isFavorite: data['is_favorite'] ?? false,
-          colorHex: data['color_hex'],
-          priority: data['priority'],
-          createdAt: DateTime.parse(data['created_at']),
-          updatedAt: DateTime.parse(data['updated_at']),
-          syncPending: false,
-          isDefault: false,
-        );
-        await bankBox.put(bank.id, bank);
-      }
-
-      // Fetch cards
-      final cardsData = await supabase
-          .from('cards')
-          .select()
-          .eq('user_id', userId);
-      for (var data in cardsData) {
-        final card = CreditCardModel(
-          id: data['id'],
-          userId: userId,
-          name: data['name'],
-          bankId: data['bank_id'],
-          last4Digits: data['last_4_digits'],
-          billingDate: DateTime.parse(data['billing_date']),
-          dueDate: DateTime.parse(data['due_date']),
-          cardType: CardType.values.firstWhere(
-            (e) => e.name == data['card_type'],
-          ),
-          creditLimit: data['credit_limit']?.toDouble(),
-          currentUtilization: data['current_utilization']?.toDouble(),
-          createdAt: DateTime.parse(data['created_at']),
-          updatedAt: DateTime.parse(data['updated_at']),
-          isArchived: data['is_archived'] ?? false,
-          isFavorite: data['is_favorite'] ?? false,
-          syncPending: false,
-        );
-        await cardBox.put(card.id, card);
-      }
-
-      // Fetch payments
-      final paymentsData = await supabase
-          .from('payments')
-          .select()
-          .eq('user_id', userId);
-      for (var data in paymentsData) {
-        final payment = PaymentModel(
-          id: data['id'],
-          userId: userId,
-          cardId: data['card_id'],
-          dueAmount: data['due_amount']?.toDouble(),
-          paymentDate:
-              data['payment_date'] != null
-                  ? DateTime.parse(data['payment_date'])
-                  : null,
-          isPaid: data['is_paid'] ?? false,
-          createdAt: DateTime.parse(data['created_at']),
-          updatedAt: DateTime.parse(data['updated_at']),
-          minimumDueAmount: data['minimum_due_amount']?.toDouble(),
-          paidAmount: data['paid_amount']?.toDouble(),
-          dueDate: DateTime.parse(data['due_date']),
-          statementAmount: data['statement_amount']?.toDouble(),
-          syncPending: false,
-        );
-        await paymentBox.put(payment.id, payment);
-      }
+      await syncData();
 
       // Fetch settings
-      final settings = settingsBox.values.firstOrNull;
-      final syncSettings = settings?.syncSettings ?? true;
-      if (syncSettings) {
-        final settingsData = await supabase
-            .from('settings')
-            .select()
-            .eq('user_id', userId);
-        if (settingsData.isNotEmpty) {
-          final data = settingsData.first;
-          final setting = SettingsModel(
-            id: data['id'],
-            userId: userId,
-            language: data['language'],
-            currency: data['currency'],
-            themeMode: data['theme_mode'],
-            notificationsEnabled: data['notifications_enabled'] ?? true,
-            reminderTime: data['reminder_time'],
-            syncSettings: data['sync_settings'] ?? true,
-            createdAt: DateTime.parse(data['created_at']),
-            updatedAt: DateTime.parse(data['updated_at']),
-            syncPending: false,
-          );
-          await settingsBox.put(setting.id, setting);
-        }
+      final settingsData = await supabase
+          .from('settings')
+          .select()
+          .eq('user_id', userId);
+      if (settingsData.isEmpty) {
+        final setting = settingsBox.values.first;
+        await supabase.from('settings').upsert(setting);
       }
     } catch (e) {
       print('Initial sync error: $e');
-      rethrow;
-    }
-  }
-
-  Future<void> pushLocalChanges() async {
-    if (!await isOnline()) {
-      print('Offline: Changes queued in Hive');
-      return;
-    }
-
-    try {
-      // Push banks
-      for (var bank in bankBox.values.where((b) => b.syncPending)) {
-        final data = {
-          'id': bank.id,
-          'user_id': bank.userId,
-          'name': bank.name,
-          'code': bank.code,
-          'logo_path': bank.logoPath,
-          'support_number': bank.supportNumber,
-          'website': bank.website,
-          'is_favorite': bank.isFavorite,
-          'color_hex': bank.colorHex,
-          'priority': bank.priority,
-          'created_at': bank.createdAt.toIso8601String(),
-          'updated_at': bank.updatedAt.toIso8601String(),
-        };
-        await supabase.from('banks').upsert(data);
-        final updatedBank = bank.copyWith(syncPending: false);
-        await bankBox.put(updatedBank.id, updatedBank);
-      }
-
-      // Push cards
-      for (var card in cardBox.values.where((c) => c.syncPending)) {
-        final data = {
-          'id': card.id,
-          'user_id': card.userId,
-          'name': card.name,
-          'bank_id': card.bankId,
-          'last_4_digits': card.last4Digits,
-          'billing_date': card.billingDate.toIso8601String(),
-          'due_date': card.dueDate.toIso8601String(),
-          'card_type': card.cardType.name,
-          'credit_limit': card.creditLimit,
-          'current_utilization': card.currentUtilization,
-          'created_at': card.createdAt.toIso8601String(),
-          'updated_at': card.updatedAt.toIso8601String(),
-          'is_archived': card.isArchived,
-          'is_favorite': card.isFavorite,
-        };
-        await supabase.from('cards').upsert(data);
-        final updatedCard = card.copyWith(syncPending: false);
-        await cardBox.put(updatedCard.id, updatedCard);
-      }
-
-      // Push payments
-      for (var payment in paymentBox.values.where((p) => p.syncPending)) {
-        final data = {
-          'id': payment.id,
-          'user_id': payment.userId,
-          'card_id': payment.cardId,
-          'due_amount': payment.dueAmount,
-          'payment_date': payment.paymentDate?.toIso8601String(),
-          'is_paid': payment.isPaid,
-          'created_at': payment.createdAt.toIso8601String(),
-          'updated_at': payment.updatedAt.toIso8601String(),
-          'minimum_due_amount': payment.minimumDueAmount,
-          'paid_amount': payment.paidAmount,
-          'due_date': payment.dueDate.toIso8601String(),
-          'statement_amount': payment.statementAmount,
-        };
-        await supabase.from('payments').upsert(data);
-        final updatedPayment = payment.copyWith(syncPending: false);
-        await paymentBox.put(updatedPayment.id, updatedPayment);
-      }
-
-      // Push settings
-      final settings = settingsBox.values.firstOrNull;
-      if (settings != null) {
-        if (settings.syncSettings == true && settings.syncPending == true) {
-          final data = {
-            'id': settings.id,
-            'user_id': settings.userId,
-            'language': settings.language,
-            'currency': settings.currency,
-            'theme_mode': settings.themeMode,
-            'notifications_enabled': settings.notificationsEnabled,
-            'reminder_time': settings.reminderTime,
-            'sync_settings': settings.syncSettings,
-            'created_at': settings.createdAt.toIso8601String(),
-            'updated_at': settings.updatedAt.toIso8601String(),
-          };
-          await supabase.from('settings').upsert(data);
-          final updatedSettings = settings.copyWith(syncPending: false);
-          await settingsBox.put(updatedSettings.id, updatedSettings);
-        }
-      }
-    } catch (e) {
-      print('Push local changes error: $e');
       rethrow;
     }
   }
@@ -505,7 +313,7 @@ class SyncService {
         print('Online: Triggering sync');
         ref.read(syncStatusProvider.notifier).state = SyncStatus.syncing;
         try {
-          await pushLocalChanges();
+          await syncData();
           ref.read(syncStatusProvider.notifier).state = SyncStatus.idle;
         } catch (e) {
           ref.read(syncStatusProvider.notifier).state = SyncStatus.error;

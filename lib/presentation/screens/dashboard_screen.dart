@@ -221,13 +221,6 @@ class DashboardScreen extends ConsumerWidget {
           ),
     );
 
-    // Currency formatter
-    final currencyFormat = NumberFormat.currency(
-      locale: 'en_IN',
-      symbol: '₹',
-      decimalDigits: 0,
-    );
-
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [

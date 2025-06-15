@@ -10,6 +10,7 @@ import 'data/hive/storage/bank_storage.dart';
 import 'data/hive/storage/credit_card_storage.dart';
 import 'data/hive/storage/setting_storage.dart';
 import 'data/hive/storage/user_storage.dart';
+import 'helper/notification_handler.dart';
 import 'services/notification_service.dart';
 
 void main() async {
@@ -31,7 +32,10 @@ void main() async {
   await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
 
   // Notification
+  // Initialize notifications with ProviderContainer
+  final container = ProviderContainer();
   await NotificationService().init();
+  await NotificationTapHandler.init(container);
 
   // Hive
   await Hive.initFlutter();
