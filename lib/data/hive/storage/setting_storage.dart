@@ -2,7 +2,6 @@ import 'package:card_nudge/data/hive/adapters/card_type_adapter.dart';
 import 'package:card_nudge/data/hive/models/settings_model.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../enums/currency.dart';
 import '../../enums/language.dart';
