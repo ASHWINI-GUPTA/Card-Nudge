@@ -9,6 +9,7 @@ import '../../services/navigation_service.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/format_provider.dart';
 import '../providers/payment_provider.dart';
+import 'credit_card_color_dot_indicator.dart';
 
 final selectedOptionProvider = StateProvider<PaymentOption>(
   (ref) => PaymentOption.totalDue,
@@ -194,7 +195,7 @@ class LogPaymentBottomSheet extends ConsumerWidget {
                           },
                   label:
                       isSubmitting
-                          ? const CircularProgressIndicator()
+                          ? const CreditCardColorDotIndicator()
                           : Text(AppStrings.logPaymentButton),
                 ),
               ),

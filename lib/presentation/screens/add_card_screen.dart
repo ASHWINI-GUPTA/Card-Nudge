@@ -1,4 +1,5 @@
 import 'package:card_nudge/data/hive/models/user_model.dart';
+import 'package:card_nudge/presentation/widgets/credit_card_color_dot_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -245,7 +246,9 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                           () => [
                             const DropdownMenuItem<String>(
                               enabled: false,
-                              child: Center(child: CircularProgressIndicator()),
+                              child: Center(
+                                child: CreditCardColorDotIndicator(),
+                              ),
                             ),
                           ],
                       error:
@@ -394,7 +397,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                         },
                 child:
                     _isSubmitting
-                        ? const CircularProgressIndicator()
+                        ? const CreditCardColorDotIndicator()
                         : Text(AppStrings.saveButton),
               ),
             ],

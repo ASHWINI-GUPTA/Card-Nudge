@@ -28,7 +28,7 @@ class SettingStorage {
       _box!.put(
         '00000000-0000-0000-0000-000000000000',
         SettingsModel(
-          language: Language.en,
+          language: Language.English,
           currency: Currency.INR,
           themeMode: ThemeMode.system,
           notificationsEnabled: true,
@@ -36,6 +36,7 @@ class SettingStorage {
           syncSettings: false,
           updatedAt: DateTime(2012, 12, 12),
           createdAt: DateTime(2012, 12, 12),
+          userId: '00000000-0000-0000-0000-000000000000',
         ),
       );
     }

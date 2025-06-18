@@ -17,16 +17,16 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return SettingsModel(
-      userId: fields[1] as String?,
+      userId: fields[1] as String,
       language: fields[2] as Language,
       currency: fields[3] as Currency,
       themeMode: fields[4] as ThemeMode,
       notificationsEnabled: fields[5] as bool,
-      reminderTime: fields[6] as TimeOfDay,
+      reminderTime: fields[6] as TimeOfDay?,
       syncSettings: fields[7] as bool,
-      syncPending: fields[10] as bool,
       createdAt: fields[8] as DateTime?,
       updatedAt: fields[9] as DateTime?,
+      syncPending: fields[10] as bool,
     );
   }
 

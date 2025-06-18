@@ -112,7 +112,7 @@ class SettingsScreen extends ConsumerWidget {
                                 return DropdownMenuItem(
                                   value: lang,
                                   child: Text(
-                                    lang == Language.en
+                                    lang == Language.English
                                         ? AppStrings.english
                                         : AppStrings.hindi,
                                   ),

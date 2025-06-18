@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 import '../../data/enums/currency.dart';
 import '../../data/enums/language.dart';
@@ -57,11 +58,13 @@ class FormatHelper {
   }
 
   String formatShortDate(DateTime date) {
-    return DateFormat.MMMd(_language.locale).format(date);
+    final localDate = _toLocal(date);
+    return DateFormat.MMMd(_language.locale).format(localDate);
   }
 
   String formatDate(DateTime date, {String format = 'MMMM d, yyyy'}) {
-    return DateFormat(format, _language.locale).format(date);
+    final localDate = _toLocal(date);
+    return DateFormat(format, _language.locale).format(localDate);
   }
 
   String formatTime(TimeOfDay time) {
@@ -74,7 +77,8 @@ class FormatHelper {
       time.hour,
       time.minute,
     );
-    return formatter.format(dateTime);
+    final localDateTime = _toLocal(dateTime);
+    return formatter.format(localDateTime);
   }
 
   String formatDateTime(
@@ -82,8 +86,15 @@ class FormatHelper {
     String dateFormat = 'yMd',
     String timeFormat = 'jm',
   }) {
-    final dateStr = DateFormat(dateFormat, _language.locale).format(dateTime);
-    final timeStr = DateFormat(timeFormat, _language.locale).format(dateTime);
+    final localDateTime = _toLocal(dateTime);
+    final dateStr = DateFormat(
+      dateFormat,
+      _language.locale,
+    ).format(localDateTime);
+    final timeStr = DateFormat(
+      timeFormat,
+      _language.locale,
+    ).format(localDateTime);
     return '$dateStr, $timeStr';
   }
 
@@ -118,6 +129,29 @@ class FormatHelper {
       } catch (_) {}
     }
     return null;
+  }
+
+  /// Convert UTC DateTime to local using timezone package if available, else fallback to .toLocal()
+  DateTime _toLocal(DateTime dateTime) {
+    try {
+      // If already local, return as is
+      if (!dateTime.isUtc) return dateTime;
+      // Use timezone package if tz.local is set
+      final tzDateTime = tz.TZDateTime.from(dateTime, tz.local);
+      return DateTime(
+        tzDateTime.year,
+        tzDateTime.month,
+        tzDateTime.day,
+        tzDateTime.hour,
+        tzDateTime.minute,
+        tzDateTime.second,
+        tzDateTime.millisecond,
+        tzDateTime.microsecond,
+      );
+    } catch (_) {
+      // Fallback to Dart's built-in conversion
+      return dateTime.toLocal();
+    }
   }
 
   // Extension methods for DateTime and TimeOfDay

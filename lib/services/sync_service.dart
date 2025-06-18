@@ -1,4 +1,3 @@
-// sync_service.dart
 import 'dart:async';
 import 'package:card_nudge/data/enums/currency.dart';
 import 'package:card_nudge/data/enums/language.dart';

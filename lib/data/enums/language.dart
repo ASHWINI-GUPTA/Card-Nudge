@@ -1,11 +1,11 @@
-enum Language { en, hi }
+enum Language { English, Hindi }
 
 extension LanguageLocale on Language {
   String get locale {
     switch (this) {
-      case Language.en:
+      case Language.English:
         return 'en_US';
-      case Language.hi:
+      case Language.Hindi:
         return 'hi_IN';
     }
   }

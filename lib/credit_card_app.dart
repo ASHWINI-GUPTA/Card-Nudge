@@ -32,8 +32,8 @@ class CreditCardApp extends ConsumerWidget {
           themeMode: settings.themeMode,
           locale: Locale(settings.language.name),
           supportedLocales: [
-            Locale(Language.en.name, 'US'),
-            Locale(Language.hi.name, 'IN'),
+            Locale(Language.English.name, 'US'),
+            Locale(Language.Hindi.name, 'IN'),
           ],
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,

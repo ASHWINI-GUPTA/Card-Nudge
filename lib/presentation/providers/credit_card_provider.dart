@@ -48,8 +48,9 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
     bool cardSaved = false;
     try {
       await _box.put(card.id, card);
-      await loadCards();
       await _triggerSync();
+      await loadCards();
+
       cardSaved = true;
 
       // Schedule notifications for this card

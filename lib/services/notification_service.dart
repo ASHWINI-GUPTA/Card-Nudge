@@ -8,6 +8,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tzData;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
 import '../data/hive/models/credit_card_model.dart';
 
@@ -16,14 +17,47 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
 });
 
 class NotificationService {
+  // Notification ID constants
   static const _dailyInsightId = 999;
   static const _billingNotificationOffset = 100;
+  static const _demoNotificationStartId = 1000;
+  static const _maxScheduledNotifications = 50;
+
   final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
+  bool _isInitialized = false;
+
+  Future<tz.TZDateTime> _convertToLocalTZ(DateTime date, TimeOfDay time) async {
+    await ensureInitialized();
+    return tz.TZDateTime(
+      tz.local,
+      date.year,
+      date.month,
+      date.day,
+      time.hour,
+      time.minute,
+    );
+  }
+
+  Future<void> _setLocalTimezone() async {
+    try {
+      final String timeZoneName =
+          await FlutterNativeTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(timeZoneName));
+      debugPrint('Set local timezone: $timeZoneName');
+    } catch (e) {
+      debugPrint('Could not set local timezone, defaulting to UTC: $e');
+      tz.setLocalLocation(tz.getLocation('UTC'));
+    }
+  }
 
   Future<void> init() async {
+    if (_isInitialized) return;
+
     try {
       tzData.initializeTimeZones();
+      await _setLocalTimezone();
+      await _createNotificationChannels();
 
       const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
       const iosInit = DarwinInitializationSettings(
@@ -35,13 +69,50 @@ class NotificationService {
       await _notifications.initialize(
         InitializationSettings(android: androidInit, iOS: iosInit),
         onDidReceiveNotificationResponse: (details) {
-          debugPrint('Notification tapped: ${details.payload}');
+          if (_isValidPayload(details.payload)) {
+            debugPrint('Notification tapped: ${details.payload}');
+            _logNotificationEvent('tap', payload: details.payload);
+          }
         },
       );
 
       await _requestPermissions();
+      _isInitialized = true;
     } catch (e, stackTrace) {
       debugPrint('NotificationService.init error: $e\n$stackTrace');
+      rethrow;
+    }
+  }
+
+  Future<void> _createNotificationChannels() async {
+    // Android notification channels
+    if (Platform.isAndroid) {
+      const androidChannels = [
+        AndroidNotificationChannel(
+          'card_reminders',
+          'Card Reminders',
+          description: 'Credit card payment reminders',
+          importance: Importance.high,
+          playSound: true,
+          enableVibration: true,
+        ),
+        AndroidNotificationChannel(
+          'daily_insights',
+          'Daily Insights',
+          description: 'Daily credit card insights',
+          importance: Importance.defaultImportance,
+        ),
+      ];
+
+      final androidPlugin =
+          _notifications
+              .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin
+              >();
+
+      for (final channel in androidChannels) {
+        await androidPlugin?.createNotificationChannel(channel);
+      }
     }
   }
 
@@ -60,9 +131,16 @@ class NotificationService {
     }
   }
 
+  Future<void> ensureInitialized() async {
+    if (!_isInitialized) {
+      await init();
+    }
+  }
+
   Future<void> cancelAllNotifications() async {
     try {
       await _notifications.cancelAll();
+      await _logNotificationEvent('cancel_all');
     } catch (e, stackTrace) {
       debugPrint('cancelAllNotifications error: $e\n$stackTrace');
     }
@@ -75,6 +153,7 @@ class NotificationService {
         _notifications.cancel(baseId + _billingNotificationOffset),
         ...List.generate(5, (i) => _notifications.cancel(baseId + i)),
       ]);
+      await _logNotificationEvent('cancel_card', cardId: cardId);
     } catch (e, stackTrace) {
       debugPrint('cancelCardNotifications error: $e\n$stackTrace');
     }
@@ -82,6 +161,20 @@ class NotificationService {
 
   int _generateNotificationId(String cardId) {
     return cardId.hashCode.abs() % 1000000;
+  }
+
+  Future<void> _validateNotificationTime(tz.TZDateTime scheduledTime) async {
+    final now = tz.TZDateTime.now(tz.local);
+    if (scheduledTime.isBefore(now)) {
+      throw Exception(
+        'Scheduled time $scheduledTime is in the past (Current time: $now)',
+      );
+    }
+
+    // Check if time is within reasonable bounds (e.g., not 1..100 years in future)
+    if (scheduledTime.year > now.year + 1) {
+      throw Exception('Scheduled time too far in future');
+    }
   }
 
   Future<void> scheduleCardNotifications({
@@ -94,9 +187,16 @@ class NotificationService {
     required TimeOfDay reminderTime,
   }) async {
     try {
+      await ensureInitialized();
+      await _checkNotificationLimit();
       await cancelCardNotifications(cardId);
 
       final baseId = _generateNotificationId(cardId);
+      final localBillingDate = await _convertToLocalTZ(
+        billingDate,
+        reminderTime,
+      );
+
       final unpaidPayments = payments.where((p) => !p.isPaid).toList();
       final dueAmount = unpaidPayments.fold<double>(
         0,
@@ -108,16 +208,12 @@ class NotificationService {
         id: baseId + _billingNotificationOffset,
         title: 'Billing Date Reminder',
         body: 'Billing date for $cardName (**** $last4Digits) is today!',
-        scheduledDate: _createTZDateTime(
-          billingDate.year,
-          billingDate.month,
-          billingDate.day,
-          reminderTime,
-        ),
+        scheduledDate: localBillingDate,
         payload: '/cards/$cardId',
+        isTimeSensitive: true,
       );
 
-      // Schedule due date reminders (3 days before, 1 day before, and on due date)
+      // Schedule due date reminders
       for (int daysBefore = 3; daysBefore >= 0; daysBefore--) {
         final notificationDate = dueDate.subtract(Duration(days: daysBefore));
         if (notificationDate.isAfter(DateTime.now())) {
@@ -135,9 +231,12 @@ class NotificationService {
               reminderTime,
             ),
             payload: '/cards/$cardId',
+            isTimeSensitive: true,
           );
         }
       }
+
+      await _logNotificationEvent('schedule_card', cardId: cardId);
     } catch (e, stackTrace) {
       debugPrint('scheduleCardNotifications error: $e\n$stackTrace');
       rethrow;
@@ -159,12 +258,15 @@ class NotificationService {
     required String body,
     required tz.TZDateTime scheduledDate,
     required String payload,
+    bool isTimeSensitive = false,
   }) async {
     if (scheduledDate.isBefore(tz.TZDateTime.now(tz.local))) {
-      debugPrint(
-        'Scheduled date $scheduledDate is in the past. Skipping notification.',
-      );
+      debugPrint('Skipping past-dated notification');
       return;
+    }
+
+    if (!_isValidPayload(payload)) {
+      throw ArgumentError('Invalid notification payload: $payload');
     }
 
     await _notifications.zonedSchedule(
@@ -180,8 +282,18 @@ class NotificationService {
           importance: Importance.high,
           priority: Priority.high,
           playSound: true,
+          enableVibration: true,
+          groupKey: 'card_reminders_group',
         ),
-        iOS: const DarwinNotificationDetails(),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+          interruptionLevel:
+              isTimeSensitive
+                  ? InterruptionLevel.timeSensitive
+                  : InterruptionLevel.active,
+        ),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       payload: payload,
@@ -193,6 +305,9 @@ class NotificationService {
     required TimeOfDay reminderTime,
   }) async {
     try {
+      await ensureInitialized();
+      await _checkNotificationLimit();
+
       final prefs = await SharedPreferences.getInstance();
       final now = DateTime.now();
       final scheduledTime = _createTZDateTime(
@@ -220,7 +335,9 @@ class NotificationService {
             importance: Importance.defaultImportance,
             priority: Priority.defaultPriority,
           ),
-          iOS: const DarwinNotificationDetails(),
+          iOS: const DarwinNotificationDetails(
+            interruptionLevel: InterruptionLevel.active,
+          ),
         ),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         matchDateTimeComponents: DateTimeComponents.time,
@@ -228,15 +345,146 @@ class NotificationService {
       );
 
       await prefs.setString('last_daily_insight', targetTime.toIso8601String());
+      await _logNotificationEvent('daily_insight');
     } catch (e, stackTrace) {
       debugPrint('scheduleDailyInsight error: $e\n$stackTrace');
     }
   }
 
-  Future<void> cancelAllCardNotifications(List<CreditCardModel> cards) async {
-    for (final card in cards) {
-      await cancelCardNotifications(card.id);
+  Future<void> _checkNotificationLimit() async {
+    final pending = await _notifications.pendingNotificationRequests();
+    if (pending.length >= _maxScheduledNotifications) {
+      throw Exception(
+        'Cannot schedule more notifications. Maximum limit ($_maxScheduledNotifications) reached.',
+      );
     }
+  }
+
+  bool _isValidPayload(String? payload) {
+    if (payload == null) return false;
+    return payload.startsWith('/') &&
+        !payload.contains(' ') &&
+        payload.length < 100;
+  }
+
+  Future<void> _logNotificationEvent(
+    String type, {
+    String? cardId,
+    String? payload,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final count = prefs.getInt('notification_$type') ?? 0;
+    await prefs.setInt('notification_$type', count + 1);
+
+    debugPrint('Logged notification event: $type');
+  }
+
+  Future<void> rescheduleAllNotifications({
+    required List<CreditCardModel> cards,
+    required List<PaymentModel> payments,
+    required TimeOfDay reminderTime,
+  }) async {
+    try {
+      await ensureInitialized();
+      await cancelAllNotifications();
+
+      final activeCards = cards.where((card) => !card.isArchived).toList();
+
+      await Future.wait(
+        activeCards.map(
+          (card) => scheduleCardNotifications(
+            cardId: card.id,
+            cardName: card.name,
+            last4Digits: card.last4Digits,
+            billingDate: card.billingDate,
+            dueDate: card.dueDate,
+            payments: payments.where((p) => p.cardId == card.id).toList(),
+            reminderTime: reminderTime,
+          ),
+        ),
+      );
+
+      final dueCount = _calculateDuePaymentsCount(payments);
+      await scheduleDailyInsight(
+        dueCount: dueCount,
+        reminderTime: reminderTime,
+      );
+
+      debugPrint(
+        'Rescheduled ${activeCards.length} card notifications and daily insight',
+      );
+      await _logNotificationEvent('reschedule_all');
+    } catch (e, stackTrace) {
+      debugPrint('Error rescheduling notifications: $e\n$stackTrace');
+      rethrow;
+    }
+  }
+
+  Future<void> demoInsight({
+    required int dueCount,
+    required BuildContext context,
+  }) async {
+    try {
+      await ensureInitialized();
+      await _cancelDemoNotifications();
+
+      const notificationCount = 10;
+      final notificationIds = List.generate(
+        notificationCount,
+        (i) => _demoNotificationStartId + i,
+      );
+
+      await Future.wait(
+        notificationIds.map((id) {
+          final minutes = 2 * (id - _demoNotificationStartId + 1);
+          return _notifications.zonedSchedule(
+            id,
+            '💡 Demo Insight ${id - _demoNotificationStartId + 1}/$notificationCount',
+            'Sample: $dueCount payment${dueCount == 1 ? '' : 's'} due',
+            tz.TZDateTime.now(tz.local).add(Duration(minutes: minutes)),
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                'daily_insights',
+                'Daily Insights',
+                importance: Importance.defaultImportance,
+              ),
+              iOS: const DarwinNotificationDetails(),
+            ),
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+            payload: '/dashboard?source=demo_$id',
+          );
+        }),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Demo notifications scheduled')),
+      );
+      await _logNotificationEvent('demo_insight');
+    } catch (e, stackTrace) {
+      debugPrint('demoInsight error: $e\n$stackTrace');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to schedule demo: ${e.toString()}')),
+      );
+    }
+  }
+
+  Future<void> _cancelDemoNotifications() async {
+    const notificationCount = 10;
+    final notificationIds = List.generate(
+      notificationCount,
+      (i) => _demoNotificationStartId + i,
+    );
+
+    await Future.wait(notificationIds.map((id) => _notifications.cancel(id)));
+  }
+
+  int _calculateDuePaymentsCount(List<PaymentModel> payments) {
+    final now = DateTime.now();
+    return payments.where((payment) {
+      return !payment.isPaid &&
+          payment.dueDate.isAfter(now) &&
+          payment.dueDate.isBefore(now.add(const Duration(days: 7)));
+    }).length;
   }
 
   Future<bool> shouldSendDailyInsight() async {
@@ -253,96 +501,9 @@ class NotificationService {
         lastSentDate.day == now.day);
   }
 
-  Future<void> rescheduleAllNotifications({
-    required List<CreditCardModel> cards,
-    required List<PaymentModel> payments,
-    required TimeOfDay reminderTime,
-  }) async {
-    try {
-      // 1. Cancel all existing notifications first
-      await cancelAllNotifications();
-
-      // 2. Filter cards that need notifications (active cards)
-      final activeCards = cards.where((card) => !card.isArchived).toList();
-
-      // 3. Schedule notifications in parallel for better performance
-      await Future.wait(
-        activeCards.map(
-          (card) => _scheduleCardNotifications(
-            card: card,
-            payments: payments.where((p) => p.cardId == card.id).toList(),
-            reminderTime: reminderTime,
-          ),
-        ),
-      );
-
-      // 4. Schedule daily insight notification
-      final dueCount = _calculateDuePaymentsCount(payments);
-      await scheduleDailyInsight(
-        dueCount: dueCount,
-        reminderTime: reminderTime,
-      );
-
-      debugPrint(
-        'Successfully rescheduled ${activeCards.length} card notifications',
-      );
-    } catch (e, stackTrace) {
-      debugPrint('Error rescheduling notifications: $e\n$stackTrace');
-      rethrow;
+  Future<void> cancelAllCardNotifications(List<CreditCardModel> cards) async {
+    for (final card in cards) {
+      await cancelCardNotifications(card.id);
     }
-  }
-
-  Future<void> _scheduleCardNotifications({
-    required CreditCardModel card,
-    required List<PaymentModel> payments,
-    required TimeOfDay reminderTime,
-  }) async {
-    await scheduleCardNotifications(
-      cardId: card.id,
-      cardName: card.name,
-      last4Digits: card.last4Digits,
-      billingDate: card.billingDate,
-      dueDate: card.dueDate,
-      payments: payments,
-      reminderTime: reminderTime,
-    );
-  }
-
-  int _calculateDuePaymentsCount(List<PaymentModel> payments) {
-    final now = DateTime.now();
-    return payments.where((payment) {
-      return !payment.isPaid &&
-          payment.dueDate.isAfter(now) &&
-          payment.dueDate.isBefore(now.add(const Duration(days: 7)));
-    }).length;
-  }
-
-  Future<void> demoInsight({
-    required int dueCount,
-    required BuildContext context,
-  }) async {
-    final bigText =
-        '💡 You have $dueCount card${dueCount == 1 ? '' : 's'} due this week. Tap to view your dashboard.';
-    final androidDetails = AndroidNotificationDetails(
-      'insight_channel',
-      'Insight Notifications',
-      channelDescription: 'Shows daily credit card insights',
-      importance: Importance.high,
-      priority: Priority.high,
-      styleInformation: BigTextStyleInformation(bigText),
-    );
-    final iosDetails = DarwinNotificationDetails();
-    final notificationDetails = NotificationDetails(
-      android: androidDetails,
-      iOS: iosDetails,
-    );
-
-    await _notifications.show(
-      999,
-      '💡 Card Nudge Insight',
-      bigText,
-      notificationDetails,
-      payload: '/dashboard',
-    );
   }
 }

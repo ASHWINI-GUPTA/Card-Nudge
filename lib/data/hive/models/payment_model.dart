@@ -55,14 +55,15 @@ class PaymentModel extends HiveObject {
     DateTime? updatedAt,
     this.minimumDueAmount,
     this.paidAmount = 0.0,
-    required this.dueDate,
+    required DateTime dueDate,
     double? statementAmount,
     this.syncPending = true,
   }) : id = id ?? const Uuid().v4(),
        createdAt = (createdAt ?? DateTime.now()).toUtc(),
        updatedAt = (updatedAt ?? DateTime.now()).toUtc(),
+       dueDate = dueDate.toUtc(),
        statementAmount = statementAmount ?? dueAmount,
-       paymentDate = paymentDate;
+       paymentDate = paymentDate?.toUtc();
 
   PaymentModel copyWith({
     String? cardId,
@@ -78,13 +79,13 @@ class PaymentModel extends HiveObject {
       id: id,
       cardId: cardId ?? this.cardId,
       dueAmount: dueAmount ?? this.dueAmount,
-      paymentDate: paymentDate ?? this.paymentDate,
+      paymentDate: paymentDate?.toUtc() ?? this.paymentDate,
       isPaid: isPaid ?? this.isPaid,
       createdAt: createdAt,
       updatedAt: DateTime.now().toUtc(),
       minimumDueAmount: minimumDueAmount ?? this.minimumDueAmount,
       paidAmount: paidAmount ?? this.paidAmount,
-      dueDate: dueDate ?? this.dueDate,
+      dueDate: dueDate?.toUtc() ?? this.dueDate,
       statementAmount: this.statementAmount,
       userId: this.userId,
       syncPending: syncPending ?? this.syncPending,

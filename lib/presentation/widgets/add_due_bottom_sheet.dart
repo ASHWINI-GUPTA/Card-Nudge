@@ -9,6 +9,7 @@ import '../../services/navigation_service.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/payment_provider.dart';
 import '../providers/user_provider.dart';
+import 'credit_card_color_dot_indicator.dart';
 
 class AddDueBottomSheet extends ConsumerStatefulWidget {
   final CreditCardModel card;
@@ -271,7 +272,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
                       icon: const Icon(Icons.add),
                       label:
                           _isSubmitting
-                              ? const CircularProgressIndicator()
+                              ? const CreditCardColorDotIndicator()
                               : Text(
                                 _isNoPaymentDue
                                     ? 'Confirm No Payment Due'

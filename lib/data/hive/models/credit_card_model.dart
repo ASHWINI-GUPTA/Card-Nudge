@@ -55,10 +55,10 @@ class CreditCardModel extends HiveObject {
     String? id,
     required this.userId,
     required this.name,
-    required this.bankId,
+    required String? bankId,
     required this.last4Digits,
-    required this.billingDate,
-    required this.dueDate,
+    required DateTime billingDate,
+    required DateTime dueDate,
     required this.cardType,
     required this.creditLimit,
     this.currentUtilization = 0.0,
@@ -68,6 +68,9 @@ class CreditCardModel extends HiveObject {
     this.isFavorite = false,
     this.syncPending = true,
   }) : id = id ?? const Uuid().v4(),
+       bankId = bankId,
+       billingDate = billingDate.toUtc(),
+       dueDate = dueDate.toUtc(),
        createdAt = (createdAt ?? DateTime.now()).toUtc(),
        updatedAt = (updatedAt ?? DateTime.now()).toUtc();
 
@@ -83,22 +86,25 @@ class CreditCardModel extends HiveObject {
     bool? isArchived,
     bool? isFavorite,
     bool? syncPending,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return CreditCardModel(
       id: id,
+      userId: userId,
       name: name ?? this.name,
       bankId: bankId ?? this.bankId,
       last4Digits: last4Digits ?? this.last4Digits,
-      billingDate: billingDate ?? this.billingDate,
-      dueDate: dueDate ?? this.dueDate,
+      billingDate: billingDate?.toUtc() ?? this.billingDate,
+      dueDate: dueDate?.toUtc() ?? this.dueDate,
       cardType: cardType ?? this.cardType,
       creditLimit: creditLimit ?? this.creditLimit,
       currentUtilization: currentUtilization ?? this.currentUtilization,
-      createdAt: createdAt,
       isArchived: isArchived ?? this.isArchived,
       isFavorite: isFavorite ?? this.isFavorite,
-      userId: this.userId,
       syncPending: syncPending ?? this.syncPending,
+      createdAt: createdAt?.toUtc() ?? this.createdAt,
+      updatedAt: updatedAt?.toUtc() ?? DateTime.now().toUtc(),
     );
   }
 

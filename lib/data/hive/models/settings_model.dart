@@ -38,37 +38,42 @@ class SettingsModel {
   bool syncPending;
 
   SettingsModel({
-    String? userId,
-    this.language = Language.en,
+    required this.userId,
+    this.language = Language.English,
     this.currency = Currency.INR,
     this.themeMode = ThemeMode.system,
     this.notificationsEnabled = true,
-    this.reminderTime = const TimeOfDay(hour: 9, minute: 0),
+    TimeOfDay? reminderTime,
     this.syncSettings = true,
-    this.syncPending = true,
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) : userId = (userId ?? '00000000-0000-0000-0000-000000000000'),
+    this.syncPending = false,
+  }) : reminderTime = reminderTime ?? const TimeOfDay(hour: 10, minute: 0),
        createdAt = (createdAt ?? DateTime.now()).toUtc(),
        updatedAt = (updatedAt ?? DateTime.now()).toUtc();
 
   SettingsModel copyWith({
+    String? userId,
     Language? language,
     Currency? currency,
     ThemeMode? themeMode,
     bool? notificationsEnabled,
     TimeOfDay? reminderTime,
     bool? syncSettings,
+    DateTime? createdAt,
+    DateTime? updatedAt,
     bool? syncPending,
   }) {
     return SettingsModel(
-      userId: this.userId,
+      userId: userId ?? this.userId,
       language: language ?? this.language,
       currency: currency ?? this.currency,
       themeMode: themeMode ?? this.themeMode,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       reminderTime: reminderTime ?? this.reminderTime,
       syncSettings: syncSettings ?? this.syncSettings,
+      createdAt: createdAt?.toUtc() ?? this.createdAt,
+      updatedAt: updatedAt?.toUtc() ?? DateTime.now().toUtc(),
       syncPending: syncPending ?? this.syncPending,
     );
   }
