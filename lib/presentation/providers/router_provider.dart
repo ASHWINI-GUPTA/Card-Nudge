@@ -50,6 +50,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.root,
         name: 'root',
+        // AG TODO: On App reload/resume it should not go to AuthProgress instead use Loading Screen
         builder: (context, state) {
           final isAuthenticated =
               ref.watch(supabaseServiceProvider).isAuthenticated;
