@@ -95,26 +95,26 @@ class SyncService {
             isDefault: false,
           );
           await bankBox.put(bank.id, bank);
-        } else if (localBank.syncPending) {
-          // Push local changes if they are newer
-          final data = {
-            'id': localBank.id,
-            'user_id': localBank.userId,
-            'name': localBank.name,
-            'code': localBank.code,
-            'logo_path': localBank.logoPath,
-            'support_number': localBank.supportNumber,
-            'website': localBank.website,
-            'is_favorite': localBank.isFavorite,
-            'color_hex': localBank.colorHex,
-            'priority': localBank.priority,
-            'created_at': localBank.createdAt.toIso8601String(),
-            'updated_at': localBank.updatedAt.toIso8601String(),
-          };
-          await supabase.from('banks').upsert(data);
-          final updatedBank = localBank.copyWith(syncPending: false);
-          await bankBox.put(updatedBank.id, updatedBank);
         }
+      }
+      for (final localBank in bankBox.values.where((b) => b.syncPending)) {
+        final data = {
+          'id': localBank.id,
+          'user_id': localBank.userId,
+          'name': localBank.name,
+          'code': localBank.code,
+          'logo_path': localBank.logoPath,
+          'support_number': localBank.supportNumber,
+          'website': localBank.website,
+          'is_favorite': localBank.isFavorite,
+          'color_hex': localBank.colorHex,
+          'priority': localBank.priority,
+          'created_at': localBank.createdAt.toIso8601String(),
+          'updated_at': localBank.updatedAt.toIso8601String(),
+        };
+        await supabase.from('banks').upsert(data);
+        final updatedBank = localBank.copyWith(syncPending: false);
+        await bankBox.put(updatedBank.id, updatedBank);
       }
 
       // Sync cards
@@ -142,27 +142,28 @@ class SyncService {
             syncPending: false,
           );
           await cardBox.put(card.id, card);
-        } else if (localCard.syncPending) {
-          final data = {
-            'id': localCard.id,
-            'user_id': localCard.userId,
-            'name': localCard.name,
-            'bank_id': localCard.bankId,
-            'last_4_digits': localCard.last4Digits,
-            'billing_date': localCard.billingDate.toIso8601String(),
-            'due_date': localCard.dueDate.toIso8601String(),
-            'card_type': localCard.cardType.name,
-            'credit_limit': localCard.creditLimit,
-            'current_utilization': localCard.currentUtilization,
-            'created_at': localCard.createdAt.toIso8601String(),
-            'updated_at': localCard.updatedAt.toIso8601String(),
-            'is_archived': localCard.isArchived,
-            'is_favorite': localCard.isFavorite,
-          };
-          await supabase.from('cards').upsert(data);
-          final updatedCard = localCard.copyWith(syncPending: false);
-          await cardBox.put(updatedCard.id, updatedCard);
         }
+      }
+      for (final localCard in cardBox.values.where((c) => c.syncPending)) {
+        final data = {
+          'id': localCard.id,
+          'user_id': localCard.userId,
+          'name': localCard.name,
+          'bank_id': localCard.bankId,
+          'last_4_digits': localCard.last4Digits,
+          'billing_date': localCard.billingDate.toIso8601String(),
+          'due_date': localCard.dueDate.toIso8601String(),
+          'card_type': localCard.cardType.name,
+          'credit_limit': localCard.creditLimit,
+          'current_utilization': localCard.currentUtilization,
+          'created_at': localCard.createdAt.toIso8601String(),
+          'updated_at': localCard.updatedAt.toIso8601String(),
+          'is_archived': localCard.isArchived,
+          'is_favorite': localCard.isFavorite,
+        };
+        await supabase.from('cards').upsert(data);
+        final updatedCard = localCard.copyWith(syncPending: false);
+        await cardBox.put(updatedCard.id, updatedCard);
       }
 
       // Sync payments
@@ -190,25 +191,28 @@ class SyncService {
             syncPending: false,
           );
           await paymentBox.put(payment.id, payment);
-        } else if (localPayment.syncPending) {
-          final data = {
-            'id': localPayment.id,
-            'user_id': localPayment.userId,
-            'card_id': localPayment.cardId,
-            'due_amount': localPayment.dueAmount,
-            'payment_date': localPayment.paymentDate?.toIso8601String(),
-            'is_paid': localPayment.isPaid,
-            'created_at': localPayment.createdAt.toIso8601String(),
-            'updated_at': localPayment.updatedAt.toIso8601String(),
-            'minimum_due_amount': localPayment.minimumDueAmount,
-            'paid_amount': localPayment.paidAmount,
-            'due_date': localPayment.dueDate.toIso8601String(),
-            'statement_amount': localPayment.statementAmount,
-          };
-          await supabase.from('payments').upsert(data);
-          final updatedPayment = localPayment.copyWith(syncPending: false);
-          await paymentBox.put(updatedPayment.id, updatedPayment);
         }
+      }
+      for (final localPayment in paymentBox.values.where(
+        (p) => p.syncPending,
+      )) {
+        final data = {
+          'id': localPayment.id,
+          'user_id': localPayment.userId,
+          'card_id': localPayment.cardId,
+          'due_amount': localPayment.dueAmount,
+          'payment_date': localPayment.paymentDate?.toIso8601String(),
+          'is_paid': localPayment.isPaid,
+          'created_at': localPayment.createdAt.toIso8601String(),
+          'updated_at': localPayment.updatedAt.toIso8601String(),
+          'minimum_due_amount': localPayment.minimumDueAmount,
+          'paid_amount': localPayment.paidAmount,
+          'due_date': localPayment.dueDate.toIso8601String(),
+          'statement_amount': localPayment.statementAmount,
+        };
+        await supabase.from('payments').upsert(data);
+        final updatedPayment = localPayment.copyWith(syncPending: false);
+        await paymentBox.put(updatedPayment.id, updatedPayment);
       }
 
       // Sync settings
@@ -246,11 +250,13 @@ class SyncService {
           );
           await settingsBox.put(defaultSettingId, setting);
           ref.watch(settingsProvider.notifier).refresh();
-        } else if (localSetting.syncPending && !localSetting.isDefaultSetting) {
-          await supabase.from('settings').upsert(localSetting);
-          final updatedSetting = localSetting.copyWith(syncPending: false);
-          await settingsBox.put(defaultSettingId, updatedSetting);
         }
+      }
+      final localSetting = settingsBox.values.first;
+      if (localSetting.syncPending && !localSetting.isDefaultSetting) {
+        await supabase.from('settings').upsert(localSetting);
+        final updatedSetting = localSetting.copyWith(syncPending: false);
+        await settingsBox.put(defaultSettingId, updatedSetting);
       }
     } catch (e) {
       print('Sync error: $e');
@@ -291,18 +297,6 @@ class SyncService {
       }
 
       await syncData();
-
-      // Fetch settings
-      final settingsData = await supabase
-          .from('settings')
-          .select()
-          .eq('user_id', userId);
-
-      final setting = settingsBox.values.first;
-
-      if (settingsData.isEmpty && !setting.isDefaultSetting) {
-        await supabase.from('settings').upsert(setting);
-      }
     } catch (e) {
       print('Initial sync error: $e');
       rethrow;
