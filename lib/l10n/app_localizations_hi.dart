@@ -18,7 +18,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get noCardsMessage => 'आपने अभी तक कोई कार्ड नहीं जोड़ा है।';
 
   @override
-  String get errorLoadingCards => 'कार्ड लोड करने में विफल। कृपया फिर से प्रयास करें।';
+  String get errorLoadingCards =>
+      'कार्ड लोड करने में विफल। कृपया फिर से प्रयास करें।';
 
   @override
   String get retryButtonLabel => 'पुनः प्रयास करें';
@@ -48,7 +49,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get invalidAmountError => 'मान्य राशि दर्ज करें।';
 
   @override
-  String get minimumDueExceedsError => 'न्यूनतम देय राशि कुल देय से अधिक नहीं हो सकती।';
+  String get minimumDueExceedsError =>
+      'न्यूनतम देय राशि कुल देय से अधिक नहीं हो सकती।';
 
   @override
   String get paymentAddedSuccess => 'भुगतान देय सफलतापूर्वक जोड़ा गया!';
@@ -192,7 +194,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get deleteCardConfirmation => 'कार्ड हटाने की पुष्टि';
 
   @override
-  String get deleteCardMessage => 'क्या आप वाकई इस कार्ड को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।';
+  String get deleteCardMessage =>
+      'क्या आप वाकई इस कार्ड को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।';
 
   @override
   String get cancelButton => 'रद्द करें';
@@ -270,10 +273,12 @@ class AppLocalizationsHi extends AppLocalizations {
   String get clearButton => 'साफ करें';
 
   @override
-  String get editDueDateOnCard => 'देय तिथि को कार्ड विवरण से संपादित किया जा सकता है।';
+  String get editDueDateOnCard =>
+      'देय तिथि को कार्ड विवरण से संपादित किया जा सकता है।';
 
   @override
-  String get dueAlreadyExist => 'इस कार्ड के लिए पहले से ही एक देय भुगतान मौजूद है।';
+  String get dueAlreadyExist =>
+      'इस कार्ड के लिए पहले से ही एक देय भुगतान मौजूद है।';
 
   @override
   String get spendOverview => 'खर्च अवलोकन';
@@ -294,7 +299,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get monthFuture => 'भविष्य';
 
   @override
-  String get dueScreenNoFilterMessage => 'आपके फ़िल्टर से कोई भुगतान मेल नहीं खाता।';
+  String get dueScreenNoFilterMessage =>
+      'आपके फ़िल्टर से कोई भुगतान मेल नहीं खाता।';
 
   @override
   String get settingsScreenTitle => 'सेटिंग्स';
@@ -357,7 +363,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get clearData => 'सभी डेटा साफ करें';
 
   @override
-  String get clearDataConfirm => 'क्या आप वाकई सभी डेटा साफ करना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।';
+  String get clearDataConfirm =>
+      'क्या आप वाकई सभी डेटा साफ करना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।';
 
   @override
   String get clearDataSuccess => 'सभी डेटा सफलतापूर्वक साफ किया गया!';

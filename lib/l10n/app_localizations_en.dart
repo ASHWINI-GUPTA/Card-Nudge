@@ -192,7 +192,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteCardConfirmation => 'Confirm Delete Card';
 
   @override
-  String get deleteCardMessage => 'Are you sure you want to delete this card? This action cannot be undone.';
+  String get deleteCardMessage =>
+      'Are you sure you want to delete this card? This action cannot be undone.';
 
   @override
   String get cancelButton => 'Cancel';
@@ -270,7 +271,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clearButton => 'Clear';
 
   @override
-  String get editDueDateOnCard => 'Due date can be edited from the card details.';
+  String get editDueDateOnCard =>
+      'Due date can be edited from the card details.';
 
   @override
   String get dueAlreadyExist => 'A payment due already exists for this card.';
@@ -357,7 +359,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clearData => 'Clear All Data';
 
   @override
-  String get clearDataConfirm => 'Are you sure you want to clear all data? This action cannot be undone.';
+  String get clearDataConfirm =>
+      'Are you sure you want to clear all data? This action cannot be undone.';
 
   @override
   String get clearDataSuccess => 'All data cleared successfully!';

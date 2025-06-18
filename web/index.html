@@ -3,18 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Card Nudge - Manage Your Credit Cards</title>
+  <title>Card Nudge - Credit Card Manager</title>
+  <link rel="icon" type="image/png" href="https://github.com/ASHWINI-GUPTA/Card-Nudge/blob/main/assets/icons/icon.png">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
     body {
-      font-family: 'Arial', sans-serif;
+      font-family: 'Roboto', 'Arial', sans-serif;
       line-height: 1.6;
-      color: #333;
-      background-color: #f9fafb;
+      color: #222;
+      background-color: #f5f7fa;
     }
     .container {
       max-width: 1200px;
@@ -22,12 +18,13 @@
       padding: 0 20px;
     }
     header {
-      background-color: #1e3a8a;
+      background-color: #2563eb;
       color: #fff;
       padding: 15px 0;
       position: sticky;
       top: 0;
       z-index: 100;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.08);
     }
     nav {
       display: flex;
@@ -35,8 +32,18 @@
       align-items: center;
     }
     nav .logo {
-      font-size: 1.5em;
+      display: flex;
+      align-items: center;
+      font-size: 1.6em;
       font-weight: bold;
+      gap: 10px;
+    }
+    nav .logo img {
+      height: 40px;
+      width: 40px;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
     nav ul {
       list-style: none;
@@ -47,81 +54,122 @@
       color: #fff;
       text-decoration: none;
       font-size: 1em;
+      transition: color 0.2s;
     }
     nav ul li a:hover {
+      color: #a5b4fc;
       text-decoration: underline;
     }
     .hero {
-      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+      background: linear-gradient(135deg, #2563eb 60%, #60a5fa 100%);
       color: #fff;
       text-align: center;
-      padding: 80px 20px;
+      padding: 80px 20px 60px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero .logo-img {
+      width: 90px;
+      height: 90px;
+      border-radius: 20px;
+      margin-bottom: 18px;
+      background: #fff;
+      box-shadow: 0 4px 24px rgba(37,99,235,0.10);
+      object-fit: contain;
     }
     .hero h1 {
-      font-size: 2.5em;
-      margin-bottom: 20px;
+      font-size: 2.7em;
+      margin-bottom: 18px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
     }
     .hero p {
-      font-size: 1.2em;
+      font-size: 1.18em;
       max-width: 600px;
-      margin: 0 auto 30px;
+      margin: 0 auto 32px;
+      color: #e0e7ff;
     }
     .cta-button {
       display: inline-block;
-      padding: 12px 24px;
+      padding: 14px 32px;
       background-color: #fff;
-      color: #1e3a8a;
+      color: #2563eb;
       text-decoration: none;
       font-weight: bold;
-      border-radius: 8px;
-      transition: background-color 0.3s;
+      border-radius: 10px;
+      font-size: 1.1em;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+      transition: background-color 0.2s, color 0.2s;
+      margin: 0 10px 10px 0;
     }
     .cta-button:hover {
-      background-color: #e5e7eb;
+      background-color: #e0e7ff;
+      color: #1e40af;
     }
     .features, .why {
       padding: 60px 20px;
+      background: #fff;
+      border-radius: 24px;
+      margin: 40px auto;
+      box-shadow: 0 2px 12px rgba(37,99,235,0.04);
     }
     .features h2, .why h2 {
       font-size: 2em;
-      color: #1e3a8a;
+      color: #2563eb;
       text-align: center;
       margin-bottom: 40px;
+      font-weight: 700;
     }
     .feature-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 30px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 32px;
     }
     .feature-card {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      background-color: #f1f5fd;
+      padding: 28px 20px 22px 20px;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.04);
       text-align: center;
+      transition: box-shadow 0.2s;
+      border: 1px solid #e0e7ff;
+    }
+    .feature-card:hover {
+      box-shadow: 0 4px 24px rgba(37,99,235,0.10);
     }
     .feature-card h3 {
-      font-size: 1.3em;
-      color: #1e3a8a;
+      font-size: 1.22em;
+      color: #2563eb;
       margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .feature-card p {
+      color: #374151;
+      font-size: 1em;
     }
     .why p {
       max-width: 800px;
       margin: 0 auto 20px;
       text-align: center;
+      color: #374151;
     }
     footer {
       background-color: #1e3a8a;
       color: #fff;
-      padding: 20px 0;
+      padding: 24px 0 12px 0;
       text-align: center;
+      font-size: 1em;
+      border-radius: 0 0 18px 18px;
+      margin-top: 40px;
     }
     footer a {
-      color: #3b82f6;
+      color: #a5b4fc;
       text-decoration: none;
+      margin: 0 8px;
     }
     footer a:hover {
       text-decoration: underline;
+      color: #fff;
     }
     @media (max-width: 768px) {
       .hero h1 {
@@ -137,33 +185,42 @@
       .feature-grid {
         grid-template-columns: 1fr;
       }
+      .features, .why {
+        padding: 32px 8px;
+      }
     }
   </style>
 </head>
 <body>
   <header>
     <nav class="container">
-      <div class="logo">Card Nudge</div>
+      <div class="logo">
+        <img src="https://github.com/ASHWINI-GUPTA/Card-Nudge/raw/main/assets/icons/icon.png" alt="Card Nudge App Icon">
+        Card Nudge
+      </div>
       <ul>
         <li><a href="#features">Features</a></li>
         <li><a href="#why">Why Card Nudge</a></li>
         <li><a href="/privacy">Privacy Policy</a></li>
         <li><a href="/terms">Terms & Conditions</a></li>
-        <li><a href="https://card.fnlsg.in/assets/screenshot.png">Screenshot</a></li>
-        <li><a href="https://card.fnlsg.in/assets/logo.png">Logo</a></li>
+        <!-- <li><a href="https://card.fnlsg.in/assets/screenshot.png" target="_blank">Screenshot</a></li> -->
       </ul>
     </nav>
   </header>
 
   <section class="hero">
     <div class="container">
-      <h1>Manage Your Credit Cards with Ease</h1>
-      <p>Card Nudge helps you track payments, organize cards, and stay on top of your finances, all in one secure app.</p>
-      <a href="in.fnlsg.card://login-callback" class="cta-button">Open App</a>
-      <p style="margin-top: 20px;">
-        <a href="https://play.google.com/store/apps/details?id=in.fnlsg.card" class="cta-button">Get it on Google Play</a>
-        <a href="https://apps.apple.com/app/card-nudge/id<your-apple-app-id>" class="cta-button">App Store</a>
+      <img class="logo-img" src="https://github.com/ASHWINI-GUPTA/Card-Nudge/raw/main/assets/icons/icon.png" alt="Card Nudge Logo">
+      <h1>Stay Ahead of Your Credit Card Dues</h1>
+      <p>
+        Card Nudge is your modern, minimal credit card manager.<br>
+        Track cards, get smart reminders, and never miss a payment again.<br>
+        <span style="color:#ffe066;font-weight:600;">Secure, private, and open source.</span>
       </p>
+      <a href="https://play.google.com/store/apps/details?id=in.fnlsg.card">
+			  <img loading="lazy" decoding="async" width="250" height="70" src="./GetItOnGooglePlay.png" alt="Get it on Google Play">								
+      </a>
+       
     </div>
   </section>
 
@@ -172,20 +229,28 @@
       <h2>Key Features</h2>
       <div class="feature-grid">
         <div class="feature-card">
-          <h3>Card Management</h3>
-          <p>Add and organize credit cards with details like last 4 digits, billing dates, and credit limits.</p>
+          <h3>🏦 Card Management</h3>
+          <p>Add multiple credit cards with custom names, bank info, and last 4 digits. Track billing cycles & due dates. Set card limits for better control.</p>
         </div>
         <div class="feature-card">
-          <h3>Payment Tracking</h3>
-          <p>Monitor due amounts, payment dates, and statement balances to never miss a payment.</p>
+          <h3>🔔 Smart Reminders</h3>
+          <p>Get local notifications 3 days before due date and on due day. Daily insight notification at your preferred time. Never miss a payment deadline.</p>
         </div>
         <div class="feature-card">
-          <h3>Secure Sync</h3>
-          <p>Sync data securely with Supabase cloud or store locally with Hive for offline access.</p>
+          <h3>📊 Dashboard & Insights</h3>
+          <p>Visual calendar and list view of due dates. Color-coded status (upcoming, near-due, overdue). Total dues summary and utilization insights.</p>
         </div>
         <div class="feature-card">
-          <h3>OAuth Login</h3>
-          <p>Sign in effortlessly with Google or GitHub for a seamless and secure experience.</p>
+          <h3>🛡️ Data Security & Sync</h3>
+          <p>Offline-first with local database. Cloud sync with Supabase (secure, privacy-first). Google/GitHub OAuth login.</p>
+        </div>
+        <div class="feature-card">
+          <h3>🌗 Modern UI</h3>
+          <p>Material 3 Design. Dark/Light theme support. Responsive and accessible.</p>
+        </div>
+        <div class="feature-card">
+          <h3>🌐 Localization</h3>
+          <p>Supports English and Hindi. Working on add more languages.</p>
         </div>
       </div>
     </div>
@@ -194,8 +259,12 @@
   <section class="why" id="why">
     <div class="container">
       <h2>Why We Built Card Nudge</h2>
-      <p>At Card Nudge, we understand the hassle of managing multiple credit cards and keeping track of payments. Our goal was to create a simple, secure, and user-friendly app that empowers you to take control of your finances. By combining local storage for offline access with cloud sync for convenience, we built Card Nudge to simplify your financial life while prioritizing your privacy and security.</p>
-      <p>We’re passionate about helping users avoid late fees, stay organized, and make informed financial decisions, all through a beautifully designed mobile experience.</p>
+      <p>
+        Managing multiple credit cards and payments shouldn't be a hassle. Card Nudge is designed to be simple, secure, and user-friendly—empowering you to take control of your finances. By combining local storage for offline access with cloud sync for convenience, Card Nudge simplifies your financial life while prioritizing privacy and security.
+      </p>
+      <p>
+        Avoid late fees, stay organized, and make informed financial decisions—all through a beautifully designed mobile experience.
+      </p>
     </div>
   </section>
 
@@ -205,9 +274,8 @@
       <p>
         <a href="/privacy">Privacy Policy</a> | 
         <a href="/terms">Terms & Conditions</a> | 
-        <a href="https://card.fnlsg.in/assets/screenshot.png">Screenshot</a> | 
-        <a href="https://card.fnlsg.in/assets/logo.png">Logo</a> | 
-        <a href="mailto:support@card.fnlsg.in">Contact Us</a>
+        <!-- <a href="https://card.fnlsg.in/assets/screenshot.png" target="_blank">Screenshot</a> |  -->
+        <a href="mailto:ashwini@fnlsg.in">Contact Us</a>
       </p>
     </div>
   </footer>

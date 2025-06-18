@@ -55,13 +55,12 @@ class PaymentModel extends HiveObject {
     DateTime? updatedAt,
     this.minimumDueAmount,
     this.paidAmount = 0.0,
-    required DateTime dueDate,
+    required this.dueDate,
     double? statementAmount,
     this.syncPending = true,
   }) : id = id ?? const Uuid().v4(),
        createdAt = (createdAt ?? DateTime.now()).toUtc(),
        updatedAt = (updatedAt ?? DateTime.now()).toUtc(),
-       dueDate = dueDate.toUtc(),
        statementAmount = statementAmount ?? dueAmount,
        paymentDate = paymentDate?.toUtc();
 
@@ -85,7 +84,7 @@ class PaymentModel extends HiveObject {
       updatedAt: DateTime.now().toUtc(),
       minimumDueAmount: minimumDueAmount ?? this.minimumDueAmount,
       paidAmount: paidAmount ?? this.paidAmount,
-      dueDate: dueDate?.toUtc() ?? this.dueDate,
+      dueDate: dueDate ?? this.dueDate,
       statementAmount: this.statementAmount,
       userId: this.userId,
       syncPending: syncPending ?? this.syncPending,

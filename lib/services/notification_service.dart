@@ -8,7 +8,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tzData;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 
 import '../data/hive/models/credit_card_model.dart';
 
@@ -41,8 +41,7 @@ class NotificationService {
 
   Future<void> _setLocalTimezone() async {
     try {
-      final String timeZoneName =
-          await FlutterNativeTimezone.getLocalTimezone();
+      final String timeZoneName = await FlutterTimezone.getLocalTimezone();
       tz.setLocalLocation(tz.getLocation(timeZoneName));
       debugPrint('Set local timezone: $timeZoneName');
     } catch (e) {
