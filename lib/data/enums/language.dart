@@ -9,4 +9,13 @@ extension LanguageLocale on Language {
         return 'hi_IN';
     }
   }
+
+  String get code {
+    switch (this) {
+      case Language.English:
+        return 'en';
+      case Language.Hindi:
+        return 'hi';
+    }
+  }
 }
