@@ -368,7 +368,7 @@ class SettingsScreen extends ConsumerWidget {
               TextButton(
                 onPressed: () {
                   ref.watch(paymentProvider.notifier).reset();
-                  ref.watch(creditCardListProvider.notifier).reset();
+                  ref.watch(creditCardProvider.notifier).reset();
 
                   // TODO: Clear from Supabase too?
 

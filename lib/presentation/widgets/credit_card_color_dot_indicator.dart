@@ -38,8 +38,8 @@ class _CreditCardColorDotIndicatorState
           CurvedAnimation(
             parent: _controller,
             curve: Interval(
-              index * 0.15, // Adjusted to ensure end <= 1.0
-              (index * 0.15) + 0.4, // End value stays within [0.0, 1.0]
+              index * 0.15,
+              (index * 0.15) + 0.4,
               curve: Curves.easeInOut,
             ),
           ),

@@ -21,7 +21,7 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final cardsAsync = ref.watch(creditCardListProvider);
+    final cardsAsync = ref.watch(creditCardProvider);
     final paymentsAsync = ref.watch(paymentProvider);
     final user = ref.watch(userProvider);
     final hour = DateTime.now().hour;

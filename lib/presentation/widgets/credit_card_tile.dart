@@ -1,3 +1,4 @@
+import 'package:card_nudge/presentation/providers/credit_card_provider.dart';
 import 'package:card_nudge/presentation/providers/format_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,9 +12,9 @@ import '../providers/payment_provider.dart';
 import 'credit_card_color_dot_indicator.dart';
 
 class CreditCardTile extends ConsumerWidget {
-  final CreditCardModel card;
+  final String cardId;
 
-  const CreditCardTile({super.key, required this.card});
+  const CreditCardTile({super.key, required this.cardId});
 
   static const _defaultColor = Color(0xFF1A1A1A);
   static const _cardWidth = 400.0;
@@ -21,21 +22,44 @@ class CreditCardTile extends ConsumerWidget {
   static const _padding = EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0);
   static const _borderRadius = BorderRadius.all(Radius.circular(20));
 
-  String get maskedCardNumber => '**** **** **** ${card.last4Digits}';
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final bankAsync = ref.watch(bankProvider);
+    final cardAsync = ref.watch(creditCardProvider);
 
-    return bankAsync.when(
-      data: (banks) {
-        final bank = banks.firstWhere((b) => b.id == card.bankId);
+    return cardAsync.when(
+      data: (cards) {
+        final card = cards.firstWhere((c) => c.id == cardId);
+        return bankAsync.when(
+          data: (banks) {
+            final bank = banks.firstWhere((b) => b.id == card.bankId);
 
-        return Semantics(
-          button: true,
-          label: '${AppStrings.cardDetailsTitle} ${card.name}',
-          child: _buildCard(context, ref, theme, bank),
+            return Semantics(
+              button: true,
+              label: '${AppStrings.cardDetailsTitle} ${card.name}',
+              child: _buildCard(context, ref, theme, bank, card),
+            );
+          },
+          loading: () => const Center(child: CreditCardColorDotIndicator()),
+          error:
+              (error, _) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '${AppStrings.bankDetailsLoadError}: $error',
+                      style: theme.textTheme.bodyLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => ref.invalidate(bankProvider),
+                      child: const Text(AppStrings.buttonRetry),
+                    ),
+                  ],
+                ),
+              ),
         );
       },
       loading: () => const Center(child: CreditCardColorDotIndicator()),
@@ -45,13 +69,13 @@ class CreditCardTile extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '${AppStrings.bankDetailsLoadError}: $error',
+                  'Card Load Error: $error',
                   style: theme.textTheme.bodyLarge,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () => ref.invalidate(bankProvider),
+                  onPressed: () => ref.invalidate(creditCardProvider),
                   child: const Text(AppStrings.buttonRetry),
                 ),
               ],
@@ -65,6 +89,7 @@ class CreditCardTile extends ConsumerWidget {
     WidgetRef ref,
     ThemeData theme,
     BankModel bank,
+    CreditCardModel card,
   ) {
     final paymentsAsync = ref.watch(paymentProvider);
     final formatHelper = ref.watch(formatHelperProvider);
@@ -116,6 +141,7 @@ class CreditCardTile extends ConsumerWidget {
                       child: _buildCardDetails(
                         context,
                         bank,
+                        card,
                         hasDue,
                         dueAmount,
                         formatHelper,
@@ -183,6 +209,7 @@ class CreditCardTile extends ConsumerWidget {
   Widget _buildCardDetails(
     BuildContext context,
     BankModel bank,
+    CreditCardModel card,
     bool hasDue,
     double dueAmount,
     FormatHelper formatHelper,
@@ -194,6 +221,18 @@ class CreditCardTile extends ConsumerWidget {
             : const Icon(Icons.credit_card, size: 30);
 
     final statmentGenerated = DateTime.now().isAfter(card.billingDate);
+    final daysLeft = card.dueDate.difference(DateTime.now()).inDays;
+
+    Color dueDateColor;
+    if (daysLeft <= 5) {
+      dueDateColor = Colors.redAccent;
+    } else if (daysLeft <= 10) {
+      dueDateColor = Colors.deepOrangeAccent;
+    } else {
+      dueDateColor = Colors.orangeAccent;
+    }
+
+    String maskedCardNumber = '**** **** **** ${card.last4Digits}';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,13 +285,16 @@ class CreditCardTile extends ConsumerWidget {
             if (statmentGenerated)
               _buildInfoTile(
                 label: AppStrings.dueDateLabel,
-                value: formatHelper.formatShortDate(card.dueDate),
-                valueColor: hasDue ? Colors.redAccent : Colors.greenAccent,
+                value: formatHelper.formatDate(card.dueDate, format: 'MMMM d'),
+                valueColor: dueDateColor,
               )
             else
               _buildInfoTile(
                 label: AppStrings.billingDateLabel,
-                value: formatHelper.formatShortDate(card.billingDate),
+                value: formatHelper.formatDate(
+                  card.billingDate,
+                  format: 'MMMM d',
+                ),
                 valueColor: hasDue ? Colors.redAccent : Colors.greenAccent,
               ),
           ],

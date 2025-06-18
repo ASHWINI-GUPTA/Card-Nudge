@@ -95,14 +95,14 @@ class CardDetailsScreen extends ConsumerWidget {
           return RefreshIndicator(
             onRefresh: () async {
               ref.invalidate(paymentProvider);
-              ref.invalidate(creditCardListProvider);
+              ref.invalidate(creditCardProvider);
             },
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
                 Semantics(
                   label: '${AppStrings.cardLabel}: ${card.name}',
-                  child: CreditCardTile(card: card),
+                  child: CreditCardTile(cardId: card.id),
                 ),
                 const SizedBox(height: 24),
                 Semantics(
@@ -252,7 +252,7 @@ class CardDetailsScreen extends ConsumerWidget {
         _showDeleteConfirmation(context, ref);
         break;
       case 'archive':
-        await ref.read(creditCardListProvider.notifier).markArchive(card.id);
+        await ref.read(creditCardProvider.notifier).markArchive(card.id);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text(AppStrings.cardArchivedSuccess)),
         );
@@ -282,9 +282,7 @@ class CardDetailsScreen extends ConsumerWidget {
               TextButton(
                 onPressed: () async {
                   try {
-                    await ref
-                        .read(creditCardListProvider.notifier)
-                        .delete(card.id);
+                    await ref.read(creditCardProvider.notifier).delete(card.id);
                     if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(

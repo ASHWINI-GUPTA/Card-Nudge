@@ -62,7 +62,7 @@ class LogPaymentBottomSheet extends ConsumerWidget {
         syncPending: true,
       );
 
-      await ref.read(creditCardListProvider.notifier).save(updatedCard);
+      await ref.read(creditCardProvider.notifier).save(updatedCard);
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text(AppStrings.paymentLoggedSuccess)),
@@ -185,7 +185,7 @@ class LogPaymentBottomSheet extends ConsumerWidget {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton.icon(
-                  icon: const Icon(Icons.receipt_long),
+                  icon: isSubmitting ? null : const Icon(Icons.receipt_long),
                   onPressed:
                       isSubmitting
                           ? null

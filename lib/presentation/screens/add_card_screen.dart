@@ -93,7 +93,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
         cardType: cardType,
       );
 
-      await ref.read(creditCardListProvider.notifier).save(updatedCard);
+      await ref.read(creditCardProvider.notifier).save(updatedCard);
 
       if (!mounted) return null;
       ScaffoldMessenger.of(context).showSnackBar(

@@ -51,7 +51,6 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
   }
 
   Future<void> save(PaymentModel payment) async {
-    state = const AsyncValue.loading();
     bool paymentSaved = false;
     try {
       // Validate payment
@@ -69,21 +68,16 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
         throw const FormatException(AppStrings.invalidAmountError);
       }
 
-      if (_box.containsKey(payment.id)) {
-        // Update existing payment
-        await _box.put(payment.id, payment);
-      } else {
-        // Add new payment
-        await _box.put(payment.id, payment);
-      }
+      state = const AsyncValue.loading();
+      await _box.put(payment.id, payment);
+      await _triggerSync();
 
       final updatedPayments = _box.values.toList();
       state = AsyncValue.data(updatedPayments);
-      await _triggerSync();
       paymentSaved = true;
 
       // Reschedule notifications for this card
-      final cards = ref.read(creditCardListProvider.notifier).sortedOnDueDate;
+      final cards = ref.read(creditCardProvider.notifier).sortedOnDueDate;
       final settings = ref.read(settingsProvider);
       final notificationProvider = ref.read(notificationServiceProvider);
       await notificationProvider.rescheduleAllNotifications(
@@ -129,7 +123,7 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
       await _triggerSync();
 
       // Reschedule notifications for this card
-      final cards = ref.read(creditCardListProvider.notifier).sortedOnDueDate;
+      final cards = ref.read(creditCardProvider.notifier).sortedOnDueDate;
       final settings = ref.read(settingsProvider);
       final notificationProvider = ref.read(notificationServiceProvider);
 

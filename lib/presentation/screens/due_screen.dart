@@ -28,7 +28,7 @@ class DueScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final cardsAsync = ref.watch(creditCardListProvider);
+    final cardsAsync = ref.watch(creditCardProvider);
 
     final isFilterApplied =
         ref.watch(dueFilterProvider.notifier).isFilterApplied;
@@ -57,7 +57,7 @@ class DueScreen extends ConsumerWidget {
           }
           return RefreshIndicator(
             onRefresh: () async {
-              ref.invalidate(creditCardListProvider);
+              ref.invalidate(creditCardProvider);
               ref.invalidate(bankProvider);
               ref.invalidate(paymentProvider);
             },
@@ -77,7 +77,7 @@ class DueScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => ref.invalidate(creditCardListProvider),
+                    onPressed: () => ref.invalidate(creditCardProvider),
                     child: Text(AppStrings.buttonRetry),
                   ),
                 ],

@@ -14,7 +14,7 @@ final creditCardBoxProvider = Provider<Box<CreditCardModel>>((ref) {
   return CreditCardStorage.getBox();
 });
 
-final creditCardListProvider =
+final creditCardProvider =
     AsyncNotifierProvider<CreditCardNotifier, List<CreditCardModel>>(
       CreditCardNotifier.new,
     );

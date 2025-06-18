@@ -71,7 +71,6 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
 
       await ref.read(paymentProvider.notifier).save(payment);
 
-      if (!mounted) return null;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text(AppStrings.paymentAddedSuccess)),
       );
@@ -128,7 +127,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
         syncPending: true,
       );
 
-      await ref.read(creditCardListProvider.notifier).save(updatedCard);
+      await ref.read(creditCardProvider.notifier).save(updatedCard);
 
       if (!mounted) return;
 
@@ -269,7 +268,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
                                   }
                                 }
                               },
-                      icon: const Icon(Icons.add),
+                      icon: _isSubmitting ? null : const Icon(Icons.add),
                       label:
                           _isSubmitting
                               ? const CreditCardColorDotIndicator()

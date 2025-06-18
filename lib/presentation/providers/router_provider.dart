@@ -9,6 +9,7 @@ import '../screens/auth_screen.dart';
 import '../screens/error_screen.dart';
 import '../screens/card_details_screen.dart';
 import '../providers/credit_card_provider.dart';
+import '../screens/loading_screen.dart';
 import '../screens/setting_screen.dart';
 import '../screens/home_screen.dart';
 
@@ -82,9 +83,12 @@ final routerProvider = Provider<GoRouter>((ref) {
             return const AuthScreen();
           }
 
-          final cardProvider = ref.watch(creditCardListProvider);
-          final cards = cardProvider.valueOrNull;
+          final cardAsync = ref.watch(creditCardProvider);
+          if (cardAsync.isLoading) {
+            return const LoadingIndicatorScreen();
+          }
 
+          final cards = cardAsync.valueOrNull;
           if (cards == null) {
             return const ErrorScreen(message: 'Cards not found.');
           }

@@ -16,7 +16,7 @@ class CardsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cardsAsync = ref.watch(creditCardListProvider);
+    final cardsAsync = ref.watch(creditCardProvider);
     final theme = Theme.of(context);
     final user = ref.read(userProvider);
     if (user == null) {
@@ -33,7 +33,7 @@ class CardsScreen extends ConsumerWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          ref.invalidate(creditCardListProvider);
+          ref.invalidate(creditCardProvider);
         },
         child: cardsAsync.when(
           data:
@@ -58,7 +58,7 @@ class CardsScreen extends ConsumerWidget {
                                   '${AppStrings.cardsScreenTitle}: ${card.name}',
                               child: CreditCardTile(
                                 key: ValueKey(card.id),
-                                card: card,
+                                cardId: card.id,
                               ),
                             ),
                           );
@@ -80,7 +80,7 @@ class CardsScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: () => ref.invalidate(creditCardListProvider),
+                      onPressed: () => ref.invalidate(creditCardProvider),
                       child: Text(AppStrings.buttonRetry),
                     ),
                   ],
