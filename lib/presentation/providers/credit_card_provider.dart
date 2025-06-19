@@ -43,6 +43,10 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
       ..sort((a, b) => a.dueDate.compareTo(b.dueDate));
   }
 
+  Future<void> refresh() async {
+    _onBoxChange();
+  }
+
   Future<void> save(CreditCardModel card) async {
     state = const AsyncValue.loading();
     bool cardSaved = false;

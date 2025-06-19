@@ -42,6 +42,10 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
     return _box.values.toList();
   }
 
+  Future<void> refresh() async {
+    _onBoxChange();
+  }
+
   void _onBoxChange() {
     // Update state only if data has changed to avoid infinite loops
     final newPayments = _box.values.toList();

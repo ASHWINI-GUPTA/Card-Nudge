@@ -1,6 +1,5 @@
 import 'dart:async';
-import 'package:card_nudge/data/enums/currency.dart';
-import 'package:card_nudge/data/enums/language.dart';
+import 'package:card_nudge/presentation/providers/credit_card_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,10 +7,14 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../data/enums/card_type.dart';
+import '../data/enums/currency.dart';
+import '../data/enums/language.dart';
 import '../data/hive/models/bank_model.dart';
 import '../data/hive/models/credit_card_model.dart';
 import '../data/hive/models/payment_model.dart';
 import '../data/hive/models/settings_model.dart';
+import '../presentation/providers/bank_provider.dart';
+import '../presentation/providers/payment_provider.dart';
 import '../presentation/providers/setting_provider.dart';
 
 class SyncService {
@@ -258,6 +261,12 @@ class SyncService {
         final updatedSetting = localSetting.copyWith(syncPending: false);
         await settingsBox.put(defaultSettingId, updatedSetting);
       }
+
+      // Refresh Providers
+      ref.watch(settingsProvider.notifier).refresh();
+      ref.watch(bankProvider.notifier).refresh();
+      ref.watch(creditCardProvider.notifier).refresh();
+      ref.watch(paymentProvider.notifier).refresh();
     } catch (e) {
       print('Sync error: $e');
       rethrow;
@@ -295,7 +304,6 @@ class SyncService {
         );
         await bankBox.put(bank.id, bank);
       }
-
       await syncData();
     } catch (e) {
       print('Initial sync error: $e');
