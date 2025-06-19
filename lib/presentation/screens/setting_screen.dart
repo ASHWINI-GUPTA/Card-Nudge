@@ -7,16 +7,18 @@ import '../../constants/app_strings.dart';
 import '../../data/enums/currency.dart';
 import '../../data/enums/language.dart';
 import '../../services/navigation_service.dart';
-import '../../services/notification_service.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/payment_provider.dart';
 import '../providers/setting_provider.dart';
 import '../providers/supabase_provider.dart';
 import '../providers/sync_provider.dart';
 import '../providers/user_provider.dart';
+import 'active_notifications_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
+
+  static const _heightBetweenSection = 10.0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -90,7 +92,7 @@ class SettingsScreen extends ConsumerWidget {
                 },
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: _heightBetweenSection),
 
             // General Settings Section
             Card(
@@ -102,6 +104,10 @@ class SettingsScreen extends ConsumerWidget {
                 children: [
                   ListTile(
                     title: Text(AppStrings.language),
+                    leading: Icon(
+                      Icons.language,
+                      color: theme.colorScheme.primary,
+                    ),
                     trailing: Consumer(
                       builder: (context, ref, child) {
                         final settings = ref.watch(settingsProvider);
@@ -131,6 +137,10 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   ListTile(
                     title: Text(AppStrings.currency),
+                    leading: Icon(
+                      Icons.currency_rupee_rounded,
+                      color: theme.colorScheme.primary,
+                    ),
                     trailing: Consumer(
                       builder: (context, ref, child) {
                         final settings = ref.watch(settingsProvider);
@@ -160,6 +170,10 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   ListTile(
                     title: Text(AppStrings.theme),
+                    leading: Icon(
+                      Icons.color_lens,
+                      color: theme.colorScheme.primary,
+                    ),
                     trailing: Consumer(
                       builder: (context, ref, child) {
                         final settings = ref.watch(settingsProvider);
@@ -197,8 +211,7 @@ class SettingsScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
-
+            const SizedBox(height: _heightBetweenSection),
             // Notifications Section
             Card(
               elevation: 2,
@@ -218,6 +231,10 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   ListTile(
                     title: Text(AppStrings.reminderTime),
+                    leading: Icon(
+                      Icons.alarm,
+                      color: theme.colorScheme.primary,
+                    ),
                     trailing: Text(
                       settings.reminderTime.format(context),
                       style: theme.textTheme.bodyLarge,
@@ -237,8 +254,67 @@ class SettingsScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
-
+            const SizedBox(height: _heightBetweenSection),
+            // Data Management Section
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  SwitchListTile(
+                    title: Text(AppStrings.syncPreference),
+                    value: settings.syncSettings,
+                    subtitle: Text(AppStrings.syncPreferenceSubtitle),
+                    onChanged: (value) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .updateSyncPreference(value);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.sync),
+                    title: Text(
+                      AppStrings.syncData,
+                      style: TextStyle(color: theme.colorScheme.primary),
+                    ),
+                    onTap: () async {
+                      await ref.read(syncServiceProvider).syncData();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(AppStrings.syncDataSuccess)),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(
+                      Icons.cleaning_services,
+                      color: theme.colorScheme.error,
+                    ),
+                    title: Text(
+                      AppStrings.clearData,
+                      style: TextStyle(color: theme.colorScheme.error),
+                    ),
+                    onTap: () => _showClearDataDialog(context, ref),
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Active Notifications',
+                      style: TextStyle(color: theme.colorScheme.primary),
+                    ),
+                    leading: const Icon(Icons.notifications_active),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const ActiveNotificationsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: _heightBetweenSection),
             // About Section
             Card(
               elevation: 2,
@@ -294,59 +370,7 @@ class SettingsScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
-
-            // Data Management Section
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                children: [
-                  SwitchListTile(
-                    title: Text(AppStrings.syncPreference),
-                    value: settings.syncSettings,
-                    subtitle: Text(AppStrings.syncPreferenceSubtitle),
-                    onChanged: (value) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .updateSyncPreference(value);
-                    },
-                  ),
-                  ListTile(
-                    title: Text(
-                      AppStrings.syncData,
-                      style: TextStyle(color: theme.colorScheme.primary),
-                    ),
-                    onTap: () async {
-                      await ref.read(syncServiceProvider).syncData();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(AppStrings.syncDataSuccess)),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    title: Text(
-                      AppStrings.clearData,
-                      style: TextStyle(color: theme.colorScheme.error),
-                    ),
-                    onTap: () => _showClearDataDialog(context, ref),
-                  ),
-                  ListTile(
-                    title: Text(
-                      'Demo Notfications',
-                      style: TextStyle(color: theme.colorScheme.primary),
-                    ),
-                    onTap:
-                        () => ref
-                            .read(notificationServiceProvider)
-                            .demoInsight(context: context, dueCount: 2),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: _heightBetweenSection),
           ],
         ),
       ),

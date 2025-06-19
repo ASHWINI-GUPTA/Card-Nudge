@@ -20,7 +20,6 @@ class NotificationService {
   // Notification ID constants
   static const _dailyInsightId = 999;
   static const _billingNotificationOffset = 100;
-  static const _demoNotificationStartId = 1000;
   static const _maxScheduledNotifications = 50;
 
   final FlutterLocalNotificationsPlugin _notifications =
@@ -419,64 +418,6 @@ class NotificationService {
     }
   }
 
-  Future<void> demoInsight({
-    required int dueCount,
-    required BuildContext context,
-  }) async {
-    try {
-      await ensureInitialized();
-      await _cancelDemoNotifications();
-
-      const notificationCount = 10;
-      final notificationIds = List.generate(
-        notificationCount,
-        (i) => _demoNotificationStartId + i,
-      );
-
-      await Future.wait(
-        notificationIds.map((id) {
-          final minutes = 2 * (id - _demoNotificationStartId + 1);
-          return _notifications.zonedSchedule(
-            id,
-            '💡 Demo Insight ${id - _demoNotificationStartId + 1}/$notificationCount',
-            'Sample: $dueCount payment${dueCount == 1 ? '' : 's'} due',
-            tz.TZDateTime.now(tz.local).add(Duration(minutes: minutes)),
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                'daily_insights',
-                'Daily Insights',
-                importance: Importance.defaultImportance,
-              ),
-              iOS: const DarwinNotificationDetails(),
-            ),
-            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-            payload: '/dashboard?source=demo_$id',
-          );
-        }),
-      );
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Demo notifications scheduled')),
-      );
-      await _logNotificationEvent('demo_insight');
-    } catch (e, stackTrace) {
-      debugPrint('demoInsight error: $e\n$stackTrace');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to schedule demo: ${e.toString()}')),
-      );
-    }
-  }
-
-  Future<void> _cancelDemoNotifications() async {
-    const notificationCount = 10;
-    final notificationIds = List.generate(
-      notificationCount,
-      (i) => _demoNotificationStartId + i,
-    );
-
-    await Future.wait(notificationIds.map((id) => _notifications.cancel(id)));
-  }
-
   int _calculateDuePaymentsCount(List<PaymentModel> payments) {
     final now = DateTime.now();
     return payments.where((payment) {
@@ -504,5 +445,22 @@ class NotificationService {
     for (final card in cards) {
       await cancelCardNotifications(card.id);
     }
+  }
+
+  Future<List<ActiveNotification>> getActiveNotifications() async {
+    await ensureInitialized();
+    return await _notifications.getActiveNotifications();
+  }
+
+  Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+    await ensureInitialized();
+    return await _notifications.pendingNotificationRequests();
+  }
+
+  // Cancel by Id
+  Future<void> cancelNotificationById(int id) async {
+    await ensureInitialized();
+    await _notifications.cancel(id);
+    await _logNotificationEvent('cancel_by_id', payload: 'ID: $id');
   }
 }

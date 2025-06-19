@@ -218,14 +218,16 @@ class CardDetailsScreen extends ConsumerWidget {
     );
   }
 
-  ListView _listPayment(List<PaymentModel> history) {
+  ListView _listPayment(List<PaymentModel> paymentHistory) {
+    final sortedHistory = [...paymentHistory]
+      ..sort((a, b) => (b.paymentDate!).compareTo(a.paymentDate!));
     return ListView.separated(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: history.length,
+      itemCount: sortedHistory.length,
       separatorBuilder: (_, __) => const SizedBox(height: 0),
       itemBuilder: (context, index) {
-        final payment = history[index];
+        final payment = sortedHistory[index];
         return Semantics(
           label: '${AppStrings.paymentHistoryItem}: ${payment.paidAmount}',
           child: MinimalPaymentCard(payment: payment),
