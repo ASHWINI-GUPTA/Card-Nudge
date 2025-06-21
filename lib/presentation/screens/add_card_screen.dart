@@ -1,15 +1,17 @@
-import 'package:card_nudge/data/hive/models/user_model.dart';
-import 'package:card_nudge/presentation/widgets/credit_card_color_dot_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/services.dart';
+
 import '../../constants/app_strings.dart';
 import '../../data/enums/card_type.dart';
 import '../../data/hive/models/credit_card_model.dart';
+import '../../data/hive/models/user_model.dart';
 import '../../services/navigation_service.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/bank_provider.dart';
+import '../widgets/credit_card_color_dot_indicator.dart';
+import 'loading_screen.dart';
 
 class AddCardScreen extends ConsumerStatefulWidget {
   final CreditCardModel? card;
@@ -31,6 +33,8 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
   DateTime? _billingDate;
   DateTime? _dueDate;
   bool _isSubmitting = false;
+  Map<String, String>? _selectedCardType;
+  Map<String, String>? _selectedBank;
 
   @override
   void initState() {
@@ -158,6 +162,101 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
     }
   }
 
+  Future<String?> _showSearchBottomSheet({
+    required BuildContext context,
+    required String title,
+    required List<Map<String, String>> items,
+    String? selectedId,
+  }) async {
+    TextEditingController searchController = TextEditingController();
+    List<Map<String, String>> filtered = List.from(items);
+
+    return await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) {
+        final halfHeight = MediaQuery.of(ctx).size.height * 0.5;
+        return StatefulBuilder(
+          builder: (ctx, setSheetState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(ctx).viewInsets.bottom,
+                left: 16,
+                right: 16,
+                top: 16,
+              ),
+              child: SizedBox(
+                height: halfHeight,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(title, style: Theme.of(ctx).textTheme.titleMedium),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: searchController,
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.search),
+                        hintText: 'Search...',
+                      ),
+                      onChanged: (query) {
+                        setSheetState(() {
+                          filtered =
+                              items
+                                  .where(
+                                    (item) => item['label']!
+                                        .toLowerCase()
+                                        .contains(query.toLowerCase()),
+                                  )
+                                  .toList();
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child:
+                          filtered.isEmpty
+                              ? const Padding(
+                                padding: EdgeInsets.all(24),
+                                child: Text('No results found.'),
+                              )
+                              : ListView.builder(
+                                itemCount: filtered.length,
+                                itemBuilder: (ctx, i) {
+                                  final item = filtered[i];
+                                  return ListTile(
+                                    leading:
+                                        selectedId == item['id']
+                                            ? const Icon(
+                                              Icons.check,
+                                              color: Colors.blue,
+                                            )
+                                            : null,
+
+                                    title: Text(item['label']!),
+                                    trailing:
+                                        item['iconPath'] != null &&
+                                                item['iconPath']!.isNotEmpty
+                                            ? SvgPicture.asset(
+                                              item['iconPath']!,
+                                              width: 24,
+                                              height: 24,
+                                            )
+                                            : const Icon(Icons.credit_card),
+                                    onTap: () => Navigator.pop(ctx, item['id']),
+                                  );
+                                },
+                              ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     _cardNameController.dispose();
@@ -171,6 +270,33 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
   @override
   Widget build(BuildContext context) {
     const spacing = SizedBox(height: 12);
+
+    final banksAsync = ref.watch(bankProvider);
+    if (banksAsync.isLoading) {
+      LoadingIndicatorScreen();
+    }
+
+    if (widget.card != null) {
+      final bank = banksAsync.value!.firstWhere(
+        (b) => b.id == widget.card!.bankId,
+      );
+      _selectedBank = {
+        'id': bank.id,
+        'label': bank.name,
+        'iconPath': bank.logoPath ?? '',
+      };
+      _bankNameController.text = bank.name;
+      final cardType = CardType.values.firstWhere(
+        (type) => type.name == widget.card!.cardType.name,
+        orElse: () => CardType.Visa,
+      );
+      _selectedCardType = {
+        'id': cardType.name,
+        'label': cardType.name,
+        'iconPath': cardType.logoPath,
+      };
+      _cardTypeController.text = cardType.name;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -199,120 +325,130 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                             : null,
               ),
               spacing,
-              DropdownButtonFormField<String>(
-                value:
-                    _bankNameController.text.isNotEmpty
-                        ? _bankNameController.text
-                        : null,
-                decoration: const InputDecoration(
+              TextFormField(
+                controller: _bankNameController,
+                readOnly: true,
+                decoration: InputDecoration(
                   labelText: AppStrings.bankLabel,
+                  suffixIcon: const Icon(Icons.arrow_drop_down),
+                  prefixIcon:
+                      _selectedBank != null &&
+                              _selectedBank!['iconPath']!.isNotEmpty
+                          ? Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SvgPicture.asset(
+                              _selectedBank!['iconPath']!,
+                              width: 24,
+                              height: 24,
+                              placeholderBuilder:
+                                  (_) => const Icon(Icons.account_balance),
+                            ),
+                          )
+                          : null,
                 ),
-                items: ref
-                    .watch(bankProvider)
-                    .when(
-                      data:
-                          (banks) =>
-                              banks.map((bank) {
-                                return DropdownMenuItem<String>(
-                                  value: bank.id,
-                                  child: Row(
-                                    children: [
-                                      Semantics(
-                                        label:
-                                            '${AppStrings.bankLogo} ${bank.name}',
-                                        child:
-                                            bank.logoPath != null
-                                                ? SvgPicture.asset(
-                                                  bank.logoPath!,
-                                                  width: 20,
-                                                  placeholderBuilder:
-                                                      (_) => const Icon(
-                                                        Icons.account_balance,
-                                                        size: 20,
-                                                      ),
-                                                )
-                                                : const Icon(
-                                                  Icons.account_balance,
-                                                  size: 20,
-                                                ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(bank.name),
-                                    ],
-                                  ),
-                                );
-                              }).toList(),
-                      loading:
-                          () => [
-                            const DropdownMenuItem<String>(
-                              enabled: false,
-                              child: Center(
-                                child: CreditCardColorDotIndicator(),
-                              ),
-                            ),
-                          ],
-                      error:
-                          (error, stack) => [
-                            DropdownMenuItem<String>(
-                              enabled: false,
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.error,
-                                    color: Colors.red,
-                                    size: 20,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    '${AppStrings.bankDetailsLoadError}: $error',
-                                    style: const TextStyle(color: Colors.red),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                    ),
-                onChanged:
+                onTap:
                     _isSubmitting
                         ? null
-                        : (value) {
-                          setState(() {
-                            _bankNameController.text = value ?? '';
-                          });
+                        : () async {
+                          final banks =
+                              ref.read(bankProvider).asData?.value ?? [];
+                          if (banks.isEmpty) return;
+                          final selectedId = await _showSearchBottomSheet(
+                            context: context,
+                            title: AppStrings.bankLabel,
+                            items:
+                                banks
+                                    .map(
+                                      (b) => {
+                                        'id': b.id,
+                                        'label': b.name,
+                                        'iconPath': b.logoPath ?? '',
+                                      },
+                                    )
+                                    .toList(),
+                            selectedId:
+                                _selectedBank != null
+                                    ? _selectedBank!['id']
+                                    : null,
+                          );
+                          if (selectedId != null) {
+                            final selectedBank = banks.firstWhere(
+                              (b) => b.id == selectedId,
+                            );
+                            setState(() {
+                              _selectedBank = {
+                                'id': selectedBank.id,
+                                'label': selectedBank.name,
+                                'iconPath': selectedBank.logoPath ?? '',
+                              };
+                              _bankNameController.text = selectedBank.name;
+                            });
+                          }
                         },
                 validator:
                     (v) =>
-                        v == null || v.trim().isEmpty
+                        _selectedBank == null
                             ? AppStrings.validationRequired
                             : null,
               ),
               spacing,
-              DropdownButtonFormField<String>(
-                value:
-                    _cardTypeController.text.isNotEmpty
-                        ? _cardTypeController.text
-                        : null,
-                decoration: const InputDecoration(
+              TextFormField(
+                controller: _cardTypeController,
+                readOnly: true,
+                decoration: InputDecoration(
                   labelText: AppStrings.networkLabel,
+                  suffixIcon: const Icon(Icons.arrow_drop_down),
+                  prefixIcon:
+                      _selectedCardType != null &&
+                              _selectedCardType!['iconPath']!.isNotEmpty
+                          ? Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SvgPicture.asset(
+                              _selectedCardType!['iconPath']!,
+                              width: 24,
+                              height: 24,
+                              placeholderBuilder:
+                                  (_) => const Icon(Icons.credit_card),
+                            ),
+                          )
+                          : null,
                 ),
-                items:
-                    CardType.values.map((type) {
-                      return DropdownMenuItem<String>(
-                        value: type.name,
-                        child: Text(type.name),
-                      );
-                    }).toList(),
-                onChanged:
+                onTap:
                     _isSubmitting
                         ? null
-                        : (value) {
-                          setState(() {
-                            _cardTypeController.text = value ?? '';
-                          });
+                        : () async {
+                          final cardTypes =
+                              CardType.values
+                                  .map(
+                                    (type) => {
+                                      'id': type.name,
+                                      'label': type.name,
+                                      'iconPath': type.logoPath,
+                                    },
+                                  )
+                                  .toList();
+                          final selectedId = await _showSearchBottomSheet(
+                            context: context,
+                            title: AppStrings.networkLabel,
+                            items: cardTypes,
+                            selectedId:
+                                _selectedCardType != null
+                                    ? _selectedCardType!['id']
+                                    : null,
+                          );
+                          if (selectedId != null) {
+                            final selectedType = cardTypes.firstWhere(
+                              (t) => t['id'] == selectedId,
+                            );
+                            setState(() {
+                              _selectedCardType = selectedType;
+                              _cardTypeController.text = selectedType['label']!;
+                            });
+                          }
                         },
                 validator:
                     (v) =>
-                        v == null || v.trim().isEmpty
+                        _selectedCardType == null
                             ? AppStrings.validationRequired
                             : null,
               ),

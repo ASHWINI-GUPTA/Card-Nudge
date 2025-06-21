@@ -215,10 +215,12 @@ class CreditCardTile extends ConsumerWidget {
     FormatHelper formatHelper,
   ) {
     final theme = Theme.of(context);
-    final cardNetworkLogo =
-        bank.logoPath != null
-            ? SvgPicture.asset(card.cardType.logoPath, width: 22, height: 22)
-            : const Icon(Icons.credit_card, size: 30);
+    final cardNetworkLogo = SvgPicture.asset(
+      card.cardType.logoPath,
+      width: 22,
+      height: 22,
+      semanticsLabel: card.cardType.name,
+    );
 
     final statmentGenerated = DateTime.now().isAfter(card.billingDate);
     final daysLeft = card.dueDate.difference(DateTime.now()).inDays;

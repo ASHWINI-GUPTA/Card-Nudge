@@ -91,7 +91,6 @@ class ActiveNotificationsScreen extends ConsumerWidget {
   }
 }
 
-// Widget for displaying notification info
 class NotificationInfoTile extends StatelessWidget {
   final int id;
   final String? title;
@@ -149,7 +148,7 @@ class NotificationInfoTile extends StatelessWidget {
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.cancel, color: Colors.red),
+              icon: const Icon(Icons.cancel_outlined, color: Colors.red),
               tooltip: 'Cancel Notification',
               onPressed: onCancel,
             ),
