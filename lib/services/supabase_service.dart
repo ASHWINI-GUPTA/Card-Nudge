@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:card_nudge/presentation/providers/setting_provider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -78,6 +81,7 @@ class SupabaseService {
   // Sign out
   Future<void> signOut() async {
     try {
+      await removeDeviceToken();
       await _googleSignIn.signOut();
       await _client.auth.signOut();
       _ref.read(userProvider.notifier).clearUserDetails();
@@ -121,8 +125,72 @@ class SupabaseService {
           );
       // Update it in Setting too.
       await _ref.read(settingsProvider.notifier).updateUserId(user.id);
+
+      await initializeNotifications();
     } catch (e) {
       throw AuthException('Failed to sync user details: ${e.toString()}');
+    }
+  }
+
+  Future<void> initializeNotifications() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    // Request permissions
+    await messaging.requestPermission();
+
+    // Get the FCM token
+    final token = await messaging.getToken();
+    final userId = _client.auth.currentUser?.id;
+    final platform = Platform.operatingSystem;
+
+    if (token != null && userId != null) {
+      // Check if the token already exists for the user
+      // If it does not exist, insert it into the database
+      // If it exists, we do not need to insert it again
+      final existingToken =
+          await _client
+              .from('device_tokens')
+              .select()
+              .eq('user_id', userId)
+              .eq('device_token', token)
+              .maybeSingle();
+
+      if (existingToken == null) {
+        await _client.from('device_tokens').upsert({
+          'user_id': userId,
+          'device_token': token,
+          'platform': platform,
+        });
+      }
+    }
+
+    // Listen for token refresh
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+      if (userId != null) {
+        await _client.from('device_tokens').upsert({
+          'user_id': userId,
+          'device_token': newToken,
+          'platform': platform,
+          'updated_at': DateTime.now().toUtc().toIso8601String(),
+        });
+      }
+    });
+  }
+
+  Future<void> removeDeviceToken() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    final userId = _client.auth.currentUser?.id;
+    final token = await messaging.getToken();
+    if (token == null) {
+      return; // No token to remove
+    }
+
+    if (userId != null) {
+      await _client
+          .from('device_tokens')
+          .delete()
+          .eq('user_id', userId)
+          .eq('device_token', token);
     }
   }
 }

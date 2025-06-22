@@ -1,4 +1,5 @@
 import 'package:card_nudge/data/hive/storage/payment_storage.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,7 @@ import 'data/hive/storage/bank_storage.dart';
 import 'data/hive/storage/credit_card_storage.dart';
 import 'data/hive/storage/setting_storage.dart';
 import 'data/hive/storage/user_storage.dart';
+import 'firebase_options.dart';
 import 'helper/notification_handler.dart';
 import 'services/notification_service.dart';
 
@@ -18,7 +20,8 @@ void main() async {
 
   // Load .env file
   await dotenv.load(fileName: '.env');
-
+  // Initialize Firebase
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // Initialize Supabase
   final supabaseUrl = dotenv.env['SUPABASE_URL'];
   final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'];

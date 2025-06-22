@@ -261,3 +261,76 @@ VALUES
 ('Canara Bank', 'CANARA', 'assets/bank_icons/CANARA.svg', '1800 425 0018', 'https://canarabank.com', 'FFF7941D', 19),
 ('Federal Bank', 'FEDERAL', 'assets/bank_icons/FEDERAL.svg', '1800 425 1199', 'https://www.federalbank.co.in', 'FF0066B3', 21),
 ('Bandhan Bank', 'BANDHAN', 'assets/bank_icons/BANDHAN.svg', '1800 258 8181', 'https://www.bandhanbank.com', 'FFE31937', 22);
+
+
+-- Auth Tokens
+create table if not exists public.device_tokens (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete cascade,
+  device_token text not null,
+  platform text check (platform in ('android', 'ios')) not null,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  constraint unique_user_token unique (user_id, device_token)
+);
+
+-- Optional: Index for faster lookup
+create index idx_device_tokens_user_id on public.device_tokens(user_id);
+
+-- Enable RLS
+alter table public.device_tokens enable row level security;
+
+create policy "Allow insert for authenticated users"
+on public.device_tokens
+for insert
+with check (
+  auth.uid() = user_id
+);
+
+create policy "Allow update if user owns the token"
+on public.device_tokens
+for update
+using (
+  auth.uid() = user_id
+);
+
+create policy "Allow select only own tokens"
+on public.device_tokens
+for select
+using (
+  auth.uid() = user_id
+);
+
+create policy "Allow delete only own token"
+on public.device_tokens
+for delete
+using (
+  auth.uid() = user_id
+);
+
+create table if not exists public.notification_logs (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id),
+  card_id text not null,
+  title text not null,
+  body text not null,
+  payload text not null,
+  sent_at timestamptz not null default now()
+);
+
+alter table public.notification_logs enable row level security;
+
+-- Allow insert from service
+create index idx_notification_logs_user_id on public.notification_logs(user_id);
+
+-- Allow insert from service
+create policy "Allow service inserts"
+  on public.notification_logs
+  for insert
+  with check (auth.role() = 'service_role');
+
+-- Allow users to select their own logs
+create policy "Allow user selects"
+  on public.notification_logs
+  for select
+  using (user_id = (select auth.uid()));
