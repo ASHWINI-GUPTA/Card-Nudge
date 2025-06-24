@@ -47,18 +47,19 @@ serve(async (req) => {
   const supabase = createClient(supabaseUrl, serviceKey);
   const messaging = firebaseAdminApp.messaging();
 
-  // Helper function to handle token deletion
-  async function deleteStaleToken(token: string) {
-    console.log(`🗑️ Attempting to delete stale/invalid token: ${token}`);
+  // Helper function to handle token deletion (now supports array)
+  async function deleteStaleTokens(tokens: string[]) {
+    if (!tokens.length) return;
+    console.log(`🗑️ Attempting to delete stale/invalid tokens: ${tokens.join(', ')}`);
     const { error: deleteError } = await supabase
       .from('device_tokens')
       .delete()
-      .eq('device_token', token);
+      .in('device_token', tokens);
 
     if (deleteError) {
-      console.error(`❌ Failed to delete token ${token}:`, deleteError.message);
+      console.error(`❌ Failed to delete tokens [${tokens.join(', ')}]:`, deleteError.message);
     } else {
-      console.log(`✅ Successfully deleted stale token: ${token}`);
+      console.log(`✅ Successfully deleted stale tokens: ${tokens.join(', ')}`);
     }
   }
 
@@ -76,52 +77,69 @@ serve(async (req) => {
       return new Response('No tokens found', { status: 404 });
     }
 
+    const tokensArr = tokens.map((t) => t.device_token);
+
+    if (!tokensArr.length) {
+      console.error(`❌ No tokens found for user ${debugUserId}`);
+      return new Response('No tokens found', { status: 404 });
+    }
+
     const title = '🔔 Test Notification';
     const body = 'This is a test push notification from Supabase Edge Function.';
     const payload = '/cards';
 
-    for (const t of tokens) {
-      console.log(`📨 Sending test notification to ${debugUserId} (token: ${t.device_token})...`);
+    console.log(`📨 Sending test notification to ${debugUserId} (tokens: ${tokensArr.join(', ')})...`);
 
-      try {
-        const message = {
-          notification: { title, body },
-          data: { route: payload },
-          token: t.device_token,
-        };
+    try {
+      const message = {
+        notification: { title, body },
+        data: { route: payload },
+        tokens: tokensArr,
+      };
 
-        const response = await messaging.send(message); // Use Admin SDK's send method
-        console.log(`✅ Message sent successfully to ${debugUserId}:`, response);
+      const response = await messaging.sendMulticast(message);
 
-        const { error: logErr } = await supabase
-          .from('notification_logs')
-          .insert({
-            user_id: debugUserId,
-            card_id: null,
-            title,
-            body,
-            payload,
-            sent_at: new Date().toISOString(),
-          });
+      console.log(`✅ Multicast message sent to ${debugUserId}:`, response);
 
-        if (logErr) {
-          console.error(`❌ Failed to log debug notification: ${logErr.message}`);
-        } else {
-          console.log(`✅ Debug notification logged for ${debugUserId}`);
+      // Log notification for each successful token
+      for (let i = 0; i < response.responses.length; i++) {
+        if (response.responses[i].success) {
+          const { error: logErr } = await supabase
+            .from('notification_logs')
+            .insert({
+              user_id: debugUserId,
+              card_id: null,
+              title,
+              body,
+              payload,
+              sent_at: new Date().toISOString(),
+            });
+          if (logErr) {
+            console.error(`❌ Failed to log debug notification: ${logErr.message}`);
+          }
         }
-      } catch (error: any) { // Type 'any' for error for simpler handling in Deno
-        console.error(`❌ FCM send failed for token ${t.device_token}:`, error);
-
-        // Check for specific error codes indicating an invalid token
-        if (
-          error.code === 'messaging/invalid-registration-token' ||
-          error.code === 'messaging/registration-token-not-registered' ||
-          error.code === 'messaging/not-found'
-        ) {
-          await deleteStaleToken(t.device_token);
-        }
-        // Continue to the next token even if one fails
       }
+
+      // Collect failed tokens for deletion
+      const failedTokens: string[] = [];
+      response.responses.forEach((r, idx) => {
+        if (!r.success) {
+          const error = r.error;
+          console.error(`❌ FCM send failed for token ${tokensArr[idx]}:`, error);
+          if (
+            error.code === 'messaging/invalid-registration-token' ||
+            error.code === 'messaging/registration-token-not-registered' ||
+            error.code === 'messaging/not-found'
+          ) {
+            failedTokens.push(tokensArr[idx]);
+          }
+        }
+      });
+      if (failedTokens.length) {
+        await deleteStaleTokens(failedTokens);
+      }
+    } catch (error: any) {
+      console.error(`❌ FCM multicast send failed:`, error);
     }
 
     return new Response('✅ Debug notification sent', { status: 200 });
@@ -150,9 +168,10 @@ serve(async (req) => {
   for (const userId of userIds) {
     const { data: payments, error: payError } = await supabase
       .from('payments')
-      .select('id as card_id, due_date, due_amount, is_paid, card_name, last4_digits')
+      .select('id as card_id, due_date, due_amount, is_paid, cards.name as card_name, cards.last_4_digits')
       .eq('user_id', userId)
-      .eq('is_paid', false);
+      .eq('is_paid', false)
+      .innerJoin('cards', 'payments.card_id = cards.id');
 
     if (payError || !payments) {
       console.error(`❌ Payment fetch failed for ${userId}:`, payError);
@@ -167,7 +186,7 @@ serve(async (req) => {
       const title = daysBefore === 0
         ? 'Payment Due Today'
         : `Payment Due in ${daysBefore} day${daysBefore === 1 ? '' : 's'}`;
-      const body = `Pay ₹${p.due_amount} for ${p.card_name} (**** ${p.last4_digits})`;
+      const body = `Pay ₹${p.due_amount} for ${p.card_name} (**** ${p.last_4_digits})`;
       const payload = `/cards/${p.card_id}`;
 
       const { data: tokens, error: tokenError } = await supabase
@@ -180,47 +199,60 @@ serve(async (req) => {
         continue;
       }
 
-      for (const t of tokens) {
-        console.log(`📨 Sending notification to ${userId} [${p.card_name}] (token: ${t.device_token})...`);
+      const tokensArr = tokens.map((t) => t.device_token);
+      if (!tokensArr.length) continue;
 
-        try {
-          const message = {
-            notification: { title, body },
-            data: { route: payload },
-            token: t.device_token,
-          };
+      console.log(`📨 Sending notification to ${userId} [${p.card_name}] (tokens: ${tokensArr.join(', ')})...`);
 
-          const response = await messaging.send(message); // Use Admin SDK's send method
-          console.log(`✅ Message sent successfully to ${userId} for card ${p.card_id}:`, response);
+      try {
+        const message = {
+          notification: { title, body },
+          data: { route: payload },
+          tokens: tokensArr,
+        };
 
-          const { error: logErr } = await supabase
-            .from('notification_logs')
-            .insert({
-              user_id: userId,
-              card_id: p.card_id,
-              title,
-              body,
-              payload,
-              sent_at: new Date().toISOString(),
-            });
+        const response = await messaging.sendMulticast(message);
+        console.log(`✅ Multicast message sent to ${userId} for card ${p.card_id}:`, response);
 
-          if (logErr) {
-            console.error(`❌ Log insert failed for ${userId}:`, logErr.message);
-          } else {
-            console.log(`✅ Notification logged for ${userId}`);
+        // Log notification for each successful token
+        for (let i = 0; i < response.responses.length; i++) {
+          if (response.responses[i].success) {
+            const { error: logErr } = await supabase
+              .from('notification_logs')
+              .insert({
+                user_id: userId,
+                card_id: p.card_id,
+                title,
+                body,
+                payload,
+                sent_at: new Date().toISOString(),
+              });
+            if (logErr) {
+              console.error(`❌ Log insert failed for ${userId}:`, logErr.message);
+            }
           }
-        } catch (error: any) {
-            console.error(`❌ FCM send failed for token ${t.device_token}:`, error);
+        }
 
-            // Check for specific error codes indicating an invalid token
+        // Collect failed tokens for deletion
+        const failedTokens: string[] = [];
+        response.responses.forEach((r, idx) => {
+          if (!r.success) {
+            const error = r.error;
+            console.error(`❌ FCM send failed for token ${tokensArr[idx]}:`, error);
             if (
               error.code === 'messaging/invalid-registration-token' ||
               error.code === 'messaging/registration-token-not-registered' ||
               error.code === 'messaging/not-found'
             ) {
-              await deleteStaleToken(t.device_token);
+              failedTokens.push(tokensArr[idx]);
             }
           }
+        });
+        if (failedTokens.length) {
+          await deleteStaleTokens(failedTokens);
+        }
+      } catch (error: any) {
+        console.error(`❌ FCM multicast send failed for user ${userId}:`, error);
       }
     }
   }
