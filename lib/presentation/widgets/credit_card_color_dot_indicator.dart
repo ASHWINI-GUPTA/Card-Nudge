@@ -13,7 +13,7 @@ class CreditCardColorDotIndicator extends StatefulWidget {
 class _CreditCardColorDotIndicatorState
     extends State<CreditCardColorDotIndicator>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+  AnimationController? _controller;
   late List<Animation<double>> _animations;
 
   final List<Color> _dotColors = [
@@ -26,46 +26,43 @@ class _CreditCardColorDotIndicatorState
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && widget.animate) {
-        _controller = AnimationController(
-          duration: const Duration(seconds: 2),
-          vsync: this,
-        )..repeat();
+    if (widget.animate) {
+      _controller = AnimationController(
+        duration: const Duration(seconds: 2),
+        vsync: this,
+      )..repeat();
 
-        _animations = List.generate(
-          4,
-          (index) => Tween<double>(begin: 0.4, end: 1.0).animate(
-            CurvedAnimation(
-              parent: _controller,
-              curve: Interval(
-                index * 0.15,
-                (index * 0.15) + 0.4,
-                curve: Curves.easeInOut,
-              ),
+      _animations = List.generate(
+        4,
+        (index) => Tween<double>(begin: 0.4, end: 1.0).animate(
+          CurvedAnimation(
+            parent: _controller!,
+            curve: Interval(
+              index * 0.15,
+              (index * 0.15) + 0.4,
+              curve: Curves.easeInOut,
             ),
           ),
-        );
-        setState(() {});
-      } else if (!widget.animate) {
-        _animations = List.generate(4, (index) => AlwaysStoppedAnimation(1.0));
-        setState(() {});
-      }
-    });
+        ),
+      );
+    } else {
+      _animations = List.generate(4, (index) => AlwaysStoppedAnimation(1.0));
+    }
   }
 
   @override
   void dispose() {
-    if (widget.animate) {
-      _controller.dispose();
-    }
+    _controller?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: widget.animate ? _controller : Listenable.merge([]),
+      animation:
+          widget.animate && _controller != null
+              ? _controller!
+              : Listenable.merge([]),
       builder: (context, child) {
         return Row(
           mainAxisSize: MainAxisSize.min,
