@@ -27,14 +27,14 @@ try {
 }
 
 serve(async (req) => {
-  const fullUrl = `https://${req.headers.get('x-forwarded-host')}${req.url}`;
+  const fullUrl = req.url;
   const url = new URL(fullUrl);
   
   // Run Debug Flow
-  const isDebug = url.searchParams.get('debug');
-  const debugUserId = url.searchParams.get('userId');
-  // const debug = true;
-  // const debugUserId = '9a113684-b797-4e3b-8985-8041ffd83c06';
+  // const isDebug = url.searchParams.get('debug');
+  // const debugUserId = url.searchParams.get('userId');
+  const isDebug = true;
+  const debugUserId = '9a113684-b797-4e3b-8985-8041ffd83c06';
 
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   const supabaseUrl = Deno.env.get('SUPABASE_URL');
@@ -97,28 +97,8 @@ serve(async (req) => {
         tokens: tokensArr,
       };
 
-      const response = await messaging.sendMulticast(message);
-
+      const response = await messaging.sendEachForMulticast(message);
       console.log(`✅ Multicast message sent to ${debugUserId}:`, response);
-
-      // Log notification for each successful token
-      for (let i = 0; i < response.responses.length; i++) {
-        if (response.responses[i].success) {
-          const { error: logErr } = await supabase
-            .from('notification_logs')
-            .insert({
-              user_id: debugUserId,
-              card_id: null,
-              title,
-              body,
-              payload,
-              sent_at: new Date().toISOString(),
-            });
-          if (logErr) {
-            console.error(`❌ Failed to log debug notification: ${logErr.message}`);
-          }
-        }
-      }
 
       // Collect failed tokens for deletion
       const failedTokens: string[] = [];
@@ -168,10 +148,15 @@ serve(async (req) => {
   for (const userId of userIds) {
     const { data: payments, error: payError } = await supabase
       .from('payments')
-      .select('id as card_id, due_date, due_amount, is_paid, cards.name as card_name, cards.last_4_digits')
+      .select(`
+        id as card_id, 
+        due_date, 
+        due_amount, 
+        is_paid, 
+        cards (name as card_name, last_4_digits)
+      `)
       .eq('user_id', userId)
-      .eq('is_paid', false)
-      .innerJoin('cards', 'payments.card_id = cards.id');
+      .eq('is_paid', false);
 
     if (payError || !payments) {
       console.error(`❌ Payment fetch failed for ${userId}:`, payError);
@@ -211,7 +196,7 @@ serve(async (req) => {
           tokens: tokensArr,
         };
 
-        const response = await messaging.sendMulticast(message);
+        const response = await messaging.sendEachForMulticast(message);
         console.log(`✅ Multicast message sent to ${userId} for card ${p.card_id}:`, response);
 
         // Log notification for each successful token
