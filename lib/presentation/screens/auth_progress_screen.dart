@@ -106,43 +106,45 @@ class _AuthProgressState extends ConsumerState<AuthProgress> {
           ),
         ),
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('🚀', style: TextStyle(fontSize: _emojiSize)),
-              const SizedBox(height: _spacingMedium),
-              const CreditCardColorDotIndicator(),
-              const SizedBox(height: _spacingLarge),
-              Text(
-                _isUserLoading
-                    ? 'Loading your profile... 🌟'
-                    : 'Setting up your cards... 💳✨',
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.primary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: _spacingSmall),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: _horizontalPadding,
-                ),
-                child: Text(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('🚀', style: TextStyle(fontSize: _emojiSize)),
+                const SizedBox(height: _spacingMedium),
+                const CreditCardColorDotIndicator(),
+                const SizedBox(height: _spacingLarge),
+                Text(
                   _isUserLoading
-                      ? "We're fetching your details to get started! 😊"
-                      : _isSyncing
-                      ? "We're syncing your cards and banks to get you started! 😊"
-                      : 'Sync complete! Redirecting... 🎉',
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: colorScheme.onSurface.withAlpha(
-                      179,
-                    ), // 0.7 opacity (179/255)
+                      ? 'Loading your profile... 🌟'
+                      : 'Setting up your cards... 💳✨',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.primary,
                   ),
                   textAlign: TextAlign.center,
                 ),
-              ),
-            ],
+                const SizedBox(height: _spacingSmall),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: _horizontalPadding,
+                  ),
+                  child: Text(
+                    _isUserLoading
+                        ? "We're fetching your details to get started! 😊"
+                        : _isSyncing
+                        ? "We're syncing your cards and banks to get you started! 😊"
+                        : 'Sync complete! Redirecting... 🎉',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: colorScheme.onSurface.withAlpha(
+                        179,
+                      ), // 0.7 opacity (179/255)
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
