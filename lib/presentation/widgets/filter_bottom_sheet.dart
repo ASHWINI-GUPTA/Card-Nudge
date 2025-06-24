@@ -21,6 +21,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   @override
   void initState() {
     super.initState();
+    // Only lightweight state initialization here
     final filter = widget.ref.read(dueFilterProvider);
     _sort = filter.sort;
     _range = filter.range;

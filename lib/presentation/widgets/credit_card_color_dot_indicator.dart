@@ -26,28 +26,32 @@ class _CreditCardColorDotIndicatorState
   @override
   void initState() {
     super.initState();
-    if (widget.animate) {
-      _controller = AnimationController(
-        duration: const Duration(seconds: 2),
-        vsync: this,
-      )..repeat();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && widget.animate) {
+        _controller = AnimationController(
+          duration: const Duration(seconds: 2),
+          vsync: this,
+        )..repeat();
 
-      _animations = List.generate(
-        4,
-        (index) => Tween<double>(begin: 0.4, end: 1.0).animate(
-          CurvedAnimation(
-            parent: _controller,
-            curve: Interval(
-              index * 0.15,
-              (index * 0.15) + 0.4,
-              curve: Curves.easeInOut,
+        _animations = List.generate(
+          4,
+          (index) => Tween<double>(begin: 0.4, end: 1.0).animate(
+            CurvedAnimation(
+              parent: _controller,
+              curve: Interval(
+                index * 0.15,
+                (index * 0.15) + 0.4,
+                curve: Curves.easeInOut,
+              ),
             ),
           ),
-        ),
-      );
-    } else {
-      _animations = List.generate(4, (index) => AlwaysStoppedAnimation(1.0));
-    }
+        );
+        setState(() {});
+      } else if (!widget.animate) {
+        _animations = List.generate(4, (index) => AlwaysStoppedAnimation(1.0));
+        setState(() {});
+      }
+    });
   }
 
   @override

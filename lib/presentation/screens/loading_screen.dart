@@ -33,6 +33,7 @@ class LoadingIndicatorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Avoid heavy work here, only UI logic
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 

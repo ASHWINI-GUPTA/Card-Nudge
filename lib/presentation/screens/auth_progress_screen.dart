@@ -27,6 +27,7 @@ class _AuthProgressState extends ConsumerState<AuthProgress> {
   @override
   void initState() {
     super.initState();
+    // All heavy/async logic is handled in _checkUserAndSync, not in build/initState directly.
     _checkUserAndSync();
   }
 

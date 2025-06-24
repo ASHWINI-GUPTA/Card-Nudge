@@ -53,6 +53,37 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
     );
     _billingDate = card?.billingDate;
     _dueDate = card?.dueDate;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.card != null) {
+        final banksAsync = ref.read(bankProvider);
+        if (banksAsync.hasValue && banksAsync.value!.isNotEmpty) {
+          final bank = banksAsync.value!.firstWhere(
+            (b) => b.id == widget.card!.bankId,
+          );
+          setState(() {
+            _selectedBank = {
+              'id': bank.id,
+              'label': bank.name,
+              'iconPath': bank.logoPath ?? '',
+            };
+            _bankNameController.text = bank.name;
+          });
+        }
+        final cardType = CardType.values.firstWhere(
+          (type) => type.name == widget.card!.cardType.name,
+          orElse: () => CardType.Visa,
+        );
+        setState(() {
+          _selectedCardType = {
+            'id': cardType.name,
+            'label': cardType.name,
+            'iconPath': cardType.logoPath,
+          };
+          _cardTypeController.text = cardType.name;
+        });
+      }
+    });
   }
 
   Future<CreditCardModel?> _saveCard() async {
@@ -276,28 +307,6 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
     final banksAsync = ref.watch(bankProvider);
     if (banksAsync.isLoading) {
       LoadingIndicatorScreen();
-    }
-
-    if (widget.card != null) {
-      final bank = banksAsync.value!.firstWhere(
-        (b) => b.id == widget.card!.bankId,
-      );
-      _selectedBank = {
-        'id': bank.id,
-        'label': bank.name,
-        'iconPath': bank.logoPath ?? '',
-      };
-      _bankNameController.text = bank.name;
-      final cardType = CardType.values.firstWhere(
-        (type) => type.name == widget.card!.cardType.name,
-        orElse: () => CardType.Visa,
-      );
-      _selectedCardType = {
-        'id': cardType.name,
-        'label': cardType.name,
-        'iconPath': cardType.logoPath,
-      };
-      _cardTypeController.text = cardType.name;
     }
 
     return Scaffold(

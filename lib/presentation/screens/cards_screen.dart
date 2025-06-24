@@ -16,6 +16,7 @@ class CardsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // No heavy work here, only UI logic
     final cardsAsync = ref.watch(creditCardProvider);
     final theme = Theme.of(context);
     final user = ref.read(userProvider);
