@@ -167,12 +167,22 @@ class SupabaseService {
     // Listen for token refresh
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
       if (userId != null) {
-        await _client.from('device_tokens').upsert({
-          'user_id': userId,
-          'device_token': newToken,
-          'platform': platform,
-          'updated_at': DateTime.now().toUtc().toIso8601String(),
-        });
+        final existingToken =
+            await _client
+                .from('device_tokens')
+                .select()
+                .eq('user_id', userId)
+                .eq('device_token', newToken)
+                .maybeSingle();
+
+        if (existingToken == null) {
+          await _client.from('device_tokens').upsert({
+            'user_id': userId,
+            'device_token': newToken,
+            'platform': platform,
+            'updated_at': DateTime.now().toUtc().toIso8601String(),
+          });
+        }
       }
     });
   }

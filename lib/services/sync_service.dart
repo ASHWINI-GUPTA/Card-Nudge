@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'package:card_nudge/presentation/providers/credit_card_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -13,9 +11,6 @@ import '../data/hive/models/bank_model.dart';
 import '../data/hive/models/credit_card_model.dart';
 import '../data/hive/models/payment_model.dart';
 import '../data/hive/models/settings_model.dart';
-import '../presentation/providers/bank_provider.dart';
-import '../presentation/providers/payment_provider.dart';
-import '../presentation/providers/setting_provider.dart';
 
 class SyncService {
   final SupabaseClient supabase;
@@ -25,7 +20,6 @@ class SyncService {
   final Box<SettingsModel> settingsBox;
   final Connectivity connectivity;
   final defaultSettingId = '00000000-0000-0000-0000-000000000000';
-  final Ref ref;
 
   SyncService({
     required this.supabase,
@@ -34,7 +28,6 @@ class SyncService {
     required this.paymentBox,
     required this.settingsBox,
     required this.connectivity,
-    required this.ref,
   });
 
   Future<bool> isOnline() async {
@@ -227,9 +220,23 @@ class SyncService {
           final timeArray = serverSetting['reminder_time'].toString().split(
             ':',
           );
-          final reminderTime = TimeOfDay(
+          // Convert UTC time from server to local time
+          final utcTime = TimeOfDay(
             hour: int.parse(timeArray[0]),
             minute: int.parse(timeArray[1]),
+          );
+          final now = DateTime.now();
+          final utcDateTime = DateTime.utc(
+            now.year,
+            now.month,
+            now.day,
+            utcTime.hour,
+            utcTime.minute,
+          );
+          final localDateTime = utcDateTime.toLocal();
+          final reminderTime = TimeOfDay(
+            hour: localDateTime.hour,
+            minute: localDateTime.minute,
           );
 
           final setting = SettingsModel(
@@ -252,21 +259,38 @@ class SyncService {
             syncPending: false,
           );
           await settingsBox.put(defaultSettingId, setting);
-          ref.watch(settingsProvider.notifier).refresh();
         }
       }
       final localSetting = settingsBox.values.first;
       if (localSetting.syncPending && !localSetting.isDefaultSetting) {
-        await supabase.from('settings').upsert(localSetting);
+        // Convert local reminderTime to UTC before sending to server
+        final now = DateTime.now();
+        final localDateTime = DateTime(
+          now.year,
+          now.month,
+          now.day,
+          localSetting.reminderTime.hour,
+          localSetting.reminderTime.minute,
+        );
+        final utcDateTime = localDateTime.toUtc();
+        final utcReminderTime =
+            '${utcDateTime.hour.toString().padLeft(2, '0')}:${utcDateTime.minute.toString().padLeft(2, '0')}';
+
+        final data = {
+          'user_id': localSetting.userId,
+          'language': localSetting.language.name,
+          'currency': localSetting.currency.name,
+          'theme_mode': localSetting.themeMode.name,
+          'notifications_enabled': localSetting.notificationsEnabled,
+          'reminder_time': utcReminderTime,
+          'sync_settings': localSetting.syncSettings,
+          'created_at': localSetting.createdAt.toIso8601String(),
+          'updated_at': localSetting.updatedAt.toIso8601String(),
+        };
+        await supabase.from('settings').upsert(data);
         final updatedSetting = localSetting.copyWith(syncPending: false);
         await settingsBox.put(defaultSettingId, updatedSetting);
       }
-
-      // Refresh Providers
-      ref.watch(settingsProvider.notifier).refresh();
-      ref.watch(bankProvider.notifier).refresh();
-      ref.watch(creditCardProvider.notifier).refresh();
-      ref.watch(paymentProvider.notifier).refresh();
     } catch (e) {
       print('Sync error: $e');
       rethrow;

@@ -56,6 +56,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
   }
 
   Future<CreditCardModel?> _saveCard() async {
+    print('[DEBUG] AddCardScreen._saveCard called');
     if (_formKey.currentState?.validate() != true ||
         _billingDate == null ||
         _dueDate == null) {
@@ -88,7 +89,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
         id: widget.card?.id,
         userId: widget.user.id,
         name: _cardNameController.text.trim(),
-        bankId: _bankNameController.text.trim(),
+        bankId: _selectedBank?['id'],
         last4Digits: _last4DigitsController.text.trim(),
         billingDate: _billingDate!,
         dueDate: _dueDate!,
@@ -97,6 +98,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
         cardType: cardType,
       );
 
+      print('[DEBUG] Calling creditCardProvider.save');
       await ref.read(creditCardProvider.notifier).save(updatedCard);
 
       if (!mounted) return null;

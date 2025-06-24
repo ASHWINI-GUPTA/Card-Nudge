@@ -4,28 +4,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/enums/currency.dart';
 import '../../data/enums/language.dart';
 import '../../data/hive/models/settings_model.dart';
-import '../../data/hive/storage/credit_card_storage.dart';
-import '../../data/hive/storage/payment_storage.dart';
 import '../../data/hive/storage/setting_storage.dart';
-import '../../services/notification_service.dart';
 import 'user_provider.dart';
 
 final settingsProvider = StateNotifierProvider<SettingsNotifier, SettingsModel>(
   (ref) {
     final user = ref.watch(userProvider);
     final userId = user?.id ?? '00000000-0000-0000-0000-000000000000';
-    return SettingsNotifier(ref, userId);
+    return SettingsNotifier(userId);
   },
 );
 
 class SettingsNotifier extends StateNotifier<SettingsModel> {
-  final Ref _ref;
   String _userId;
 
   final defaultSettingId = '00000000-0000-0000-0000-000000000000';
 
-  SettingsNotifier(this._ref, this._userId)
-    : super(SettingsModel(userId: _userId)) {
+  SettingsNotifier(this._userId) : super(SettingsModel(userId: _userId)) {
     _loadSettings();
   }
 
@@ -33,7 +28,6 @@ class SettingsNotifier extends StateNotifier<SettingsModel> {
     try {
       final box = SettingStorage.getBox();
       final setting = box.values.first;
-      // Update userId in box if needed
       if (setting.userId != _userId) {
         setting.userId = _userId;
         await box.put(defaultSettingId, setting);
@@ -88,33 +82,10 @@ class SettingsNotifier extends StateNotifier<SettingsModel> {
     await _saveSettings(
       state.copyWith(notificationsEnabled: enabled, syncPending: true),
     );
-    // Cancel or reschedule notifications based on toggle
-    final notificationProvider = _ref.read(notificationServiceProvider);
-    if (!enabled) {
-      await notificationProvider.cancelAllNotifications();
-    } else {
-      final cards = CreditCardStorage.getBox().values.toList();
-      final payments = PaymentStorage.getBox().values.toList();
-      await notificationProvider.rescheduleAllNotifications(
-        cards: cards,
-        payments: payments.where((p) => !p.isPaid).toList(),
-        reminderTime: state.reminderTime,
-      );
-    }
   }
 
   Future<void> updateReminderTime(TimeOfDay time) async {
     await _saveSettings(state.copyWith(reminderTime: time, syncPending: true));
-    // Reschedule notifications with new time
-    final cards = CreditCardStorage.getBox().values.toList();
-    final payments = PaymentStorage.getBox().values.toList();
-
-    final notificationProvider = _ref.read(notificationServiceProvider);
-    await notificationProvider.rescheduleAllNotifications(
-      cards: cards,
-      payments: payments.where((p) => !p.isPaid).toList(),
-      reminderTime: time,
-    );
   }
 
   Future<void> updateSyncPreference(bool syncPreference) async {

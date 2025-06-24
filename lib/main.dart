@@ -13,7 +13,6 @@ import 'data/hive/storage/setting_storage.dart';
 import 'data/hive/storage/user_storage.dart';
 import 'firebase_options.dart';
 import 'helper/notification_handler.dart';
-import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,10 +33,7 @@ void main() async {
 
   await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
 
-  // Initialize notifications with ProviderContainer
-  final container = ProviderContainer();
-  final notificationProvider = container.read(notificationServiceProvider);
-  await notificationProvider.init();
+  // Initialize Notification Tap Handler
   await NotificationTapHandler.init();
 
   // Hive

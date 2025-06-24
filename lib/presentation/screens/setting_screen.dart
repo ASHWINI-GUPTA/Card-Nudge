@@ -13,7 +13,6 @@ import '../providers/setting_provider.dart';
 import '../providers/supabase_provider.dart';
 import '../providers/sync_provider.dart';
 import '../providers/user_provider.dart';
-import 'active_notifications_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -296,20 +295,6 @@ class SettingsScreen extends ConsumerWidget {
                       style: TextStyle(color: theme.colorScheme.error),
                     ),
                     onTap: () => _showClearDataDialog(context, ref),
-                  ),
-                  ListTile(
-                    title: Text(
-                      'Active Notifications',
-                      style: TextStyle(color: theme.colorScheme.primary),
-                    ),
-                    leading: const Icon(Icons.notifications_active),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const ActiveNotificationsScreen(),
-                        ),
-                      );
-                    },
                   ),
                 ],
               ),
