@@ -122,11 +122,11 @@ serve(async () => {
         (dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
       );
       if (daysBefore < 0) continue; // Skip overdue payments
-
-      console.table(p);
-
-      const card_name = p.cards[0].name;
-      const last_4_digits = p.cards[0].last_4_digits;
+      
+      // Payment N:1 Cards, assume only one card per payment
+      const card = Array.isArray(p.cards) ? p.cards[0] : p.cards;
+      const card_name = card.name;
+      const last_4_digits = card.last_4_digits;
       const title = daysBefore === 0
         ? "Payment Due Today"
         : `Payment Due in ${daysBefore} day${daysBefore === 1 ? "" : "s"}`;
