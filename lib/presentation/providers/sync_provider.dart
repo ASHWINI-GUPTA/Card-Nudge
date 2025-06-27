@@ -28,3 +28,10 @@ final syncServiceProvider = Provider<SyncService>((ref) {
     connectivity: connectivity,
   );
 });
+
+final connectivityStatusProvider = StreamProvider<List<ConnectivityResult>>((
+  ref,
+) {
+  final connectivity = Connectivity();
+  return connectivity.onConnectivityChanged;
+});

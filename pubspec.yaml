@@ -1,7 +1,7 @@
 name: card_nudge
 description: A Flutter app for managing credit card dues.
 publish_to: 'none'
-version: 0.3.8+32
+version: 0.3.9+33
 environment:
   sdk: ^3.7.0
 
