@@ -33,4 +33,23 @@ class NotificationTapHandler {
     return validRoutes.contains(payload) ||
         payload.startsWith(AppRoutes.cardDetails.split(':')[0]);
   }
+
+  /// Call this from your notification tap handler, passing the payload string.
+  static void handleNotificationTap(String payload) {
+    final context = notificationNavigatorKey.currentContext;
+    if (context == null) return;
+
+    final cardsPrefix = '/cards/';
+    if (payload.startsWith(cardsPrefix)) {
+      final cardId = payload.substring(cardsPrefix.length);
+      if (cardId.isNotEmpty) {
+        _goToRoute('/cards/$cardId');
+        return;
+      }
+    }
+
+    if (_isValidRoute(payload)) {
+      _goToRoute(payload);
+    }
+  }
 }

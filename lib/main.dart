@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'credit_card_app.dart';
 import 'data/hive/storage/bank_storage.dart';
@@ -35,6 +36,18 @@ void main() async {
 
   // Initialize Notification Tap Handler
   await NotificationTapHandler.init();
+
+  // Listen for notification taps (when app is in background/terminated)
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    final payload =
+        message.data['payload'] ??
+        message.data['route'] ??
+        message.data['path'] ??
+        '';
+    if (payload is String && payload.isNotEmpty) {
+      NotificationTapHandler.handleNotificationTap(payload);
+    }
+  });
 
   // Hive
   await Hive.initFlutter();
