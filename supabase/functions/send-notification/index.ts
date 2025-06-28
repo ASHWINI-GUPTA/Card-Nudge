@@ -11,7 +11,6 @@ if (!serviceAccountJson) {
     firebaseAdminApp = admin.initializeApp({
       credential: admin.credential.cert(JSON.parse(serviceAccountJson)),
     });
-    console.log("✅ Firebase Admin SDK initialized.");
   } catch (e) {
     console.error("❌ Firebase Admin SDK init failed:", e);
   }
@@ -102,7 +101,7 @@ class NotificationMessageBuilder {
   billingReminder(card: Card): { title: string; body: string; } {
     return this.isHindi()
       ? {
-        title: `📅 ${card.name} के लिए बिलिंग तिथि है`,
+        title: `📅 ${card.name} के लिए बिलिंग तिथि है।`,
         body:
           `आज ${card.name} (**** ${card.last_4_digits}) की बिलिंग तिथि है। अपने खर्चों को लॉग करना न भूलें।`,
       }
@@ -123,7 +122,7 @@ class NotificationMessageBuilder {
   dueReminder(card: Card, dueInDays: number, remaining: number): { title: string; body: string; } {
     return this.isHindi()
       ? {
-        title: dueInDays === 0 ? `📌 आज अंतिम तिथि है` : `⏰ ${dueInDays} दिन शेष`,
+        title: dueInDays === 0 ? `📌 आज अंतिम तिथि है।` : `⏰ ${dueInDays} दिन शेष।`,
         body:
           `${card.name} (**** ${card.last_4_digits}) के लिए ₹${remaining} भुगतान करना बाकी है।`,
       }
@@ -144,7 +143,7 @@ class NotificationMessageBuilder {
   overdue(card: Card, remaining: number): { title: string; body: string; } {
     return this.isHindi()
       ? {
-        title: `⚠️ भुगतान विलंबित`,
+        title: `⚠️ भुगतान विलंबित।`,
         body:
           `${card.name} (**** ${card.last_4_digits}) के लिए ₹${remaining} अभी भी बाकी है। विलंब शुल्क लग सकता है।`,
       }
@@ -241,7 +240,8 @@ async function getUserPayments(userId: string): Promise<Payment[]> {
       "id, due_date, due_amount, paid_amount, is_paid, cards(id, name, last_4_digits, billing_date, is_archived)",
     )
     .eq("user_id", userId)
-    .or("is_paid.eq.false,paid_amount.lt.due_amount") as {
+    .or("is_paid.eq.false")
+    .or("paid_amount.lt.due_amount") as {
       data: Payment[] | null;
       error: Error | null;
     };
@@ -349,6 +349,11 @@ Deno.serve(async () => {
   const users = await getUsersToNotify(reminderTime);
   const logs: NotificationLog[] = [];
   const failed: string[] = [];
+
+  if (!users.length) {
+    console.debug("📭 No users to notify at this time");
+    return new Response("No users to notify at this time", { status: 200 });
+  }
 
   for (const userId of users) {
     const lang = await getUserLanguage(userId);
