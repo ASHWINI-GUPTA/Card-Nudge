@@ -1,3 +1,4 @@
+import 'package:card_nudge/helper/date_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -136,8 +137,8 @@ class DashboardScreen extends ConsumerWidget {
         nonPaidPayments
             .where(
               (p) =>
-                  p.dueDate.difference(now).inDays >= 0 &&
-                  p.dueDate.difference(now).inDays <= 3,
+                  p.dueDate.differenceInDaysCeil(now) >= 0 &&
+                  p.dueDate.differenceInDaysCeil(now) <= 3,
             )
             .length;
 
@@ -163,7 +164,7 @@ class DashboardScreen extends ConsumerWidget {
     // Monthly spend data for SpendChartWidget
     final monthlySpends = <Map<String, dynamic>>[];
     final months = List.generate(
-      3,
+      4,
       (i) => DateTime(now.year, now.month - i, 1),
     );
     for (var month in months) {
@@ -229,7 +230,7 @@ class DashboardScreen extends ConsumerWidget {
 
         // Quick Insights
         Text(
-          'Quick Insights',
+          AppStrings.quickInsights,
           style: theme.textTheme.titleMedium?.copyWith(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -240,25 +241,25 @@ class DashboardScreen extends ConsumerWidget {
         Column(
           children: [
             DashboardCard(
-              title: 'Total Credit Limit',
+              title: AppStrings.totalCreditLimit,
               value: formatHelper.formatCurrency(totalCreditLimit),
               icon: Icons.credit_card,
               color: theme.colorScheme.primary,
             ),
             DashboardCard(
-              title: 'Total Due',
+              title: AppStrings.totalDue,
               value: formatHelper.formatCurrency(totalDue),
               icon: Icons.account_balance_wallet_outlined,
               color: theme.colorScheme.error,
             ),
             DashboardCard(
-              title: 'Utilization',
+              title: AppStrings.utilization,
               value: '${(utilization * 100).toStringAsFixed(0)}%',
               icon: Icons.pie_chart_outline,
               color: theme.colorScheme.secondary,
             ),
             DashboardCard(
-              title: 'Overutilized Cards',
+              title: AppStrings.overUtilization,
               value:
                   '$overUtilizedCards Card${overUtilizedCards == 1 ? '' : 's'}',
               icon: Icons.warning_amber_rounded,
@@ -267,9 +268,10 @@ class DashboardScreen extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 24),
+
         // Spend Chart
         Text(
-          'Spend Chart',
+          AppStrings.spendOverview,
           style: theme.textTheme.titleMedium?.copyWith(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -279,9 +281,10 @@ class DashboardScreen extends ConsumerWidget {
         const SizedBox(height: 12),
         SpendChartWidget(data: monthlySpends),
         const SizedBox(height: 24),
+
         // Monthly Overview
         Text(
-          'Monthly Overview',
+          AppStrings.monthlyOverview,
           style: theme.textTheme.titleMedium?.copyWith(
             fontSize: 16,
             fontWeight: FontWeight.bold,

@@ -30,6 +30,13 @@ class AppStrings {
   static const errorGeneric =
       'An unexpected error occurred. Please try again or return to the home screen. If the problem persists, contact support.';
 
+  // Dashboard Screen
+  static const utilization = 'Utilization';
+  static const overUtilization = 'Overutilized Cards';
+  static const totalCreditLimit = 'Total Credit Limit';
+  static const quickInsights = 'Quick Insights';
+  static const monthlyOverview = 'Monthly Overview';
+
   // Cards Screen
   static const cardsScreenTitle = 'Your Cards';
   static const cardsScreenSubtitle = 'Manage your credit cards and payments';
@@ -76,7 +83,7 @@ class AppStrings {
   static const noDuePaymentAddedSuccess =
       'No payment due added. You can add it later.';
   static const paymentAddError = 'Failed to add payment due.';
-  static const addDueButton = 'Add';
+  static const addDueButton = 'Payment';
   static const noPaymentDue = 'No Payment Required';
 
   // Add/Update Card
@@ -119,7 +126,7 @@ class AppStrings {
   // Card Details
   static const invalidBankError = 'Invalid bank selected.';
   static const cardDetailsTitle = 'Card Details';
-  static const editCard = 'Edit';
+  static const editCard = 'Update';
   static const deleteCard = 'Delete';
   static const archiveCard = 'Archive';
   static const upcomingPayment = 'Upcoming Payment';

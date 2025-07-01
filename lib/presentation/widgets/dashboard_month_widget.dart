@@ -1,3 +1,4 @@
+import 'package:card_nudge/constants/app_strings.dart';
 import 'package:card_nudge/data/hive/models/payment_model.dart';
 import 'package:flutter/material.dart';
 
@@ -9,19 +10,40 @@ class DashboardMonthWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final now = DateTime.now();
+
+    // Legend items
+    final legendItems = [
+      {
+        'label': AppStrings.monthOnTime,
+        'color': const Color(0xFF43A047), // Green 600
+      },
+      {
+        'label': AppStrings.monthDelayed,
+        'color': const Color(0xFFFFB300), // Amber 600
+      },
+      {
+        'label': AppStrings.monthNotPaid,
+        'color': const Color(0xFFE53935), // Red 600
+      },
+      {
+        'label': AppStrings.monthNoData,
+        'color': const Color(0xFFB0BEC5), // Blue Grey 200
+      },
+    ];
+
     final months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+      '🎉 Jan', // New Year's Day (Jan 1)
+      '❤️ Feb', // Valentine's Day (Feb 14)
+      '🌍 Mar', // Earth Hour (March) or Int'l Women's Day (March 8)
+      '🌱 Apr', // Earth Day (April 22)
+      '👩 May', // Mother's Day (varies, but often May) or Int'l Workers' Day (May 1)
+      '🌈 Jun', // Pride Month
+      '🇺🇳 Jul', // No major global events - using UN emblem as July has smaller observances
+      '👨 Aug', // Father's Day (in many countries)
+      '📚 Sep', // International Literacy Day (Sep 8)
+      '🎃 Oct', // Halloween (Oct 31)
+      '✊ Nov', // Movember (men's health) or World Kindness Day (Nov 13)
+      '🎄 Dec', // Christmas (Dec 25)
     ];
 
     // Group payments by month
@@ -32,46 +54,26 @@ class DashboardMonthWidget extends StatelessWidget {
     }
 
     // Determine status and colors for each month
-    Color _getMonthColor(int month) {
+    Color _getMonthColor(int month, List<Map<String, Object>> legendItems) {
       if (month > now.month) {
-        return theme.colorScheme.surfaceContainerLowest; // Future
+        return legendItems[3]['color'] as Color; // No data (future)
       }
       final payments = monthPayments[month] ?? [];
       if (payments.isEmpty) {
-        return theme.colorScheme.surfaceContainer; // No due data
+        return legendItems[3]['color'] as Color; // No data
       }
       final hasNotPaid = payments.any((p) => !p.isPaid);
       if (hasNotPaid) {
-        return theme.colorScheme.error; // Not paid
+        return legendItems[2]['color'] as Color; // Not paid
       }
       final hasDelayed = payments.any(
         (p) => p.isPaid && p.dueDate.isBefore(now),
       );
       if (hasDelayed) {
-        return theme.colorScheme.tertiary; // Delayed
+        return legendItems[1]['color'] as Color; // Delayed
       }
-      return theme.colorScheme.primary; // On time
+      return legendItems[0]['color'] as Color; // On time
     }
-
-    TextStyle _getTextStyle(int month) {
-      final color =
-          month > now.month
-              ? theme.colorScheme.onSurfaceVariant
-              : theme.colorScheme.onSurface;
-      return TextStyle(
-        color: color,
-        fontWeight: month == now.month ? FontWeight.bold : FontWeight.w600,
-        fontSize: 14,
-      );
-    }
-
-    // Legend items
-    final legendItems = [
-      {'label': 'On Time', 'color': theme.colorScheme.primary},
-      {'label': 'Delayed', 'color': theme.colorScheme.tertiary},
-      {'label': 'Not Paid', 'color': theme.colorScheme.error},
-      {'label': 'No Data', 'color': theme.colorScheme.surfaceContainer},
-    ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +91,7 @@ class DashboardMonthWidget extends StatelessWidget {
           itemBuilder: (context, index) {
             final month = index + 1;
             return Material(
-              color: _getMonthColor(month),
+              color: _getMonthColor(month, legendItems),
               borderRadius: BorderRadius.circular(10),
               elevation: month == now.month ? 4 : 0,
               child: Container(
@@ -104,7 +106,15 @@ class DashboardMonthWidget extends StatelessWidget {
                           )
                           : null,
                 ),
-                child: Text(months[index], style: _getTextStyle(month)),
+                child: Text(
+                  months[index],
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface,
+                    fontWeight:
+                        month == now.month ? FontWeight.bold : FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
               ),
             );
           },

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:card_nudge/presentation/providers/setting_provider.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -139,7 +140,11 @@ class SupabaseService {
     await messaging.requestPermission();
 
     // Get the FCM token
-    final token = await messaging.getToken();
+    final token =
+        kDebugMode
+            ? await messaging.getAPNSToken()
+            : await messaging.getToken();
+
     final userId = _client.auth.currentUser?.id;
     final platform = Platform.operatingSystem;
 

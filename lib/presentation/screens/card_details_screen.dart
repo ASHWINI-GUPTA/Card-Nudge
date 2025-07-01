@@ -28,47 +28,53 @@ class CardDetailsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Semantics(
           label: AppStrings.cardDetailsTitle,
-          child: Text(
-            AppStrings.cardDetailsTitle,
-            style: theme.textTheme.titleLarge,
-          ),
+          child: Text(card.name, style: theme.textTheme.titleLarge),
         ),
         actions: [
           PopupMenuButton<String>(
-            onSelected: (value) => _handleMenuAction(context, ref, value),
+            icon: const Icon(Icons.more_vert, color: Colors.white),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            color: theme.colorScheme.surface,
+            elevation: 8,
             itemBuilder:
                 (context) => [
                   PopupMenuItem(
                     value: 'edit',
-                    child: ListTile(
-                      leading: const Icon(Icons.edit),
-                      title: Semantics(
-                        label: AppStrings.editCard,
-                        child: Text(AppStrings.editCard),
-                      ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.edit, color: theme.colorScheme.primary),
+                        const SizedBox(width: 12),
+                        Text(AppStrings.editCard),
+                      ],
                     ),
                   ),
                   PopupMenuItem(
                     value: 'archive',
-                    child: ListTile(
-                      leading: const Icon(Icons.archive),
-                      title: Semantics(
-                        label: AppStrings.archiveCard,
-                        child: Text(AppStrings.archiveCard),
-                      ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.archive, color: theme.colorScheme.secondary),
+                        const SizedBox(width: 12),
+                        Text(AppStrings.archiveCard),
+                      ],
                     ),
                   ),
                   PopupMenuItem(
                     value: 'delete',
-                    child: ListTile(
-                      leading: const Icon(Icons.delete, color: Colors.red),
-                      title: Semantics(
-                        label: AppStrings.deleteCard,
-                        child: Text(AppStrings.deleteCard),
-                      ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.delete, color: Colors.red),
+                        const SizedBox(width: 12),
+                        Text(
+                          AppStrings.deleteCard,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ],
                     ),
                   ),
                 ],
+            onSelected: (value) => _handleMenuAction(context, ref, value),
           ),
         ],
       ),

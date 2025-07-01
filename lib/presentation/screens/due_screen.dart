@@ -1,5 +1,6 @@
 import 'package:card_nudge/data/enums/amount_range.dart';
 import 'package:card_nudge/data/enums/sort_order.dart';
+import 'package:card_nudge/helper/date_extension.dart';
 import 'package:card_nudge/presentation/providers/filter_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,7 @@ import '../../constants/app_strings.dart';
 import '../../data/hive/models/bank_model.dart';
 import '../../data/hive/models/credit_card_model.dart';
 import '../../data/hive/models/payment_model.dart';
+import '../../helper/string_helper.dart';
 import '../../services/navigation_service.dart';
 import '../providers/bank_provider.dart';
 import '../providers/credit_card_provider.dart';
@@ -247,7 +249,7 @@ class DueScreen extends ConsumerWidget {
         payment.dueDate.month,
         payment.dueDate.day,
       );
-      final diff = dueDate.difference(today).inDays;
+      final diff = dueDate.differenceInDaysCeil(today);
       String label;
 
       if (diff < 0) {
@@ -428,22 +430,23 @@ class DueCardContent extends ConsumerWidget {
 
   String _getStatusMessage(DateTime dueDate) {
     final now = DateTime.now();
-    final difference = dueDate.difference(now).inDays;
-    if (difference < 0) {
-      return 'Overdue by ${-difference} day${-difference.abs() == 1 ? '' : 's'}';
-    } else if (difference == 0) {
+    int days = dueDate.differenceInDaysCeil(now);
+
+    if (days < 0) {
+      return 'Overdue by ${-days} day${-days.abs() == 1 ? '' : 's'}';
+    } else if (days == 0) {
       return 'Due today';
-    } else if (difference == 1) {
+    } else if (days == 1) {
       return 'Due tomorrow';
     } else {
-      return 'Due in $difference day${difference == 1 ? '' : 's'}';
+      return 'Due in $days day${days == 1 ? '' : 's'}';
     }
   }
 
   Color _dueDateColor(DateTime dueDate, BuildContext context) {
     final theme = Theme.of(context);
     final now = DateTime.now();
-    final difference = dueDate.difference(now).inDays;
+    final difference = dueDate.differenceInDaysCeil(now);
 
     if (difference < 0) {
       return theme.colorScheme.error; // Critical: Overdue
@@ -482,7 +485,7 @@ class DueCardContent extends ConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '**** **** **** ${card.last4Digits}',
+                  obfuscateCardNumber(card.last4Digits, card.cardType),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: Colors.white,
                     letterSpacing: 1.5,

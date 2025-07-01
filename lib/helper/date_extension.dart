@@ -54,4 +54,11 @@ extension CreditCardDateExtension on DateTime {
 
   /// Returns the next due date for cards with a custom interval (e.g., every N days).
   DateTime nextCustomInterval(int days) => add(Duration(days: days));
+
+  /// Returns a positive number if [other] is in the past,
+  /// zero if same day, and a negative number if [other] is in the future.
+  int differenceInDaysCeil(DateTime other) {
+    final difference = this.difference(other);
+    return (difference.inHours / 24).ceil();
+  }
 }

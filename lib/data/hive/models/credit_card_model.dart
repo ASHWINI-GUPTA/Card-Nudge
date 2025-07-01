@@ -1,3 +1,4 @@
+import 'package:card_nudge/helper/date_extension.dart';
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 import '../../enums/card_type.dart';
@@ -110,7 +111,7 @@ class CreditCardModel extends HiveObject {
     return copyWith(currentUtilization: newUtilization);
   }
 
-  bool get isNearDueDate => dueDate.difference(DateTime.now()).inDays <= 7;
-  bool get isOverUtilized => currentUtilization > creditLimit * 0.9;
+  bool get isNearDueDate => dueDate.differenceInDaysCeil(DateTime.now()) <= 7;
+  bool get isOverUtilized => currentUtilization > creditLimit * 0.3;
   double get utilizationPercentage => (currentUtilization / creditLimit) * 100;
 }

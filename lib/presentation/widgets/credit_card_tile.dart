@@ -1,3 +1,4 @@
+import 'package:card_nudge/helper/date_extension.dart';
 import 'package:card_nudge/presentation/providers/credit_card_provider.dart';
 import 'package:card_nudge/presentation/providers/format_provider.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import '../../constants/app_strings.dart';
 import '../../data/enums/card_type.dart';
 import '../../data/hive/models/credit_card_model.dart';
 import '../../data/hive/models/bank_model.dart';
+import '../../helper/string_helper.dart';
 import '../providers/bank_provider.dart';
 import '../providers/payment_provider.dart';
 import 'credit_card_color_dot_indicator.dart';
@@ -118,8 +120,9 @@ class CreditCardTile extends ConsumerWidget {
             data: (payments) {
               final cardPayments =
                   payments.where((p) => p.cardId == card.id).toList();
-              final hasDue =
-                  cardPayments.isNotEmpty && cardPayments.last.dueAmount > 0;
+              final hasDue = cardPayments.any(
+                (p) => !p.isPaid || p.isPartiallyPaid,
+              );
               final dueAmount = cardPayments.fold<double>(
                 0.0,
                 (sum, payment) => sum + (payment.dueAmount),
@@ -223,7 +226,7 @@ class CreditCardTile extends ConsumerWidget {
     );
 
     final statmentGenerated = DateTime.now().isAfter(card.billingDate);
-    final daysLeft = card.dueDate.difference(DateTime.now()).inDays;
+    final daysLeft = card.dueDate.differenceInDaysCeil(DateTime.now());
 
     Color dueDateColor;
     if (daysLeft <= 5) {
@@ -233,8 +236,6 @@ class CreditCardTile extends ConsumerWidget {
     } else {
       dueDateColor = Colors.orangeAccent;
     }
-
-    String maskedCardNumber = '**** **** **** ${card.last4Digits}';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,7 +254,7 @@ class CreditCardTile extends ConsumerWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          maskedCardNumber,
+          obfuscateCardNumber(card.last4Digits, card.cardType),
           style: theme.textTheme.titleLarge?.copyWith(
             color: Colors.white,
             letterSpacing: 2.0,
@@ -311,23 +312,29 @@ class CreditCardTile extends ConsumerWidget {
     Color? valueColor,
   }) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-          label.toUpperCase(),
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 11,
-            letterSpacing: 1.2,
+        Center(
+          child: Text(
+            label.toUpperCase(),
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 11,
+              letterSpacing: 1.2,
+            ),
+            textAlign: TextAlign.center,
           ),
         ),
         const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            color: valueColor ?? Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
+        Center(
+          child: Text(
+            value,
+            style: TextStyle(
+              color: valueColor ?? Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
           ),
         ),
       ],

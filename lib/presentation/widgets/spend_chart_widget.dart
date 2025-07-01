@@ -1,4 +1,3 @@
-import 'package:card_nudge/constants/app_strings.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,17 +10,17 @@ class SpendChartWidget extends ConsumerWidget {
   data; // [{'month': 'Jan', 'amount': 5000}, ...]
   const SpendChartWidget({super.key, this.data = const []});
 
-  // Get the last 3 months (e.g., May, Apr, Mar for May 2025)
-  List<String> _getLastThreeMonths(DateTime now) {
+  // Get the last 4 months (e.g., Jun, May, Apr, Mar for June 2025)
+  List<String> _getLastFourMonths(DateTime now) {
     final months = <String>[];
-    for (int i = 2; i >= 0; i--) {
+    for (int i = 3; i >= 0; i--) {
       final monthDate = DateTime(now.year, now.month - i, 1);
       months.add(DateFormat.MMM().format(monthDate));
     }
     return months;
   }
 
-  // Get spend amounts for the last 3 months, default to 0 if missing
+  // Get spend amounts for the last 4 months, default to 0 if missing
   List<double> _getSpendValues(List<String> months) {
     return months.map((month) {
       final entry = data.firstWhere(
@@ -38,31 +37,21 @@ class SpendChartWidget extends ConsumerWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final now = DateTime.now();
-    final quarterMonths = _getLastThreeMonths(now);
-    final spendValues = _getSpendValues(quarterMonths);
-    // AG TODO: Get this from Settings
-    const overspendThreshold = 50000.0; // ₹50,000
+    final monthsToShow = _getLastFourMonths(now);
+    final spendValues = _getSpendValues(monthsToShow);
 
     return Card(
-      margin: const EdgeInsets.all(12),
-      elevation: 2,
+      margin: const EdgeInsets.all(6),
+      elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       color:
           isDark
               ? theme.colorScheme.surfaceContainerHighest
               : theme.colorScheme.surface,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(12.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              AppStrings.spendOverview,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onSurface,
-              ),
-            ),
             const SizedBox(height: 16),
             SizedBox(
               height: 200,
@@ -70,13 +59,26 @@ class SpendChartWidget extends ConsumerWidget {
                 BarChartData(
                   borderData: FlBorderData(show: false),
                   gridData: FlGridData(show: false),
+                  barGroups: List.generate(monthsToShow.length, (i) {
+                    return BarChartGroupData(
+                      x: i,
+                      barRods: [
+                        BarChartRodData(
+                          toY: spendValues[i],
+                          color: theme.colorScheme.primary,
+                          borderRadius: BorderRadius.circular(6),
+                          width: 20,
+                        ),
+                      ],
+                    );
+                  }),
                   titlesData: FlTitlesData(
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        maxIncluded: true,
+                        maxIncluded: false,
                         minIncluded: false,
-                        reservedSize: 50,
+                        reservedSize: 40,
                         getTitlesWidget:
                             (value, _) => Text(
                               formatHelper.formatCurrencyCompact(value),
@@ -95,11 +97,11 @@ class SpendChartWidget extends ConsumerWidget {
                         showTitles: true,
                         getTitlesWidget: (value, _) {
                           final index = value.toInt();
-                          if (index >= 0 && index < quarterMonths.length) {
+                          if (index >= 0 && index < monthsToShow.length) {
                             return Text(
-                              quarterMonths[index],
+                              monthsToShow[index],
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 14,
                                 color:
                                     isDark
                                         ? theme.colorScheme.onSurface
@@ -119,23 +121,6 @@ class SpendChartWidget extends ConsumerWidget {
                       sideTitles: SideTitles(showTitles: false),
                     ),
                   ),
-                  barGroups: List.generate(quarterMonths.length, (i) {
-                    final isOverspent = spendValues[i] > overspendThreshold;
-                    return BarChartGroupData(
-                      x: i,
-                      barRods: [
-                        BarChartRodData(
-                          toY: spendValues[i],
-                          color:
-                              isOverspent
-                                  ? theme.colorScheme.error
-                                  : theme.colorScheme.primary,
-                          borderRadius: BorderRadius.circular(6),
-                          width: 18,
-                        ),
-                      ],
-                    );
-                  }),
                 ),
               ),
             ),
