@@ -27,7 +27,6 @@ class _AuthProgressState extends ConsumerState<AuthProgress> {
   @override
   void initState() {
     super.initState();
-    // All heavy/async logic is handled in _checkUserAndSync, not in build/initState directly.
     _checkUserAndSync();
   }
 
@@ -59,7 +58,10 @@ class _AuthProgressState extends ConsumerState<AuthProgress> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to load user details')),
         );
-        await NavigationService.goToRoute(context, '/error');
+        await NavigationService.goToRoute(
+          context,
+          '/error?message=Failed to load user details',
+        );
         return;
       }
     }
@@ -83,7 +85,10 @@ class _AuthProgressState extends ConsumerState<AuthProgress> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Sync failed: $e')));
-        await NavigationService.goToRoute(context, '/error');
+        await NavigationService.goToRoute(
+          context,
+          '/error?message=Sync failed: $e',
+        );
       }
     }
   }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/app_strings.dart';
@@ -13,6 +12,7 @@ import '../providers/setting_provider.dart';
 import '../providers/supabase_provider.dart';
 import '../providers/sync_provider.dart';
 import '../providers/user_provider.dart';
+import '../widgets/version_list_tile_widget.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -308,22 +308,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
               child: Column(
                 children: [
-                  ListTile(
-                    title: Text(AppStrings.appVersion),
-                    subtitle: FutureBuilder<PackageInfo>(
-                      future: PackageInfo.fromPlatform(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Text(snapshot.data!.version);
-                        } else if (snapshot.hasError) {
-                          return Text(
-                            '${AppStrings.versionError}: ${snapshot.error}',
-                          );
-                        }
-                        return const Text(AppStrings.loadingVersion);
-                      },
-                    ),
-                  ),
+                  VersionListTile(),
                   ListTile(
                     title: Text('Website'),
                     subtitle: const Text('https://card.fnlsg.in'),

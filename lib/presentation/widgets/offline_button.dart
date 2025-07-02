@@ -1,5 +1,7 @@
+import 'package:card_nudge/presentation/widgets/emoji_blast.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
+
+import '../../helper/emoji_helper.dart';
 
 class OfflineButton extends StatefulWidget {
   @override
@@ -12,109 +14,7 @@ class _OfflineButtonState extends State<OfflineButton>
   late AnimationController _controller;
   late Animation<double> _glowAnimation;
 
-  // AG TODO: Create a Helper class for emojis
-  final List<String> _emojis = [
-    '😂',
-    '🤪',
-    '😜',
-    '🥳',
-    '🤡',
-    '👾',
-    '🦄',
-    '💥',
-    '🎉',
-    '😎',
-    '🚀',
-    '✨',
-    '🔥',
-    '🍕',
-    '🍔',
-    '🎈',
-    '😺',
-    '😹',
-    '🙃',
-    '😇',
-    '🎮',
-    '🎵',
-    '🎤',
-    '📸',
-    '🍩',
-    '🍭',
-    '🍦',
-    '🍉',
-    '🌈',
-    '🧃',
-    '🤖',
-    '👑',
-    '💫',
-    '🎊',
-    '🧁',
-    '🥤',
-    '🛸',
-    '🌟',
-    '💯',
-    '🤩',
-    '😍',
-    '👍',
-    '👎',
-    '👏',
-    '🙌',
-    '🙏',
-    '🤞',
-    '👌',
-    '🤘',
-    '🤙',
-    '💪',
-    '🥳',
-    '🤯',
-    '😴',
-    '🤤',
-    '🤑',
-    '🤫',
-    '🤬',
-    '🤭',
-    '🤫',
-    '🤥',
-    '🤧',
-    '🤒',
-    '🤕',
-    '🤮',
-    '🤢',
-    '🤤',
-    '🥴',
-    '😵',
-    '🤯',
-    '🤠',
-    '😎',
-    '🤓',
-    '🧐',
-    '🥳',
-    '🙂',
-    '🤗',
-    '🙃',
-    '😇',
-    '😈',
-    '👿',
-    '👹',
-    '👺',
-    '🤡',
-    '👻',
-    '👽',
-    '👾',
-    '🤖',
-    '💩',
-    '😺',
-    '😸',
-    '😹',
-    '😻',
-    '😼',
-    '😽',
-    '🙀',
-    '😿',
-    '😾',
-  ];
-  bool _showBlast = false;
-  List<_EmojiBlast> _blasts = [];
+  Key? _blastKey;
 
   @override
   void initState() {
@@ -139,24 +39,8 @@ class _OfflineButtonState extends State<OfflineButton>
     setState(() {
       _pressCount++;
       if (_pressCount >= 3) {
-        _showBlast = true;
-        _blasts = List.generate(
-          24, // Number of emojis to blast
-          (i) => _EmojiBlast(
-            emoji: (_emojis..shuffle()).first,
-            key: UniqueKey(),
-            // Calculate angle for full 360-degree distribution
-            angle: (i * (2 * pi / 24)),
-          ),
-        );
-        Future.delayed(const Duration(milliseconds: 1200), () {
-          if (mounted) {
-            setState(() {
-              _showBlast = false;
-              _pressCount = 0;
-            });
-          }
-        });
+        _blastKey = UniqueKey();
+        _pressCount = 0;
       }
     });
   }
@@ -213,83 +97,24 @@ class _OfflineButtonState extends State<OfflineButton>
               );
             },
           ),
-          // Position the blasts relative to the button
-          if (_showBlast)
+          if (_blastKey != null)
             Positioned(
-              child: SizedBox(
-                child: Stack(alignment: Alignment.center, children: _blasts),
+              child: EmojiBlast(
+                key: _blastKey,
+                count: 24,
+                emojis: List.from(blastEmojiList),
+                duration: const Duration(milliseconds: 1200),
+                minDistance: 100,
+                maxDistance: 500,
+                onBlastEnd: () {
+                  setState(() {
+                    _blastKey = null;
+                  });
+                },
               ),
             ),
         ],
       ),
-    );
-  }
-}
-
-// Helper widget for emoji blast animation
-class _EmojiBlast extends StatefulWidget {
-  final String emoji;
-  final double angle;
-  const _EmojiBlast({Key? key, required this.emoji, required this.angle})
-    : super(key: key);
-
-  @override
-  State<_EmojiBlast> createState() => _EmojiBlastState();
-}
-
-class _EmojiBlastState extends State<_EmojiBlast>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _dx;
-  late Animation<double> _dy;
-  late Animation<double> _opacity;
-  late double distance;
-
-  @override
-  void initState() {
-    super.initState();
-    // Randomize distance for varied spread
-    distance = 100 + (Random().nextInt(5) * 100); // 100 to 500 pixels
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 2000),
-      vsync: this,
-    )..forward();
-
-    _dx = Tween<double>(
-      begin: 0,
-      end: distance * cos(widget.angle),
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
-    _dy = Tween<double>(
-      begin: 0,
-      end:
-          -distance *
-          sin(widget.angle), // Negative for upwards movement in Flutter
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
-    _opacity = Tween<double>(
-      begin: 1,
-      end: 0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(_dx.value, _dy.value),
-          child: Opacity(
-            opacity: _opacity.value,
-            child: Text(widget.emoji, style: const TextStyle(fontSize: 28)),
-          ),
-        );
-      },
     );
   }
 }

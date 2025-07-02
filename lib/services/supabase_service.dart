@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:card_nudge/presentation/providers/setting_provider.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -41,7 +41,6 @@ class SupabaseService {
       if (!success) {
         throw const AuthException('GitHub Sign-In failed');
       }
-      await syncUserDetails();
     } catch (e) {
       rethrow;
     }
@@ -72,8 +71,6 @@ class SupabaseService {
       if (response.user == null) {
         throw const AuthException('Failed to sign in with Google');
       }
-
-      await syncUserDetails();
     } catch (e) {
       rethrow;
     }
@@ -124,13 +121,23 @@ class SupabaseService {
                 metadata['picture']?.toString() ??
                 '',
           );
-      // Update it in Setting too.
+
+      // BUG: It will have the default settings.
       await _ref.read(settingsProvider.notifier).updateUserId(user.id);
 
       await initializeNotifications();
     } catch (e) {
       throw AuthException('Failed to sync user details: ${e.toString()}');
     }
+  }
+
+  Future<bool> isIosSimulator() async {
+    if (!Platform.isIOS) return false;
+
+    final deviceInfo = DeviceInfoPlugin();
+    final iosInfo = await deviceInfo.iosInfo;
+
+    return iosInfo.isPhysicalDevice == false;
   }
 
   Future<void> initializeNotifications() async {
@@ -140,8 +147,9 @@ class SupabaseService {
     await messaging.requestPermission();
 
     // Get the FCM token
+    bool isSimulator = await isIosSimulator();
     final token =
-        kDebugMode
+        isSimulator
             ? await messaging.getAPNSToken()
             : await messaging.getToken();
 
@@ -208,4 +216,6 @@ class SupabaseService {
           .eq('device_token', token);
     }
   }
+
+  SupabaseClient get client => _client;
 }

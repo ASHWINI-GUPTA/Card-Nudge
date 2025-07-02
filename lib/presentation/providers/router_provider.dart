@@ -1,8 +1,8 @@
+import 'package:card_nudge/constants/app_routes.dart';
 import 'package:card_nudge/presentation/screens/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../providers/supabase_provider.dart';
 import '../screens/auth_progress_screen.dart';
 import '../screens/auth_screen.dart';
@@ -12,18 +12,6 @@ import '../providers/credit_card_provider.dart';
 import '../screens/loading_screen.dart';
 import '../screens/setting_screen.dart';
 import '../screens/home_screen.dart';
-
-class AppRoutes {
-  static const String root = '/';
-  static const String home = '/home';
-  static const String auth = '/auth';
-  static const String loginCallback = '/login-callback';
-  static const String settings = '/settings';
-  static const String sync = '/sync';
-  static const String error = '/error';
-  static const String cardDetails = '/cards/:cardId';
-  static const String dashboard = '/dashboard';
-}
 
 final notificationNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -49,7 +37,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: AppRoutes.root,
-        name: 'root',
+        name: AppRoutes.rootName,
         // AG TODO: On App reload/resume it should not go to AuthProgress instead use Loading Screen
         builder: (context, state) {
           final isAuthenticated =
@@ -59,22 +47,22 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.home,
-        name: 'home',
+        name: AppRoutes.homeName,
         builder: (context, state) => const HomeScreen(),
       ),
       GoRoute(
         path: AppRoutes.settings,
-        name: 'settings',
+        name: AppRoutes.settingsName,
         builder: (context, state) => const SettingsScreen(),
       ),
       GoRoute(
         path: AppRoutes.dashboard,
-        name: 'dashboard',
+        name: AppRoutes.dashboardName,
         builder: (context, state) => const DashboardScreen(),
       ),
       GoRoute(
         path: AppRoutes.cardDetails,
-        name: 'cardDetails',
+        name: AppRoutes.cardDetailsName,
         builder: (context, state) {
           final cardId = state.pathParameters['cardId']!;
           final isAuthenticated =
@@ -93,8 +81,8 @@ final routerProvider = Provider<GoRouter>((ref) {
           if (cards == null) {
             return const ErrorScreen(message: 'Cards not found.');
           }
-          final card = cards.where((c) => c.id == cardId).firstOrNull;
 
+          final card = cards.where((c) => c.id == cardId).firstOrNull;
           if (card == null) {
             return ErrorScreen(message: 'Card with ID $cardId not found.');
           }
@@ -104,31 +92,30 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.auth,
-        name: 'auth',
+        name: AppRoutes.authName,
         builder: (context, state) => const AuthScreen(),
       ),
       GoRoute(
         path: AppRoutes.loginCallback,
-        name: 'loginCallback',
+        name: AppRoutes.loginCallbackName,
         redirect: (context, state) async {
           final supabaseService = ref.read(supabaseServiceProvider);
           try {
-            await Supabase.instance.client.auth.getSessionFromUrl(state.uri);
-            await supabaseService.syncUserDetails();
-            return AppRoutes.home;
+            await supabaseService.client.auth.getSessionFromUrl(state.uri);
+            return AppRoutes.root;
           } catch (e) {
-            return AppRoutes.error;
+            return '${AppRoutes.error}?message=${Uri.encodeComponent(e.toString())}';
           }
         },
       ),
       GoRoute(
         path: AppRoutes.sync,
-        name: 'sync',
+        name: AppRoutes.syncName,
         builder: (context, state) => const AuthProgress(),
       ),
       GoRoute(
         path: AppRoutes.error,
-        name: 'error',
+        name: AppRoutes.errorName,
         builder: (context, state) {
           final message =
               state.uri.queryParameters['message'] ?? 'An error occurred';

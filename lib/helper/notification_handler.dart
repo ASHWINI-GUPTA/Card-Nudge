@@ -1,5 +1,6 @@
 import 'package:card_nudge/services/navigation_service.dart';
 import 'package:flutter/material.dart';
+import '../constants/app_routes.dart';
 import '../presentation/providers/router_provider.dart';
 
 class NotificationTapHandler {

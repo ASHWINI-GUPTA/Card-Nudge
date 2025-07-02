@@ -1,39 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../helper/emoji_helper.dart';
 import '../widgets/credit_card_color_dot_indicator.dart';
-
-const bankPaymentCardSettingsEmojis = [
-  '🏦', // Bank
-  '💳', // Credit Card
-  '🏧', // ATM
-  '💰', // Money Bag
-  '💸', // Money with Wings
-  '🧾', // Receipt
-  '📈', // Chart Increasing
-  '📉', // Chart Decreasing
-  '🔒', // Security/Lock
-  '⚙️', // Settings
-  '🔔', // Notification/Reminder
-  '🗓️', // Calendar (for due dates)
-  '✅', // Success/Checkmark
-  '🔄', // Sync/Refresh
-  '🪙', // Coin
-  '🧑‍💼', // Banker/Account
-];
 
 const _emojiSize = 64.0;
 
-class LoadingIndicatorScreen extends StatelessWidget {
+class LoadingIndicatorScreen extends ConsumerWidget {
   const LoadingIndicatorScreen({super.key});
 
   String _getRandomEmoji() {
     final now = DateTime.now();
-    return bankPaymentCardSettingsEmojis[(now.microsecond + now.second) %
-        bankPaymentCardSettingsEmojis.length];
+    return paymentCardEmojiList[(now.microsecond + now.second) %
+        paymentCardEmojiList.length];
   }
 
   @override
-  Widget build(BuildContext context) {
-    // Avoid heavy work here, only UI logic
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 

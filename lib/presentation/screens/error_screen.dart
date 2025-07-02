@@ -2,23 +2,8 @@ import 'package:card_nudge/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-const _errorEmojis = [
-  '😕',
-  '😟',
-  '😥',
-  '😓',
-  '🤔',
-  '😶',
-  '😑',
-  '🙁',
-  '😬',
-  '😔',
-  '👨‍🔧',
-  '🤦‍♀️',
-  '🙈',
-  '🤦',
-  '🤦‍♂️',
-];
+import '../../helper/emoji_helper.dart';
+
 const _emojiSize = 64.0;
 
 class ErrorScreen extends StatelessWidget {
@@ -29,7 +14,8 @@ class ErrorScreen extends StatelessWidget {
 
   String _getRandomEmoji() {
     final now = DateTime.now();
-    return _errorEmojis[(now.microsecond + now.second) % _errorEmojis.length];
+    return errorEmojiList[(now.microsecond + now.second) %
+        errorEmojiList.length];
   }
 
   @override
