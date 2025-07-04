@@ -72,6 +72,7 @@ class AppStrings {
 
   // Payment Due Bottom Sheet
   static const addPaymentDue = 'Add Payment Due';
+  static const editPaymentDue = 'Edit Payment Due';
   static const dueAmountLabel = 'Due Amount *';
   static const minimumDueLabel = 'Minimum Due (Optional)';
   static const paymentDateLabel = 'Payment Due Date *';
@@ -80,6 +81,7 @@ class AppStrings {
   static const invalidAmountError = 'Enter a valid amount.';
   static const minimumDueExceedsError = 'Minimum due cannot exceed total due.';
   static const paymentAddedSuccess = 'Payment due added successfully!';
+  static const paymentUpdatedSuccess = 'Payment due updated successfully!';
   static const noDuePaymentAddedSuccess =
       'No payment due added. You can add it later.';
   static const paymentAddError = 'Failed to add payment due.';
@@ -146,6 +148,9 @@ class AppStrings {
   static const cardDeleteError = 'Failed to delete card.';
   static const archiveNotImplemented = 'Archive feature not yet available.';
   static const cardArchivedSuccess = 'Card archived successfully!';
+  static const deletePaymentMessage =
+      'Are you sure you want to delete this payment? This action cannot be undone.';
+  static const deletePaymentConfirmation = 'Confirm Delete Payment';
 
   // Card Tile
   static const bankDetailsLoadError = 'Couldn\'t load bank details.';

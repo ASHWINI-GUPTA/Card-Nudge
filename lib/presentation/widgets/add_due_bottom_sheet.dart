@@ -13,8 +13,9 @@ import 'credit_card_color_dot_indicator.dart';
 
 class AddDueBottomSheet extends ConsumerStatefulWidget {
   final CreditCardModel card;
+  final PaymentModel? payment;
 
-  const AddDueBottomSheet({super.key, required this.card});
+  const AddDueBottomSheet({super.key, required this.card, this.payment});
 
   @override
   ConsumerState<AddDueBottomSheet> createState() => _AddDueBottomSheetState();
@@ -28,6 +29,19 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
   bool _isSubmitting = false;
 
   @override
+  void initState() {
+    super.initState();
+    // Prefill controllers if editing
+    if (widget.payment != null) {
+      _dueAmountController.text = widget.payment!.dueAmount.toString();
+      if (widget.payment!.minimumDueAmount != null) {
+        _minimumDueController.text =
+            widget.payment!.minimumDueAmount.toString();
+      }
+    }
+  }
+
+  @override
   void dispose() {
     _dueAmountController.dispose();
     _minimumDueController.dispose();
@@ -38,12 +52,17 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
     setState(() => _isSubmitting = true);
 
     try {
-      // Check if unpaid payment already exists for this card
       final payments = ref.read(paymentBoxProvider);
       final user = ref.watch(userProvider)!;
-      final unpaidExists = payments.values.any(
-        (p) => p.cardId == widget.card.id && !p.isPaid,
-      );
+
+      final isEditing = widget.payment != null;
+      final unpaidExists = payments.values.any((p) {
+        final isSameCard = p.cardId == widget.card.id;
+        final isUnpaid = !p.isPaid;
+        final isNotCurrentPayment = !isEditing || p.key != widget.payment!.key;
+        return isSameCard && isUnpaid && isNotCurrentPayment;
+      });
+
       if (unpaidExists) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -54,7 +73,8 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
         return null;
       }
 
-      final dueAmount = double.parse(_dueAmountController.text.trim());
+      final dueAmount =
+          double.tryParse(_dueAmountController.text.trim()) ?? 0.0;
       final minimumDue =
           _minimumDueController.text.trim().isNotEmpty
               ? double.tryParse(_minimumDueController.text.trim())
@@ -67,6 +87,7 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
         minimumDueAmount: minimumDue,
         dueDate: widget.card.dueDate,
         statementAmount: dueAmount,
+        id: isEditing ? widget.payment!.id : null,
       );
 
       await ref.read(paymentProvider.notifier).save(payment);
@@ -161,9 +182,14 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Semantics(
-              label: AppStrings.addPaymentDue,
+              label:
+                  widget.payment == null
+                      ? AppStrings.addPaymentDue
+                      : AppStrings.editPaymentDue,
               child: Text(
-                AppStrings.addPaymentDue,
+                widget.payment == null
+                    ? AppStrings.addPaymentDue
+                    : AppStrings.editPaymentDue,
                 style: Theme.of(
                   context,
                 ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -240,7 +266,27 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
                     ),
                     trailing: const Icon(Icons.calendar_today),
                   ),
-                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0, bottom: 8.0),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.info_outline,
+                          size: 16,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: Text(
+                            AppStrings.editDueDateOnCard,
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   // No Payment Due Checkbox
                   CheckboxListTile(
                     title: const Text(AppStrings.noPaymentDue),

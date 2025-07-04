@@ -111,14 +111,49 @@ class CardDetailsScreen extends ConsumerWidget {
                   child: CreditCardTile(cardId: card.id),
                 ),
                 const SizedBox(height: 24),
-                Semantics(
-                  label: AppStrings.upcomingPayment,
-                  child: Text(
-                    AppStrings.upcomingPayment,
-                    style: theme.textTheme.titleMedium,
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Semantics(
+                        label: AppStrings.upcomingPayment,
+                        child: Text(
+                          AppStrings.upcomingPayment,
+                          style: theme.textTheme.titleMedium,
+                        ),
+                      ),
+                    ),
+                    if (upcoming.isNotEmpty)
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        tooltip: AppStrings.editCard,
+                        onPressed: () {
+                          NavigationService.showBottomSheet(
+                            context: context,
+                            builder:
+                                (context) => AddDueBottomSheet(
+                                  card: card,
+                                  payment: upcoming.first,
+                                ),
+                          );
+                        },
+                      ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.delete,
+                        color: theme.colorScheme.error.withAlpha(220),
+                      ),
+                      tooltip: AppStrings.deleteCard,
+                      onPressed: () {
+                        _showDeletePaymentConfirmation(
+                          context,
+                          ref,
+                          upcoming.first,
+                        );
+                      },
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 8),
+                if (upcoming.isEmpty) const SizedBox(height: 8),
                 if (upcoming.isEmpty)
                   Container(
                     padding: const EdgeInsets.all(16),
@@ -305,6 +340,57 @@ class CardDetailsScreen extends ConsumerWidget {
                       SnackBar(
                         content: Text('${AppStrings.cardDeleteError}: $e'),
                       ),
+                    );
+                  }
+                },
+                child: Semantics(
+                  label: AppStrings.deleteButton,
+                  child: Text(AppStrings.deleteButton),
+                ),
+              ),
+            ],
+          ),
+    );
+  }
+
+  void _showDeletePaymentConfirmation(
+    BuildContext context,
+    WidgetRef ref,
+    PaymentModel payment,
+  ) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Semantics(
+              label: AppStrings.deletePaymentConfirmation,
+              child: Text(AppStrings.deletePaymentConfirmation),
+            ),
+            content: Text(AppStrings.deletePaymentMessage),
+            actions: [
+              TextButton(
+                onPressed: () => NavigationService.pop(context),
+                child: Semantics(
+                  label: AppStrings.cancelButton,
+                  child: Text(AppStrings.cancelButton),
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  try {
+                    await ref.read(paymentProvider.notifier).delete(payment.id);
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Upcoming payment deleted successfully'),
+                      ),
+                    );
+                    NavigationService.pop(context); // Close dialog
+                    ref.invalidate(paymentProvider); // Refresh payment list
+                  } catch (e) {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error deleting payment: $e')),
                     );
                   }
                 },

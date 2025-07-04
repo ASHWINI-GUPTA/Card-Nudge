@@ -88,6 +88,23 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
     }
   }
 
+  Future<void> delete(String paymentId) async {
+    print('[DEBUG] paymentProvider.delete called');
+    state = const AsyncValue.loading();
+    try {
+      if (!_box.containsKey(paymentId)) {
+        throw const FormatException(AppStrings.paymentNotFoundError);
+      }
+      await _box.delete(paymentId);
+      state = AsyncValue.data(_box.values.toList());
+      // await _triggerSync();
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
+      rethrow;
+    }
+  }
+
   Future<void> markAsPaid(String paymentId, double amount) async {
     state = const AsyncValue.loading();
     try {
