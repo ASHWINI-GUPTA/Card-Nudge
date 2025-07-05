@@ -1,5 +1,3 @@
-import 'package:card_nudge/data/enums/amount_range.dart';
-import 'package:card_nudge/data/enums/sort_order.dart';
 import 'package:card_nudge/helper/date_extension.dart';
 import 'package:card_nudge/presentation/providers/filter_provider.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +18,6 @@ import '../providers/payment_provider.dart';
 import '../widgets/add_due_bottom_sheet.dart';
 import '../widgets/credit_card_color_dot_indicator.dart';
 import '../widgets/empty_state_widget.dart';
-import '../widgets/filter_bottom_sheet.dart';
 import '../widgets/no_card_available_widget.dart';
 import '../widgets/payment_log_sheet.dart';
 
@@ -32,24 +29,12 @@ class DueScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final cardsAsync = ref.watch(creditCardProvider);
 
-    final isFilterApplied =
-        ref.watch(dueFilterProvider.notifier).isFilterApplied;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
           AppStrings.upcomingPaymentsTitle,
           style: theme.textTheme.titleLarge?.copyWith(color: Colors.white),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              isFilterApplied ? Icons.filter_alt : Icons.filter_alt_outlined,
-              color: Colors.white,
-            ),
-            onPressed: () => _showFilterBottomSheet(context, ref),
-          ),
-        ],
         backgroundColor: theme.primaryColor,
       ),
       body: cardsAsync.when(
@@ -96,7 +81,6 @@ class DueScreen extends ConsumerWidget {
   ) {
     final paymentsAsync = ref.watch(paymentProvider);
     final banksAsync = ref.watch(bankProvider);
-    final filter = ref.watch(dueFilterProvider);
 
     return paymentsAsync.when(
       data: (payments) {
@@ -105,25 +89,7 @@ class DueScreen extends ConsumerWidget {
           return _buildEmptyStateNoPayments(context, ref, cards);
         }
 
-        // Apply filters
-        List<PaymentModel> filteredPayments = nonPaidPayments;
-        if (filter.range != AmountRange.all) {
-          filteredPayments =
-              filteredPayments.where((p) {
-                if (filter.range == AmountRange.low) return p.dueAmount < 5000;
-                if (filter.range == AmountRange.medium)
-                  return p.dueAmount >= 5000 && p.dueAmount <= 10000;
-                return p.dueAmount > 10000;
-              }).toList();
-        }
-        filteredPayments.sort(
-          (a, b) =>
-              filter.sort == SortOrder.asc
-                  ? a.dueAmount.compareTo(b.dueAmount)
-                  : b.dueAmount.compareTo(a.dueAmount),
-        );
-
-        final groupedCards = _groupPaymentsByDueDate(filteredPayments);
+        final groupedCards = _groupPaymentsByDueDate(nonPaidPayments);
 
         if (groupedCards.isEmpty) return _buildNoFilteredPayments(context, ref);
 
@@ -283,13 +249,6 @@ class DueScreen extends ConsumerWidget {
     );
 
     return grouped;
-  }
-
-  void _showFilterBottomSheet(BuildContext context, WidgetRef ref) {
-    NavigationService.showBottomSheet(
-      context: context,
-      builder: (context) => FilterBottomSheet(ref: ref),
-    );
   }
 
   Widget _buildNoFilteredPayments(BuildContext context, WidgetRef ref) {
