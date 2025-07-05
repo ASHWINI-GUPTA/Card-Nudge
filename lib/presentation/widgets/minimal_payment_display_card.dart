@@ -52,7 +52,7 @@ class MinimalPaymentCard extends ConsumerWidget {
                     ],
                   ),
                 ),
-                _buildStatusChip(context, isPaid),
+                _buildStatusChip(context, payment),
               ],
             ),
             const SizedBox(height: 8),
@@ -98,7 +98,7 @@ class MinimalPaymentCard extends ConsumerWidget {
               ],
             ),
 
-            if (payment.isPartiallyPaid)
+            if (payment.isPaid && payment.isPartiallyPaid)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
@@ -115,16 +115,30 @@ class MinimalPaymentCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatusChip(BuildContext context, bool isPaid) {
+  Widget _buildStatusChip(BuildContext context, PaymentModel payment) {
     final theme = Theme.of(context);
+
     final backgroundColor =
-        isPaid
+        payment.isPaid
             ? theme.colorScheme.primaryContainer
             : theme.colorScheme.errorContainer;
     final foregroundColor =
-        isPaid
+        payment.isPaid
             ? theme.colorScheme.onPrimaryContainer
             : theme.colorScheme.onErrorContainer;
+
+    String statusText;
+    if (payment.isPaid && payment.isPartiallyPaid) {
+      statusText = 'Partially Paid';
+    } else if (payment.isPaid && payment.isNoPaymentRequired) {
+      statusText = 'No Payment Due';
+    } else if (payment.isPaid) {
+      statusText = 'Paid';
+    } else if (payment.isOverdue) {
+      statusText = 'Overdue';
+    } else {
+      statusText = 'Upcoming Due';
+    }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -136,13 +150,13 @@ class MinimalPaymentCard extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            isPaid ? Icons.check_circle : Icons.schedule,
+            payment.isPaid ? Icons.check_circle : Icons.schedule,
             size: 16,
             color: foregroundColor,
           ),
           const SizedBox(width: 4),
           Text(
-            isPaid ? 'Paid' : 'Pending',
+            statusText,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: foregroundColor,
               fontWeight: FontWeight.w500,

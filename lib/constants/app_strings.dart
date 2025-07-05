@@ -132,7 +132,10 @@ class AppStrings {
   static const deleteCard = 'Delete';
   static const archiveCard = 'Archive';
   static const upcomingPayment = 'Upcoming Payment';
-  static const noUpcomingDues = 'No upcoming payments.';
+  static const noUpcomingDueMessage = 'Add a payment to see it here.';
+  static final nextBillingDateMessage =
+      (int daysUntilBilling) =>
+          'Your next billing date is in $daysUntilBilling day${daysUntilBilling > 1 ? 's' : ''}.';
   static const paymentHistory = 'Payment History';
   static const noPastPayments = 'No past payments available.';
   static const paymentHistoryItem = 'Payment';

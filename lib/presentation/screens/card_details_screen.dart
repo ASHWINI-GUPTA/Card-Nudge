@@ -1,5 +1,6 @@
 import 'package:card_nudge/data/hive/models/credit_card_model.dart';
 import 'package:card_nudge/data/hive/models/payment_model.dart';
+import 'package:card_nudge/helper/date_extension.dart';
 import 'package:card_nudge/presentation/providers/user_provider.dart';
 import 'package:card_nudge/services/navigation_service.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class CardDetailsScreen extends ConsumerWidget {
         ),
         actions: [
           PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert, color: Colors.white),
+            icon: Icon(Icons.more_vert, color: theme.colorScheme.onSurface),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -93,6 +94,7 @@ class CardDetailsScreen extends ConsumerWidget {
       ),
       body: paymentsAsync.when(
         data: (payments) {
+          // AG TODO: Update to supporting one upcoming payment per card.
           final upcoming =
               payments.where((p) => p.cardId == card.id && !p.isPaid).toList();
           final history =
@@ -137,45 +139,62 @@ class CardDetailsScreen extends ConsumerWidget {
                           );
                         },
                       ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.delete,
-                        color: theme.colorScheme.error.withAlpha(220),
+                    if (upcoming.isNotEmpty)
+                      IconButton(
+                        icon: Icon(
+                          Icons.delete,
+                          color: theme.colorScheme.error.withAlpha(220),
+                        ),
+                        tooltip: AppStrings.deleteCard,
+                        onPressed: () {
+                          _showDeletePaymentConfirmation(
+                            context,
+                            ref,
+                            upcoming.first,
+                          );
+                        },
                       ),
-                      tooltip: AppStrings.deleteCard,
-                      onPressed: () {
-                        _showDeletePaymentConfirmation(
-                          context,
-                          ref,
-                          upcoming.first,
-                        );
-                      },
-                    ),
                   ],
                 ),
                 if (upcoming.isEmpty) const SizedBox(height: 8),
                 if (upcoming.isEmpty)
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withAlpha(26),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.info, color: theme.colorScheme.primary),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Semantics(
-                            label: AppStrings.noUpcomingDues,
-                            child: Text(
-                              AppStrings.noUpcomingDues,
-                              style: theme.textTheme.bodyMedium,
-                            ),
-                          ),
+                  Builder(
+                    builder: (context) {
+                      String message;
+                      final now = DateTime.now();
+                      if (card.billingDate.isAfter(now)) {
+                        final daysUntilBilling = card.billingDate
+                            .differenceInDaysCeil(now);
+                        message = AppStrings.nextBillingDateMessage(
+                          daysUntilBilling,
+                        );
+                      } else {
+                        message = AppStrings.noUpcomingDueMessage;
+                      }
+
+                      return Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary.withAlpha(26),
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                      ],
-                    ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.info, color: theme.colorScheme.primary),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Semantics(
+                                label: message,
+                                child: Text(
+                                  message,
+                                  style: theme.textTheme.bodyMedium,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   )
                 else
                   Semantics(
