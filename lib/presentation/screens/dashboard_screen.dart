@@ -246,25 +246,28 @@ class DashboardScreen extends ConsumerWidget {
               icon: Icons.credit_card,
               color: theme.colorScheme.primary,
             ),
-            DashboardCard(
-              title: AppStrings.totalDue,
-              value: formatHelper.formatCurrency(totalDue),
-              icon: Icons.account_balance_wallet_outlined,
-              color: theme.colorScheme.error,
-            ),
-            DashboardCard(
-              title: AppStrings.utilization,
-              value: '${(utilization * 100).toStringAsFixed(0)}%',
-              icon: Icons.pie_chart_outline,
-              color: theme.colorScheme.secondary,
-            ),
-            DashboardCard(
-              title: AppStrings.overUtilization,
-              value:
-                  '$overUtilizedCards Card${overUtilizedCards == 1 ? '' : 's'}',
-              icon: Icons.warning_amber_rounded,
-              color: theme.colorScheme.tertiary,
-            ),
+            if (totalDue > 0)
+              DashboardCard(
+                title: AppStrings.totalDue,
+                value: formatHelper.formatCurrency(totalDue),
+                icon: Icons.account_balance_wallet_outlined,
+                color: theme.colorScheme.error,
+              ),
+            if (utilization > 0)
+              DashboardCard(
+                title: AppStrings.utilization,
+                value: '${(utilization * 100).toStringAsFixed(0)}%',
+                icon: Icons.pie_chart_outline,
+                color: theme.colorScheme.secondary,
+              ),
+            if (overUtilizedCards > 0)
+              DashboardCard(
+                title: AppStrings.overUtilization,
+                value:
+                    '$overUtilizedCards Card${overUtilizedCards == 1 ? '' : 's'}',
+                icon: Icons.warning_amber_rounded,
+                color: theme.colorScheme.tertiary,
+              ),
           ],
         ),
         const SizedBox(height: 24),

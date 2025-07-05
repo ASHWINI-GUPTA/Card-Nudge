@@ -141,10 +141,7 @@ class CardDetailsScreen extends ConsumerWidget {
                       ),
                     if (upcoming.isNotEmpty)
                       IconButton(
-                        icon: Icon(
-                          Icons.delete,
-                          color: theme.colorScheme.error.withAlpha(220),
-                        ),
+                        icon: const Icon(Icons.delete, color: Colors.red),
                         tooltip: AppStrings.deleteCard,
                         onPressed: () {
                           _showDeletePaymentConfirmation(

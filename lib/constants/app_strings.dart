@@ -35,7 +35,7 @@ class AppStrings {
   static const overUtilization = 'Overutilized Cards';
   static const totalCreditLimit = 'Total Credit Limit';
   static const quickInsights = 'Quick Insights';
-  static const monthlyOverview = 'Monthly Overview';
+  static const monthlyOverview = 'Payment Overview by Month';
 
   // Cards Screen
   static const cardsScreenTitle = 'Your Cards';

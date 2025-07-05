@@ -67,7 +67,10 @@ class DashboardMonthWidget extends StatelessWidget {
         return legendItems[2]['color'] as Color; // Not paid
       }
       final hasDelayed = payments.any(
-        (p) => p.isPaid && p.dueDate.isBefore(now),
+        (p) =>
+            p.isPaid &&
+            p.paymentDate != null &&
+            p.paymentDate!.isAfter(p.dueDate),
       );
       if (hasDelayed) {
         return legendItems[1]['color'] as Color; // Delayed
