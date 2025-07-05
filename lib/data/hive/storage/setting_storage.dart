@@ -37,6 +37,7 @@ class SettingStorage {
           updatedAt: DateTime(2012, 12, 12),
           createdAt: DateTime(2012, 12, 12),
           userId: '00000000-0000-0000-0000-000000000000',
+          utilizationAlertThreshold: 30,
         ),
       );
     }

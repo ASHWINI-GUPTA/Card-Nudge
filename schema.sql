@@ -87,6 +87,7 @@ CREATE TABLE settings (
   notifications_enabled BOOLEAN DEFAULT TRUE,
   reminder_time TIME,
   sync_settings BOOLEAN DEFAULT TRUE,
+  utilization_alert_threshold INTEGER DEFAULT 30;
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE

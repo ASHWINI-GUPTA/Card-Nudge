@@ -37,6 +37,9 @@ class SettingsModel {
   @HiveField(10)
   bool syncPending;
 
+  @HiveField(11)
+  int utilizationAlertThreshold;
+
   SettingsModel({
     required this.userId,
     this.language = Language.English,
@@ -48,6 +51,7 @@ class SettingsModel {
     DateTime? createdAt,
     DateTime? updatedAt,
     this.syncPending = false,
+    this.utilizationAlertThreshold = 30,
   }) : reminderTime = reminderTime ?? const TimeOfDay(hour: 10, minute: 0),
        createdAt = (createdAt ?? DateTime.now()).toUtc(),
        updatedAt = (updatedAt ?? DateTime.now()).toUtc();
@@ -63,6 +67,7 @@ class SettingsModel {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? syncPending,
+    int? utilizationAlertThreshold,
   }) {
     return SettingsModel(
       userId: userId ?? this.userId,
@@ -75,6 +80,8 @@ class SettingsModel {
       createdAt: createdAt?.toUtc() ?? this.createdAt,
       updatedAt: updatedAt?.toUtc() ?? DateTime.now().toUtc(),
       syncPending: syncPending ?? this.syncPending,
+      utilizationAlertThreshold:
+          utilizationAlertThreshold ?? this.utilizationAlertThreshold,
     );
   }
 
@@ -92,6 +99,7 @@ class SettingsModel {
       'sync_settings': syncSettings,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
+      'utilization_alert_threshold': utilizationAlertThreshold,
     };
   }
 }

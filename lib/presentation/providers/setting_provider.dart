@@ -94,6 +94,12 @@ class SettingsNotifier extends StateNotifier<SettingsModel> {
     );
   }
 
+  Future<void> updateUtilizationAlertThreshold(int threshold) async {
+    await _saveSettings(
+      state.copyWith(utilizationAlertThreshold: threshold, syncPending: true),
+    );
+  }
+
   void refresh() {
     _loadSettings();
   }

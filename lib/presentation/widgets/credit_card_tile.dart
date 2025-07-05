@@ -243,10 +243,14 @@ class CreditCardTile extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              card.name,
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: Colors.white70,
+            Flexible(
+              child: Text(
+                card.name,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: Colors.white70,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             Semantics(label: bank.name, child: cardNetworkLogo),

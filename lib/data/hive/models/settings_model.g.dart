@@ -27,13 +27,14 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       createdAt: fields[8] as DateTime?,
       updatedAt: fields[9] as DateTime?,
       syncPending: fields[10] as bool,
+      utilizationAlertThreshold: fields[11] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, SettingsModel obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(1)
       ..write(obj.userId)
       ..writeByte(2)
@@ -53,7 +54,9 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       ..writeByte(9)
       ..write(obj.updatedAt)
       ..writeByte(10)
-      ..write(obj.syncPending);
+      ..write(obj.syncPending)
+      ..writeByte(11)
+      ..write(obj.utilizationAlertThreshold);
   }
 
   @override

@@ -239,6 +239,9 @@ class AppStrings {
   static const syncPreference = 'Sync';
   static const syncPreferenceSubtitle =
       'Enable to sync your settings and data across devices.';
+  static const utilizationAlertDescription =
+      'Get notified when your credit card utilization exceeds this percentage.';
+  static const utilizationAlert = 'Utilization Alert Threshold';
 
   // Bank Details
   static const bankName = 'Bank Name';

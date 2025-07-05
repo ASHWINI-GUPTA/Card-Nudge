@@ -257,6 +257,8 @@ class SyncService {
             createdAt: DateTime.parse(serverSetting['created_at']),
             updatedAt: serverUpdatedAt,
             syncPending: false,
+            utilizationAlertThreshold:
+                serverSetting['utilization_alert_threshold'] ?? 30,
           );
           await settingsBox.put(defaultSettingId, setting);
         }
@@ -284,6 +286,7 @@ class SyncService {
           'notifications_enabled': localSetting.notificationsEnabled,
           'reminder_time': utcReminderTime,
           'sync_settings': localSetting.syncSettings,
+          'utilization_alert_threshold': localSetting.utilizationAlertThreshold,
           'created_at': localSetting.createdAt.toIso8601String(),
           'updated_at': localSetting.updatedAt.toIso8601String(),
         };
