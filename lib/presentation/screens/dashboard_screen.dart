@@ -9,6 +9,7 @@ import '../../data/hive/models/payment_model.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/format_provider.dart';
 import '../providers/payment_provider.dart';
+import '../providers/setting_provider.dart';
 import '../providers/user_provider.dart';
 import '../widgets/credit_card_color_dot_indicator.dart';
 import '../widgets/dashboard_alert_card.dart';
@@ -105,6 +106,10 @@ class DashboardScreen extends ConsumerWidget {
     final now = DateTime.now();
     final nonPaidPayments = payments.where((p) => !p.isPaid).toList();
 
+    final setting = ref.watch(settingsProvider);
+    final utilizationThreshold =
+        (setting.utilizationAlertThreshold ?? 30) / 100;
+
     // Calculate metrics
     final totalCreditLimit = cards.fold<double>(
       0,
@@ -115,9 +120,11 @@ class DashboardScreen extends ConsumerWidget {
       (sum, payment) => sum + payment.dueAmount,
     );
     final utilization =
-        totalCreditLimit > 0 ? totalDue / totalCreditLimit : 0.0;
+        totalCreditLimit > 0
+            ? totalDue / totalCreditLimit
+            : utilizationThreshold;
 
-    // Calculate overutilized cards (utilization > 30% per card)
+    // Calculate overutilized cards (utilization > X% per card)
     final cardUtilization = <String, double>{};
     for (var card in cards) {
       final cardPayments =
@@ -130,15 +137,15 @@ class DashboardScreen extends ConsumerWidget {
       cardUtilization[card.id] = cardLimit > 0 ? cardDue / cardLimit : 0.0;
     }
     final overUtilizedCards =
-        cardUtilization.values.where((u) => u > 0.3).length;
+        cardUtilization.values.where((u) => u > utilizationThreshold).length;
 
-    // Calculate due-soon payments (within 3 days)
+    // Calculate due-soon payments (within 5 days)
     final dueSoonCount =
         nonPaidPayments
             .where(
               (p) =>
                   p.dueDate.differenceInDaysCeil(now) >= 0 &&
-                  p.dueDate.differenceInDaysCeil(now) <= 3,
+                  p.dueDate.differenceInDaysCeil(now) <= 5,
             )
             .length;
 
@@ -147,7 +154,7 @@ class DashboardScreen extends ConsumerWidget {
     if (overUtilizedCards > 0) {
       alerts.add({
         'text':
-            '$overUtilizedCards card${overUtilizedCards > 1 ? 's' : ''} over-utilized (>30%)',
+            '$overUtilizedCards card${overUtilizedCards > 1 ? 's' : ''} over-utilized (>${(setting.utilizationAlertThreshold ?? 30).toStringAsFixed(0)}%)',
         'icon': Icons.warning,
         'color': theme.colorScheme.error,
       });

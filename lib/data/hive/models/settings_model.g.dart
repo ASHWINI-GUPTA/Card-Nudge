@@ -27,7 +27,7 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       createdAt: fields[8] as DateTime?,
       updatedAt: fields[9] as DateTime?,
       syncPending: fields[10] as bool,
-      utilizationAlertThreshold: fields[11] as int,
+      utilizationAlertThreshold: fields[11] as int?,
     );
   }
 

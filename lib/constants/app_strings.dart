@@ -241,7 +241,7 @@ class AppStrings {
       'Enable to sync your settings and data across devices.';
   static const utilizationAlertDescription =
       'Get notified when your credit card utilization exceeds this percentage.';
-  static const utilizationAlert = 'Utilization Alert Threshold';
+  static const utilizationAlert = 'Utilization Threshold';
 
   // Bank Details
   static const bankName = 'Bank Name';

@@ -12,6 +12,7 @@ import '../providers/setting_provider.dart';
 import '../providers/supabase_provider.dart';
 import '../providers/sync_provider.dart';
 import '../providers/user_provider.dart';
+import '../widgets/utilization_slider.dart';
 import '../widgets/version_list_tile_widget.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -250,69 +251,38 @@ class SettingsScreen extends ConsumerWidget {
                       }
                     },
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppStrings.utilizationAlert,
+                          style: theme.textTheme.bodyLarge,
+                        ),
+                        UtilizationSlider(
+                          initialValue:
+                              settings.utilizationAlertThreshold ?? 30,
+                          onChanged: (value) {
+                            ref
+                                .read(settingsProvider.notifier)
+                                .updateUtilizationAlertThreshold(value);
+                          },
+                        ),
+                        Text(
+                          AppStrings.utilizationAlertDescription,
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-            const SizedBox(height: _heightBetweenSection),
-            // Utilization Alert Section
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 8.0,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppStrings.utilizationAlert,
-                      style: theme.textTheme.bodyLarge,
-                    ),
-                    Consumer(
-                      builder: (context, ref, child) {
-                        final settings = ref.watch(settingsProvider);
-                        final sliderValueProvider = StateProvider<double>(
-                          (ref) =>
-                              settings.utilizationAlertThreshold.toDouble(),
-                        );
-                        final sliderValue = ref.watch(sliderValueProvider);
 
-                        return Row(
-                          children: [
-                            Expanded(
-                              child: Slider(
-                                value: sliderValue,
-                                min: 0,
-                                max: 100,
-                                divisions: 50,
-                                label: '${sliderValue.round()}%',
-                                onChanged: (value) {
-                                  ref.read(sliderValueProvider.notifier).state =
-                                      value;
-                                },
-                                onChangeEnd: (value) {
-                                  ref
-                                      .read(settingsProvider.notifier)
-                                      .updateUtilizationAlertThreshold(
-                                        value.round(),
-                                      );
-                                },
-                              ),
-                            ),
-                            SizedBox(width: 8),
-                            Text('${sliderValue.round()}%'),
-                          ],
-                        );
-                      },
-                    ),
-                    Text(
-                      AppStrings.utilizationAlertDescription,
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
-              ),
-            ),
             const SizedBox(height: _heightBetweenSection),
             // Data Management Section
             Card(

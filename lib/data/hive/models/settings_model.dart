@@ -38,7 +38,7 @@ class SettingsModel {
   bool syncPending;
 
   @HiveField(11)
-  int utilizationAlertThreshold;
+  int? utilizationAlertThreshold;
 
   SettingsModel({
     required this.userId,
