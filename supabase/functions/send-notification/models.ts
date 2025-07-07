@@ -10,14 +10,6 @@ export interface Card {
 }
 
 /**
- * CardWithPayments extends Card to include payment information.
- * This is used to fetch cards along with their associated payments.
- */
-export interface CardWithPayments extends Card {
-  payments: Payment[] | null;
-}
-
-/**
  * Payment entity representing a payment for a card.
  */
 export interface Payment {
@@ -57,6 +49,7 @@ export interface NotificationStrings {
   billing: (
     cardName: string,
     last4Digits: string,
+    billingInDays: number,
   ) => { title: string; body: string };
   due: (
     cardName: string,

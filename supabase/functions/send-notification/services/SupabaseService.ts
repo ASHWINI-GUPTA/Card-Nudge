@@ -2,7 +2,7 @@ import {
   createClient,
   SupabaseClient,
 } from "npm:@supabase/supabase-js@^2.50.1";
-import { Card, CardWithPayments, NotificationLog, Payment } from "../models.ts";
+import { Card, NotificationLog, Payment } from "../models.ts";
 
 export class SupabaseService {
   private client: SupabaseClient | undefined;
@@ -74,35 +74,6 @@ export class SupabaseService {
       return "English";
     }
     return (data?.language as string) ?? "English";
-  }
-
-  /**
-   * Fetches all non-archived cards for a user, each with its single most recent payment.
-   * @param {string} userId The ID of the user.
-   * @returns {Promise<CardWithPayments[]>} A promise that resolves to an array of cards, each with its latest payment (or an empty payments array if none exist).
-   */
-  async getCardWithLastPayments(userId: string): Promise<CardWithPayments[]> {
-    if (!this.client) return [];
-
-    const { data, error } = await this.client
-      .from("cards")
-      .select(
-        "id, name, last_4_digits, billing_date, is_archived, payments(id, due_date, due_amount, paid_amount, statement_amount, is_paid)",
-      )
-      .eq("user_id", userId)
-      .eq("is_archived", false)
-      .gte("billing_date", new Date().toISOString().slice(0, 10))
-      .order("created_at", { referencedTable: "payments", ascending: false })
-      .limit(1, { referencedTable: "payments" });
-
-    if (error) {
-      console.error(
-        `Error fetching cards with last payment for user ${userId}:`,
-        error,
-      );
-      return [];
-    }
-    return (data as CardWithPayments[]) ?? [];
   }
 
   /**

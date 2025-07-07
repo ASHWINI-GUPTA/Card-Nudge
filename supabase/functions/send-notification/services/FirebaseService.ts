@@ -31,7 +31,7 @@ export class FirebaseService {
     payload: string,
     tokens: string[],
     logs: NotificationLog[],
-    failedTokens: string[], // Renamed for clarity
+    failedTokens: string[],
   ): Promise<void> {
     if (!this.app || !tokens.length) return;
 

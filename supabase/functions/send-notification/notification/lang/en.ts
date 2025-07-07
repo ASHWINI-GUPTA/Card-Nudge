@@ -1,33 +1,47 @@
 import { NotificationStrings } from "../../models.ts";
 
 export const en: NotificationStrings = {
-  billing: (cardName, last4Digits) => ({
-    title: `📅 Billing Day - ${cardName}`,
-    body:
-      `Today is the billing date for ${cardName} (**** ${last4Digits}). Don't forget to log your expenses!`,
-  }),
+  billing: (cardName, last4Digits, billingInDays) => {
+    let title = "";
+    let body = "";
+    if (billingInDays === 0) {
+      title = `📅 Billing Day Today: ${cardName}`;
+      body =
+        `Your new statement for ${cardName} (**** ${last4Digits}) will be generated soon.`;
+    } else if (billingInDays === 1) {
+      title = `📅 Billing Day Tomorrow: ${cardName}`;
+      body =
+        `Your billing date for ${cardName} (**** ${last4Digits}) is tomorrow. Finalize your expenses.`;
+    } else {
+      title = `📅 Billing in ${billingInDays} Days: ${cardName}`;
+      body =
+        `The billing date for ${cardName} (**** ${last4Digits}) is approaching in ${billingInDays} days.`;
+    }
+    return { title, body };
+  },
   due: (cardName, last4Digits, dueInDays, remaining) => {
     let title = "";
     if (dueInDays === 0) {
-      title = `📌 Payment Due Today`;
+      title = `⏰ Payment Due Today: ${cardName}`;
     } else if (dueInDays === 1) {
-      title = `⏰ Payment Due Tomorrow`;
+      title = `⏰ Payment Due Tomorrow: ${cardName}`;
     } else {
-      title = `⏰ ${dueInDays} day${dueInDays > 1 ? "s" : ""} left`;
+      title = `⏰ ${dueInDays} Days Left to Pay: ${cardName}`;
     }
     return {
       title,
-      body: `Pay ₹${remaining} for ${cardName} (**** ${last4Digits})`,
+      body:
+        `Please pay ₹${remaining} for your card ending in ${last4Digits} to avoid late fees.`,
     };
   },
   overdue: (cardName, last4Digits, remaining) => ({
-    title: `⚠️ Payment Overdue`,
+    title: `⚠️ Overdue Payment: ${cardName}`,
     body:
-      `₹${remaining} is still due for ${cardName} (**** ${last4Digits}). Late fee may apply.`,
+      `Your payment of ₹${remaining} for ${cardName} (**** ${last4Digits}) is overdue. Please pay now to avoid further charges.`,
   }),
   partial: (cardName, last4Digits, paid, remaining) => ({
-    title: `💸 Partial Payment`,
+    title: `💸 Partial Payment Received: ${cardName}`,
     body:
-      `You paid ₹${paid}. ₹${remaining} is still due for ${cardName} (**** ${last4Digits}).`,
+      `Thank you for paying ₹${paid}. A balance of ₹${remaining} is still due for ${cardName} (**** ${last4Digits}).`,
   }),
 };

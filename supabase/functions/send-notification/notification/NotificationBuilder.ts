@@ -20,8 +20,9 @@ export class NotificationMessageBuilder {
   billingReminder(
     cardName: string,
     last4Digits: string,
+    diffDaysBilling: number,
   ): { title: string; body: string } {
-    return this.strings.billing(cardName, last4Digits);
+    return this.strings.billing(cardName, last4Digits, diffDaysBilling);
   }
 
   dueReminder(

@@ -120,18 +120,12 @@ export class NotificationSender {
     }
 
     // --- 📅 Billing Reminder ---
-    const cards = await this.supabaseService.getCardWithLastPayments(userId);
+    const cards = await this.supabaseService.getUserCards(userId);
     for (const card of cards) {
       const billingDate = new Date(card.billing_date);
       const diffDaysBilling = getDaysDifference(now, billingDate);
 
-      const latestPayment = card.payments?.[0];
-      if (
-        latestPayment &&
-        (latestPayment.is_paid || new Date(latestPayment.due_date) >= now)
-      ) {
-        // If a payment exists and it's either already paid or is for a future
-        // due date, skip the billing reminder. The due/overdue logic will handle it.
+      if (diffDaysBilling < 0) {
         continue;
       }
 
@@ -159,7 +153,11 @@ export class NotificationSender {
       }
 
       if (shouldSendBilling) {
-        const msg = builder.billingReminder(card.name, card.last_4_digits);
+        const msg = builder.billingReminder(
+          card.name,
+          card.last_4_digits,
+          diffDaysBilling,
+        );
         await this.firebaseService.sendNotification(
           userId,
           card.id,
