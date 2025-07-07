@@ -124,14 +124,9 @@ export class NotificationSender {
     for (const card of cards) {
       const billingDate = new Date(card.billing_date);
       const diffDaysBilling = getDaysDifference(now, billingDate);
-
-      if (diffDaysBilling < 0) {
-        continue;
-      }
-
       let shouldSendBilling = false;
 
-      if (diffDaysBilling <= 5) {
+      if (Math.abs(diffDaysBilling) <= 5) {
         shouldSendBilling = true; // Every day
       } else {
         const lastLog = await this.supabaseService.getLastNotificationLog(

@@ -4,7 +4,12 @@ export const hi: NotificationStrings = {
   billing: (cardName, last4Digits, billingInDays) => {
     let title = "";
     let body = "";
-    if (billingInDays === 0) {
+    if (billingInDays < 0) {
+      const daysAgo = Math.abs(billingInDays);
+      title = `📝 स्टेटमेंट जेनरेट हो गया: ${cardName}`;
+      body =
+        `आपके ${cardName} (**** ${last4Digits}) का स्टेटमेंट ${daysAgo} दिन पहले जेनरेट हुआ था। कृपया अपना नया भुगतान लॉग करें।`;
+    } else if (billingInDays === 0) {
       title = `📅 आज बिलिंग दिवस: ${cardName}`;
       body =
         `आपके ${cardName} (**** ${last4Digits}) का नया स्टेटमेंट जल्द ही जेनरेट होगा।`;

@@ -4,7 +4,14 @@ export const en: NotificationStrings = {
   billing: (cardName, last4Digits, billingInDays) => {
     let title = "";
     let body = "";
-    if (billingInDays === 0) {
+    if (billingInDays < 0) {
+      const daysAgo = Math.abs(billingInDays);
+      title = `📝 Statement Generated: ${cardName}`;
+      body =
+        `Your statement for ${cardName} (**** ${last4Digits}) was generated ${daysAgo} day${
+          daysAgo > 1 ? "s" : ""
+        } ago. Please log your new payment details.`;
+    } else if (billingInDays === 0) {
       title = `📅 Billing Day Today: ${cardName}`;
       body =
         `Your new statement for ${cardName} (**** ${last4Digits}) will be generated soon.`;
