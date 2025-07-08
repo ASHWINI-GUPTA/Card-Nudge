@@ -30,16 +30,24 @@ export class NotificationMessageBuilder {
     last4Digits: string,
     dueInDays: number,
     remaining: number,
+    currencyCode: string,
   ): { title: string; body: string } {
-    return this.strings.due(cardName, last4Digits, dueInDays, remaining);
+    return this.strings.due(
+      cardName,
+      last4Digits,
+      dueInDays,
+      remaining,
+      currencyCode,
+    );
   }
 
   overdue(
     cardName: string,
     last4Digits: string,
     remaining: number,
+    currencyCode: string,
   ): { title: string; body: string } {
-    return this.strings.overdue(cardName, last4Digits, remaining);
+    return this.strings.overdue(cardName, last4Digits, remaining, currencyCode);
   }
 
   partial(
@@ -47,7 +55,14 @@ export class NotificationMessageBuilder {
     last4Digits: string,
     paid: number,
     remaining: number,
+    currencyCode: string,
   ): { title: string; body: string } {
-    return this.strings.partial(cardName, last4Digits, paid, remaining);
+    return this.strings.partial(
+      cardName,
+      last4Digits,
+      paid,
+      remaining,
+      currencyCode,
+    );
   }
 }

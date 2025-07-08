@@ -1,4 +1,5 @@
 import { NotificationStrings } from "../../models.ts";
+import { formatCurrency } from "../../utils/currencyUtils.ts";
 
 export const hi: NotificationStrings = {
   billing: (cardName, last4Digits, billingInDays) => {
@@ -24,7 +25,7 @@ export const hi: NotificationStrings = {
     }
     return { title, body };
   },
-  due: (cardName, last4Digits, dueInDays, remaining) => {
+  due: (cardName, last4Digits, dueInDays, remaining, currencyCode) => {
     let title = "";
     if (dueInDays === 0) {
       title = `⏰ आज भुगतान की अंतिम तिथि: ${cardName}`;
@@ -33,20 +34,28 @@ export const hi: NotificationStrings = {
     } else {
       title = `⏰ भुगतान के लिए ${dueInDays} दिन शेष: ${cardName}`;
     }
+    const amount = formatCurrency(remaining, currencyCode, "hi");
     return {
       title,
       body:
-        `कृपया लेट फीस से बचने के लिए अपने कार्ड (**** ${last4Digits}) का ₹${remaining} का भुगतान करें।`,
+        `कृपया लेट फीस से बचने के लिए अपने कार्ड (**** ${last4Digits}) का ${amount} का भुगतान करें।`,
     };
   },
-  overdue: (cardName, last4Digits, remaining) => ({
-    title: `⚠️ भुगतान बकाया: ${cardName}`,
-    body:
-      `आपके ${cardName} (**** ${last4Digits}) का ₹${remaining} का भुगतान बकाया है। कृपया अतिरिक्त शुल्क से बचने के लिए अभी भुगतान करें।`,
-  }),
-  partial: (cardName, last4Digits, paid, remaining) => ({
-    title: `💸 आंशिक भुगतान प्राप्त: ${cardName}`,
-    body:
-      `₹${paid} के भुगतान के लिए धन्यवाद। आपके ${cardName} (**** ${last4Digits}) पर अभी भी ₹${remaining} बकाया है।`,
-  }),
+  overdue: (cardName, last4Digits, remaining, currencyCode) => {
+    const amount = formatCurrency(remaining, currencyCode, "hi");
+    return {
+      title: `⚠️ भुगतान बकाया: ${cardName}`,
+      body:
+        `आपके ${cardName} (**** ${last4Digits}) का ${amount} का भुगतान बकाया है। कृपया अतिरिक्त शुल्क से बचने के लिए अभी भुगतान करें।`,
+    };
+  },
+  partial: (cardName, last4Digits, paid, remaining, currencyCode) => {
+    const paidAmount = formatCurrency(paid, currencyCode, "hi");
+    const remainingAmount = formatCurrency(remaining, currencyCode, "hi");
+    return {
+      title: `💸 आंशिक भुगतान प्राप्त: ${cardName}`,
+      body:
+        `${paidAmount} के भुगतान के लिए धन्यवाद। आपके ${cardName} (**** ${last4Digits}) पर अभी भी ${remainingAmount} बकाया है।`,
+    };
+  },
 };

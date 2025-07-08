@@ -1,4 +1,5 @@
 import { NotificationStrings } from "../../models.ts";
+import { formatCurrency } from "../../utils/currencyUtils.ts";
 
 export const en: NotificationStrings = {
   billing: (cardName, last4Digits, billingInDays) => {
@@ -26,7 +27,7 @@ export const en: NotificationStrings = {
     }
     return { title, body };
   },
-  due: (cardName, last4Digits, dueInDays, remaining) => {
+  due: (cardName, last4Digits, dueInDays, remaining, currencyCode) => {
     let title = "";
     if (dueInDays === 0) {
       title = `⏰ Payment Due Today: ${cardName}`;
@@ -35,20 +36,28 @@ export const en: NotificationStrings = {
     } else {
       title = `⏰ ${dueInDays} Days Left to Pay: ${cardName}`;
     }
+    const amount = formatCurrency(remaining, currencyCode, "en");
     return {
       title,
       body:
-        `Please pay ₹${remaining} for your card ending in ${last4Digits} to avoid late fees.`,
+        `Please pay ${amount} for your card ending in ${last4Digits} to avoid late fees.`,
     };
   },
-  overdue: (cardName, last4Digits, remaining) => ({
-    title: `⚠️ Overdue Payment: ${cardName}`,
-    body:
-      `Your payment of ₹${remaining} for ${cardName} (**** ${last4Digits}) is overdue. Please pay now to avoid further charges.`,
-  }),
-  partial: (cardName, last4Digits, paid, remaining) => ({
-    title: `💸 Partial Payment Received: ${cardName}`,
-    body:
-      `Thank you for paying ₹${paid}. A balance of ₹${remaining} is still due for ${cardName} (**** ${last4Digits}).`,
-  }),
+  overdue: (cardName, last4Digits, remaining, currencyCode) => {
+    const amount = formatCurrency(remaining, currencyCode, "en");
+    return {
+      title: `⚠️ Overdue Payment: ${cardName}`,
+      body:
+        `Your payment of ${amount} for ${cardName} (**** ${last4Digits}) is overdue. Please pay now to avoid further charges.`,
+    };
+  },
+  partial: (cardName, last4Digits, paid, remaining, currencyCode) => {
+    const paidAmount = formatCurrency(paid, currencyCode, "en");
+    const remainingAmount = formatCurrency(remaining, currencyCode, "en");
+    return {
+      title: `💸 Partial Payment Received: ${cardName}`,
+      body:
+        `Thank you for paying ${paidAmount}. A balance of ${remainingAmount} is still due for ${cardName} (**** ${last4Digits}).`,
+    };
+  },
 };

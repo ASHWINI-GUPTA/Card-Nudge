@@ -2,7 +2,7 @@ import {
   createClient,
   SupabaseClient,
 } from "npm:@supabase/supabase-js@^2.50.1";
-import { Card, NotificationLog, Payment } from "../models.ts";
+import { Card, NotificationLog, Payment, Setting } from "../models.ts";
 
 export class SupabaseService {
   private client: SupabaseClient | undefined;
@@ -58,22 +58,23 @@ export class SupabaseService {
   /**
    * Retrieves the preferred language for a given user.
    * @param {string} userId The ID of the user.
-   * @returns {Promise<string>} A promise that resolves to the user's language, defaulting to "English".
+   * @returns {Promise<Setting | null>} A promise that resolves to the user's setting.
    */
-  async getUserLanguage(userId: string): Promise<string> {
-    if (!this.client) return "English";
+  async getUserSetting(userId: string): Promise<Setting | null> {
+    if (!this.client) return null;
 
     const { data, error } = await this.client
       .from("settings")
-      .select("language")
+      .select("language, currency, utilization_alert_threshold")
       .eq("user_id", userId)
-      .maybeSingle();
+      .eq("notifications_enabled", true)
+      .single();
 
     if (error) {
       console.error(`Error fetching language for user ${userId}:`, error);
-      return "English";
+      return null;
     }
-    return (data?.language as string) ?? "English";
+    return data as Setting;
   }
 
   /**

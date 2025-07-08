@@ -16,16 +16,26 @@ export class NotificationSender {
     logs: NotificationLog[],
     failedTokens: string[],
   ): Promise<void> {
-    const lang = await this.supabaseService.getUserLanguage(userId);
-    const builder = new NotificationMessageBuilder(lang);
-    const tokens = await this.supabaseService.getDeviceTokens(userId);
-    if (!tokens.length) return;
+    // Fetch all necessary data in parallel to minimize latency.
+    const [userSetting, tokens, payments, cards] = await Promise.all([
+      this.supabaseService.getUserSetting(userId),
+      this.supabaseService.getDeviceTokens(userId),
+      this.supabaseService.getUserPayments(userId),
+      this.supabaseService.getUserCards(userId),
+    ]);
 
-    const payments = await this.supabaseService.getUserPayments(userId);
-    for (const p of payments) {
-      const card = p.cards;
-      const remaining = p.statement_amount;
-      const dueDate = new Date(p.due_date);
+    if (!userSetting || !tokens.length) {
+      return;
+    }
+
+    const lang = userSetting.language;
+    const currency = userSetting.currency;
+    const builder = new NotificationMessageBuilder(lang);
+
+    for (const payment of payments) {
+      const card = payment.cards;
+      const remaining = payment.statement_amount;
+      const dueDate = new Date(payment.due_date);
       const payload = `/cards/${card.id}`;
       // Calculate days until due date. Positive for future, 0 for today, negative for past.
       const diffDaysDue = getDaysDifference(now, dueDate);
@@ -60,6 +70,7 @@ export class NotificationSender {
             card.last_4_digits,
             diffDaysDue,
             remaining,
+            currency,
           );
           await this.firebaseService.sendNotification(
             userId,
@@ -100,7 +111,12 @@ export class NotificationSender {
         }
 
         if (shouldSendOverdue) {
-          const msg = builder.overdue(card.name, card.last_4_digits, remaining);
+          const msg = builder.overdue(
+            card.name,
+            card.last_4_digits,
+            remaining,
+            currency,
+          );
           await this.firebaseService.sendNotification(
             userId,
             card.id,
@@ -120,7 +136,6 @@ export class NotificationSender {
     }
 
     // --- 📅 Billing Reminder ---
-    const cards = await this.supabaseService.getUserCards(userId);
     for (const card of cards) {
       const billingDate = new Date(card.billing_date);
       const diffDaysBilling = getDaysDifference(now, billingDate);
