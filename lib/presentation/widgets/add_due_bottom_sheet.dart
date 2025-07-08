@@ -92,6 +92,19 @@ class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
 
       await ref.read(paymentProvider.notifier).save(payment);
 
+      // Update the due date on Card.
+      final card = await ref
+          .read(creditCardBoxProvider)
+          .values
+          .firstWhere((c) => c.id == payment.cardId);
+
+      final updatedCard = card.copyWith(
+        billingDate: card.billingDate.next30DayCycleDate,
+        syncPending: true,
+      );
+
+      await ref.read(creditCardProvider.notifier).save(updatedCard);
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text(AppStrings.paymentAddedSuccess)),
       );

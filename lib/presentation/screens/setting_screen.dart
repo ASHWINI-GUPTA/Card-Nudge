@@ -340,6 +340,10 @@ class SettingsScreen extends ConsumerWidget {
                 children: [
                   VersionListTile(),
                   ListTile(
+                    leading: Icon(
+                      Icons.language,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                     title: Text('Website'),
                     subtitle: const Text('https://card.fnlsg.in'),
                     onTap: () {
@@ -347,6 +351,10 @@ class SettingsScreen extends ConsumerWidget {
                     },
                   ),
                   ListTile(
+                    leading: Icon(
+                      Icons.email_outlined,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                     title: Text('Developer Email'),
                     subtitle: const Text('ashwini@fnlsg.in'),
                     onTap: () {
@@ -356,15 +364,42 @@ class SettingsScreen extends ConsumerWidget {
                     },
                   ),
                   ListTile(
+                    leading: Icon(
+                      Icons.description_outlined,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                     title: Text(AppStrings.termsConditions),
                     onTap: () {
                       launchUrl(Uri.parse('https://card.fnlsg.in/terms'));
                     },
                   ),
                   ListTile(
+                    leading: Icon(
+                      Icons.privacy_tip_outlined,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                     title: Text(AppStrings.privacyPolicy),
                     onTap: () {
                       launchUrl(Uri.parse('https://card.fnlsg.in/privacy'));
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(
+                      Icons.lightbulb_outline,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    title: const Text('Suggest a Feature'),
+                    subtitle: const Text('Share your ideas with us'),
+                    onTap: () async {
+                      final Uri emailLaunchUri = Uri(
+                        scheme: 'mailto',
+                        path: 'ashwini@fnlsg.in',
+                        queryParameters: {
+                          'subject':
+                              'Feature Suggestion for Credit Card Manager',
+                        },
+                      );
+                      await launchUrl(emailLaunchUri);
                     },
                   ),
                 ],

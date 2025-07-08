@@ -31,6 +31,10 @@ class _VersionListTileState extends State<VersionListTile> {
       children: [
         ListTile(
           title: Text(AppStrings.appVersion),
+          leading: Icon(
+            Icons.info_outline,
+            color: Theme.of(context).colorScheme.primary,
+          ),
           subtitle: FutureBuilder<PackageInfo>(
             future: PackageInfo.fromPlatform(),
             builder: (context, snapshot) {

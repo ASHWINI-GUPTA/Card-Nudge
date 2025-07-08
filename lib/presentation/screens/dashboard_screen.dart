@@ -139,13 +139,13 @@ class DashboardScreen extends ConsumerWidget {
     final overUtilizedCards =
         cardUtilization.values.where((u) => u > utilizationThreshold).length;
 
-    // Calculate due-soon payments (within 5 days)
+    // Calculate due-soon payments (within 7 days)
     final dueSoonCount =
         nonPaidPayments
             .where(
               (p) =>
                   p.dueDate.differenceInDaysCeil(now) >= 0 &&
-                  p.dueDate.differenceInDaysCeil(now) <= 5,
+                  p.dueDate.differenceInDaysCeil(now) <= 7,
             )
             .length;
 
@@ -162,7 +162,7 @@ class DashboardScreen extends ConsumerWidget {
     if (dueSoonCount > 0) {
       alerts.add({
         'text':
-            '$dueSoonCount card${dueSoonCount > 1 ? 's' : ''} due in next 3 days',
+            '$dueSoonCount card${dueSoonCount > 1 ? 's' : ''} due in next 7 days',
         'icon': Icons.calendar_today,
         'color': theme.colorScheme.tertiary,
       });
