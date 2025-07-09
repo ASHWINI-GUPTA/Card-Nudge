@@ -6,11 +6,25 @@ import '../../helper/emoji_helper.dart';
 
 const _emojiSize = 64.0;
 
-class ErrorScreen extends StatelessWidget {
+class ErrorScreen extends StatefulWidget {
   final String? message;
   final VoidCallback? onRetry;
 
   const ErrorScreen({super.key, this.message, this.onRetry});
+
+  @override
+  State<ErrorScreen> createState() => _ErrorScreenState();
+}
+
+class _ErrorScreenState extends State<ErrorScreen> {
+  String _currentEmoji = '';
+  bool _isPressed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentEmoji = _getRandomEmoji();
+  }
 
   String _getRandomEmoji() {
     final now = DateTime.now();
@@ -59,9 +73,19 @@ class ErrorScreen extends StatelessWidget {
                             child: Transform.scale(scale: value, child: child),
                           );
                         },
-                        child: Text(
-                          _getRandomEmoji(),
-                          style: const TextStyle(fontSize: _emojiSize),
+                        child: GestureDetector(
+                          onTapDown: (_) => setState(() => _isPressed = true),
+                          onTapUp: (_) => setState(() => _isPressed = false),
+                          onTapCancel: () => setState(() => _isPressed = false),
+                          onTap: () => setState(() => _currentEmoji = _getRandomEmoji()),
+                          child: AnimatedScale(
+                            scale: _isPressed ? 0.85 : 1.0,
+                            duration: const Duration(milliseconds: 100),
+                            child: Text(
+                              _currentEmoji,
+                              style: const TextStyle(fontSize: _emojiSize),
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -78,7 +102,7 @@ class ErrorScreen extends StatelessWidget {
                       const SizedBox(height: 14),
                       // Description
                       Text(
-                        message ?? AppStrings.errorGeneric,
+                        widget.message ?? AppStrings.errorGeneric,
 
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: isDark ? Colors.white70 : Colors.white,
@@ -91,9 +115,9 @@ class ErrorScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          if (onRetry != null) ...[
+                          if (widget.onRetry != null) ...[
                             ElevatedButton.icon(
-                              onPressed: onRetry,
+                              onPressed: widget.onRetry,
                               icon: const Icon(Icons.refresh_rounded),
                               label: const Text(AppStrings.buttonRetry),
                               style: ElevatedButton.styleFrom(
