@@ -82,9 +82,6 @@ class _AuthProgressState extends ConsumerState<AuthProgress> {
         _isSyncing = false;
       });
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Sync failed: $e')));
         await NavigationService.goToRoute(
           context,
           '/error?message=Sync failed: $e',
