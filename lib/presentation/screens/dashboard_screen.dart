@@ -16,6 +16,7 @@ import '../widgets/dashboard_alert_card.dart';
 import '../widgets/dashboard_card.dart';
 import '../widgets/dashboard_month_widget.dart';
 import '../widgets/spend_chart_widget.dart';
+import '../widgets/sync_progress_indicator.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -66,6 +67,10 @@ class DashboardScreen extends ConsumerWidget {
           ),
         ),
         backgroundColor: theme.colorScheme.primary,
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(2),
+          child: SyncProgressIndicator(),
+        ),
       ),
       body: cardsAsync.when(
         data:

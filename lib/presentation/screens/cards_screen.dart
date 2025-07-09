@@ -8,6 +8,7 @@ import '../providers/user_provider.dart';
 import '../widgets/credit_card_color_dot_indicator.dart';
 import '../widgets/credit_card_tile.dart';
 import '../widgets/no_card_available_widget.dart';
+import '../widgets/sync_progress_indicator.dart';
 import 'add_card_screen.dart';
 import 'card_details_screen.dart';
 
@@ -30,6 +31,10 @@ class CardsScreen extends ConsumerWidget {
           style: theme.textTheme.titleLarge?.copyWith(color: Colors.white),
         ),
         backgroundColor: theme.primaryColor,
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(2),
+          child: SyncProgressIndicator(),
+        ),
       ),
       body: RefreshIndicator(
         onRefresh: () async {

@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../constants/app_strings.dart';
 import '../../data/enums/currency.dart';
 import '../../data/enums/language.dart';
+import '../../data/enums/sync_status.dart';
 import '../../services/navigation_service.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/payment_provider.dart';
@@ -12,6 +13,7 @@ import '../providers/setting_provider.dart';
 import '../providers/supabase_provider.dart';
 import '../providers/sync_provider.dart';
 import '../providers/user_provider.dart';
+import '../widgets/sync_progress_indicator.dart';
 import '../widgets/utilization_slider.dart';
 import '../widgets/version_list_tile_widget.dart';
 
@@ -30,6 +32,10 @@ class SettingsScreen extends ConsumerWidget {
         title: Text(AppStrings.settingsScreenTitle),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(2),
+          child: SyncProgressIndicator(),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -309,10 +315,27 @@ class SettingsScreen extends ConsumerWidget {
                       style: TextStyle(color: theme.colorScheme.primary),
                     ),
                     onTap: () async {
-                      await ref.read(syncServiceProvider).syncData();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(AppStrings.syncDataSuccess)),
-                      );
+                      final syncService = ref.read(syncServiceProvider);
+                      if (await syncService.isOnline()) {
+                        ref.read(syncStatusProvider.notifier).state =
+                            SyncStatus.syncing;
+                        try {
+                          await syncService.syncData();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(AppStrings.syncDataSuccess)),
+                          );
+                          ref.read(syncStatusProvider.notifier).state =
+                              SyncStatus.idle;
+                        } catch (e) {
+                          ref.read(syncStatusProvider.notifier).state =
+                              SyncStatus.error;
+                          // Error Screen
+                          NavigationService.goToRoute(
+                            context,
+                            '/error?message=Sync failed: $e',
+                          );
+                        }
+                      }
                     },
                   ),
                   ListTile(

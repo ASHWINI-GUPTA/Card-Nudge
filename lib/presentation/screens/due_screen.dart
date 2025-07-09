@@ -20,6 +20,7 @@ import '../widgets/credit_card_color_dot_indicator.dart';
 import '../widgets/empty_state_widget.dart';
 import '../widgets/no_card_available_widget.dart';
 import '../widgets/payment_log_sheet.dart';
+import '../widgets/sync_progress_indicator.dart';
 
 class DueScreen extends ConsumerWidget {
   const DueScreen({super.key});
@@ -36,6 +37,10 @@ class DueScreen extends ConsumerWidget {
           style: theme.textTheme.titleLarge?.copyWith(color: Colors.white),
         ),
         backgroundColor: theme.primaryColor,
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(2),
+          child: SyncProgressIndicator(),
+        ),
       ),
       body: cardsAsync.when(
         data: (cards) {
