@@ -278,6 +278,7 @@ class CreditCardDetailsListTile extends ConsumerWidget {
           children: [
             // Credit Limit
             _buildInfoTile(
+              context: context,
               label: context.l10n.creditLimitLabel,
               value: formatHelper.formatCurrency(
                 card.creditLimit,
@@ -285,18 +286,21 @@ class CreditCardDetailsListTile extends ConsumerWidget {
               ),
             ),
             _buildInfoTile(
+              context: context,
               label: context.l10n.totalDue,
               value: hasDue ? formatHelper.formatCurrency(dueAmount) : '0.00',
               valueColor: hasDue ? Colors.orangeAccent : Colors.greenAccent,
             ),
             if (hasDue)
               _buildInfoTile(
+                context: context,
                 label: context.l10n.dueDateLabel,
                 value: formatHelper.formatDate(card.dueDate, format: 'MMMM d'),
                 valueColor: dueDateColor,
               )
             else
               _buildInfoTile(
+                context: context,
                 label: context.l10n.billingDateLabel,
                 value: formatHelper.formatDate(
                   card.billingDate,
@@ -314,6 +318,7 @@ class CreditCardDetailsListTile extends ConsumerWidget {
   }
 
   Widget _buildInfoTile({
+    required BuildContext context,
     required String label,
     required String value,
     Color? valueColor,
@@ -324,10 +329,9 @@ class CreditCardDetailsListTile extends ConsumerWidget {
         Center(
           child: Text(
             label.toUpperCase(),
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white70,
-              fontSize: 11,
-              letterSpacing: 1.2,
+              fontSize: Theme.of(context).textTheme.bodySmall!.fontSize,
             ),
             textAlign: TextAlign.center,
           ),
@@ -338,7 +342,7 @@ class CreditCardDetailsListTile extends ConsumerWidget {
             value,
             style: TextStyle(
               color: valueColor ?? Colors.white,
-              fontSize: 16,
+              fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize,
               fontWeight: FontWeight.w600,
             ),
             textAlign: TextAlign.center,

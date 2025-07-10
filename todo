@@ -1,5 +1,5 @@
 [*] Implement Dashboard with Data
-[ ] Support Zero Due Payment
+[*] Support Zero Due Payment
 [*] Due Date should have a validation
 [ ] Implement DELETE Queue
 [*] Fix: Google Login - https://github.com/orgs/supabase/discussions/27310#discussioncomment-13344312

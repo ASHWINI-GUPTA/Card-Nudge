@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
+import '../../constants/app_strings.dart';
 import '../../data/hive/models/bank_model.dart';
 import '../../data/hive/models/credit_card_model.dart';
 import '../../data/hive/models/payment_model.dart';
@@ -228,9 +229,9 @@ class DueScreen extends ConsumerWidget {
       String label;
 
       if (diff < 0) {
-        label = context.l10n.overdue;
+        label = AppStrings.overdue;
       } else if (diff == 0) {
-        label = context.l10n.today;
+        label = AppStrings.today;
       } else {
         label = DateFormat.yMMMMd().format(dueDate);
       }
