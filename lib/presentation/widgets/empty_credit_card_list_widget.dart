@@ -1,10 +1,11 @@
-import 'package:card_nudge/constants/app_strings.dart';
-import 'package:card_nudge/presentation/providers/user_provider.dart';
-import 'package:card_nudge/presentation/screens/add_card_screen.dart';
-import 'package:card_nudge/presentation/widgets/no_data_placeholder_widget.dart';
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:card_nudge/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../providers/user_provider.dart';
+import '../screens/add_card_screen.dart';
+import 'no_data_placeholder_widget.dart';
 
 class EmptyCreditCardListWidget extends StatelessWidget {
   const EmptyCreditCardListWidget({
@@ -20,8 +21,8 @@ class EmptyCreditCardListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider)!;
     return NoDataPlaceholderWidget(
-      message: AppStrings.cardsScreenEmptyStateTitle,
-      buttonText: AppStrings.buttonAddCard,
+      message: context.l10n.cardsScreenEmptyStateTitle,
+      buttonText: context.l10n.buttonAddCard,
       onButtonPressed:
           () =>
               NavigationService.navigateTo(context, AddCardScreen(user: user)),

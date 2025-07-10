@@ -4,7 +4,7 @@ import 'package:card_nudge/presentation/providers/format_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../constants/app_strings.dart';
+import '../../helper/app_localizations_extension.dart';
 import '../../data/enums/card_type.dart';
 import '../../data/hive/models/credit_card_model.dart';
 import '../../data/hive/models/bank_model.dart';
@@ -39,7 +39,7 @@ class CreditCardDetailsListTile extends ConsumerWidget {
 
             return Semantics(
               button: true,
-              label: '${AppStrings.cardDetailsTitle} ${card.name}',
+              label: '${context.l10n.cardDetailsTitle} ${card.name}',
               child: _buildCard(context, ref, theme, bank, card),
             );
           },
@@ -50,14 +50,14 @@ class CreditCardDetailsListTile extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '${AppStrings.bankDetailsLoadError}: $error',
+                      '${context.l10n.bankDetailsLoadError}: $error',
                       style: theme.textTheme.bodyLarge,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => ref.invalidate(bankProvider),
-                      child: const Text(AppStrings.buttonRetry),
+                      child: Text(context.l10n.retryButtonLabel),
                     ),
                   ],
                 ),
@@ -78,7 +78,7 @@ class CreditCardDetailsListTile extends ConsumerWidget {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () => ref.invalidate(creditCardProvider),
-                  child: const Text(AppStrings.buttonRetry),
+                  child: Text(context.l10n.buttonRetry),
                 ),
               ],
             ),
@@ -129,7 +129,7 @@ class CreditCardDetailsListTile extends ConsumerWidget {
               );
 
               return Semantics(
-                label: '${AppStrings.cardDetailsTitle} ${card.name}',
+                label: '${context.l10n.cardDetailsTitle} ${card.name}',
                 child: Stack(
                   children: [
                     Positioned(
@@ -161,14 +161,14 @@ class CreditCardDetailsListTile extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        '${AppStrings.paymentLoadError}: $error',
+                        '${context.l10n.paymentLoadError}: $error',
                         style: theme.textTheme.bodyLarge,
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () => ref.invalidate(paymentProvider),
-                        child: const Text(AppStrings.buttonRetry),
+                        child: Text(context.l10n.buttonRetry),
                       ),
                     ],
                   ),
@@ -278,31 +278,34 @@ class CreditCardDetailsListTile extends ConsumerWidget {
           children: [
             // Credit Limit
             _buildInfoTile(
-              label: AppStrings.creditLimitLabel,
+              label: context.l10n.creditLimitLabel,
               value: formatHelper.formatCurrency(
                 card.creditLimit,
                 decimalDigits: 0,
               ),
             ),
             _buildInfoTile(
-              label: AppStrings.totalDue,
-              value: hasDue ? formatHelper.formatCurrency(dueAmount) : '--',
+              label: context.l10n.totalDue,
+              value: hasDue ? formatHelper.formatCurrency(dueAmount) : '0.00',
               valueColor: hasDue ? Colors.orangeAccent : Colors.greenAccent,
             ),
-            if (statmentGenerated)
+            if (hasDue)
               _buildInfoTile(
-                label: AppStrings.dueDateLabel,
+                label: context.l10n.dueDateLabel,
                 value: formatHelper.formatDate(card.dueDate, format: 'MMMM d'),
                 valueColor: dueDateColor,
               )
             else
               _buildInfoTile(
-                label: AppStrings.billingDateLabel,
+                label: context.l10n.billingDateLabel,
                 value: formatHelper.formatDate(
                   card.billingDate,
                   format: 'MMMM d',
                 ),
-                valueColor: hasDue ? Colors.redAccent : Colors.greenAccent,
+                valueColor:
+                    hasDue || statmentGenerated
+                        ? Colors.redAccent
+                        : Colors.greenAccent,
               ),
           ],
         ),

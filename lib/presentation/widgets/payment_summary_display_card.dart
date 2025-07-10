@@ -1,3 +1,4 @@
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -65,7 +66,7 @@ class PaymentSummaryDisplayCard extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isPaid ? 'Paid on' : 'Due on',
+                      isPaid ? context.l10n.paidOn : context.l10n.dueOn,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -82,7 +83,7 @@ class PaymentSummaryDisplayCard extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      'Statement Amount',
+                      context.l10n.statementAmount,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -102,7 +103,7 @@ class PaymentSummaryDisplayCard extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
-                  'Partially Paid: ${formatHelper.formatCurrency(payment.paidAmount)}',
+                  '${context.l10n.partiallyPaidAmount}${formatHelper.formatCurrency(payment.paidAmount)}',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.secondary,
                     fontWeight: FontWeight.w500,
@@ -129,15 +130,15 @@ class PaymentSummaryDisplayCard extends ConsumerWidget {
 
     String statusText;
     if (payment.isPaid && payment.isPartiallyPaid) {
-      statusText = 'Partially Paid';
+      statusText = context.l10n.partiallyPaid;
     } else if (payment.isPaid && payment.isNoPaymentRequired) {
-      statusText = 'No Payment Due';
+      statusText = context.l10n.noPaymentDueStatus;
     } else if (payment.isPaid) {
-      statusText = 'Paid';
+      statusText = context.l10n.paid;
     } else if (payment.isOverdue) {
-      statusText = 'Overdue';
+      statusText = context.l10n.overdue;
     } else {
-      statusText = 'Upcoming Due';
+      statusText = context.l10n.upcomingDue;
     }
 
     return Container(

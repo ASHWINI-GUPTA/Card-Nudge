@@ -1,8 +1,8 @@
 import 'package:card_nudge/data/enums/amount_range.dart';
 import 'package:card_nudge/data/enums/sort_order.dart';
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../constants/app_strings.dart';
 import '../providers/filter_provider.dart';
 
 class TransactionFilterBottomSheet extends StatefulWidget {
@@ -206,7 +206,7 @@ class _TransactionFilterBottomSheetState
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: Text(
-                    AppStrings.cancelButton,
+                    context.l10n.cancelButton,
                     style: TextStyle(color: theme.colorScheme.onSurface),
                   ),
                 ),
@@ -217,7 +217,7 @@ class _TransactionFilterBottomSheetState
                     widget.ref.read(dueFilterProvider.notifier).resetFilter();
                   },
                   child: Text(
-                    AppStrings.resetButton,
+                    context.l10n.resetButton,
                     style: TextStyle(color: theme.colorScheme.onSurface),
                   ),
                 ),
@@ -231,7 +231,7 @@ class _TransactionFilterBottomSheetState
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Text(AppStrings.applyButton),
+                  child: Text(context.l10n.applyButton),
                 ),
               ],
             ),

@@ -1,4 +1,4 @@
-import 'package:card_nudge/constants/app_strings.dart';
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -77,7 +77,10 @@ class _ErrorScreenState extends State<ErrorScreen> {
                           onTapDown: (_) => setState(() => _isPressed = true),
                           onTapUp: (_) => setState(() => _isPressed = false),
                           onTapCancel: () => setState(() => _isPressed = false),
-                          onTap: () => setState(() => _currentEmoji = _getRandomEmoji()),
+                          onTap:
+                              () => setState(
+                                () => _currentEmoji = _getRandomEmoji(),
+                              ),
                           child: AnimatedScale(
                             scale: _isPressed ? 0.85 : 1.0,
                             duration: const Duration(milliseconds: 100),
@@ -102,7 +105,7 @@ class _ErrorScreenState extends State<ErrorScreen> {
                       const SizedBox(height: 14),
                       // Description
                       Text(
-                        widget.message ?? AppStrings.errorGeneric,
+                        widget.message ?? context.l10n.errorGeneric,
 
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: isDark ? Colors.white70 : Colors.white,
@@ -119,7 +122,7 @@ class _ErrorScreenState extends State<ErrorScreen> {
                             ElevatedButton.icon(
                               onPressed: widget.onRetry,
                               icon: const Icon(Icons.refresh_rounded),
-                              label: const Text(AppStrings.buttonRetry),
+                              label: Text(context.l10n.buttonRetry),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
                                     isDark
@@ -151,7 +154,7 @@ class _ErrorScreenState extends State<ErrorScreen> {
                             onPressed: () => context.go('/'),
                             icon: const Icon(Icons.home, size: 24),
                             label: Text(
-                              AppStrings.buttonHome,
+                              context.l10n.buttonHome,
                               style: Theme.of(context).textTheme.bodyLarge,
                               textAlign: TextAlign.center,
                             ),

@@ -1,9 +1,9 @@
 import 'package:card_nudge/data/hive/models/user_model.dart';
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../constants/app_strings.dart';
 import '../../data/hive/models/bank_model.dart';
 import '../../services/navigation_service.dart';
 import '../providers/bank_provider.dart';
@@ -58,7 +58,7 @@ class _BankBottomSheetState extends ConsumerState<BankBottomSheet> {
     if (_nameController.text.isEmpty || _codeController.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(AppStrings.validationRequired)));
+      ).showSnackBar(SnackBar(content: Text(context.l10n.validationRequired)));
       return;
     }
     final colorHex =
@@ -111,7 +111,9 @@ class _BankBottomSheetState extends ConsumerState<BankBottomSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.bank == null ? AppStrings.addBank : AppStrings.editBank,
+              widget.bank == null
+                  ? context.l10n.addBank
+                  : context.l10n.editBank,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: theme.colorScheme.onSurface,
@@ -121,7 +123,7 @@ class _BankBottomSheetState extends ConsumerState<BankBottomSheet> {
             TextField(
               controller: _nameController,
               decoration: InputDecoration(
-                labelText: AppStrings.bankName,
+                labelText: context.l10n.bankName,
                 border: const OutlineInputBorder(),
               ),
             ),
@@ -129,7 +131,7 @@ class _BankBottomSheetState extends ConsumerState<BankBottomSheet> {
             TextField(
               controller: _codeController,
               decoration: InputDecoration(
-                labelText: AppStrings.bankCode,
+                labelText: context.l10n.bankCode,
                 border: const OutlineInputBorder(),
               ),
             ),
@@ -137,7 +139,7 @@ class _BankBottomSheetState extends ConsumerState<BankBottomSheet> {
             TextField(
               controller: _supportNumberController,
               decoration: InputDecoration(
-                labelText: AppStrings.supportNumber,
+                labelText: context.l10n.supportNumber,
                 border: const OutlineInputBorder(),
               ),
               keyboardType: TextInputType.phone,
@@ -146,14 +148,14 @@ class _BankBottomSheetState extends ConsumerState<BankBottomSheet> {
             TextField(
               controller: _websiteController,
               decoration: InputDecoration(
-                labelText: AppStrings.website,
+                labelText: context.l10n.website,
                 border: const OutlineInputBorder(),
               ),
               keyboardType: TextInputType.url,
             ),
             const SizedBox(height: 16),
             ListTile(
-              title: Text(AppStrings.bankColor),
+              title: Text(context.l10n.bankColor),
               trailing: Container(
                 width: 24,
                 height: 24,
@@ -168,7 +170,7 @@ class _BankBottomSheetState extends ConsumerState<BankBottomSheet> {
                   context: context,
                   builder:
                       (context) => AlertDialog(
-                        title: Text(AppStrings.selectColorLabel),
+                        title: Text(context.l10n.selectColorLabel),
                         content: SingleChildScrollView(
                           child: BlockPicker(
                             pickerColor: _selectedColor,
@@ -182,11 +184,11 @@ class _BankBottomSheetState extends ConsumerState<BankBottomSheet> {
                         actions: [
                           TextButton(
                             onPressed: () => NavigationService.pop(context),
-                            child: Text(AppStrings.cancel),
+                            child: Text(context.l10n.cancel),
                           ),
                           TextButton(
                             onPressed: () => NavigationService.pop(context),
-                            child: Text(AppStrings.saveButton),
+                            child: Text(context.l10n.saveButton),
                           ),
                         ],
                       ),
@@ -200,7 +202,7 @@ class _BankBottomSheetState extends ConsumerState<BankBottomSheet> {
                 TextButton(
                   onPressed: () => NavigationService.pop(context),
                   child: Text(
-                    AppStrings.cancel,
+                    context.l10n.cancel,
                     style: TextStyle(color: theme.colorScheme.onSurface),
                   ),
                 ),
@@ -215,7 +217,7 @@ class _BankBottomSheetState extends ConsumerState<BankBottomSheet> {
                     ),
                   ),
                   child: Text(
-                    widget.bank == null ? AppStrings.add : AppStrings.save,
+                    widget.bank == null ? context.l10n.add : context.l10n.save,
                   ),
                 ),
               ],

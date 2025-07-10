@@ -1,7 +1,7 @@
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../constants/app_strings.dart';
 import '../../services/navigation_service.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/user_provider.dart';
@@ -27,7 +27,7 @@ class CardsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppStrings.cardsScreenTitle,
+          context.l10n.cardsScreenTitle,
           style: theme.textTheme.titleLarge?.copyWith(color: Colors.white),
         ),
         backgroundColor: theme.primaryColor,
@@ -60,7 +60,7 @@ class CardsScreen extends ConsumerWidget {
                                 ),
                             child: Semantics(
                               label:
-                                  '${AppStrings.cardsScreenTitle}: ${card.name}',
+                                  '${context.l10n.cardsScreenTitle}: ${card.name}',
                               child: CreditCardDetailsListTile(
                                 key: ValueKey(card.id),
                                 cardId: card.id,
@@ -76,9 +76,9 @@ class CardsScreen extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Semantics(
-                      label: AppStrings.cardsScreenErrorTitle,
+                      label: context.l10n.cardsScreenErrorTitle,
                       child: Text(
-                        '${AppStrings.cardsScreenErrorTitle}: $error',
+                        '${context.l10n.cardsScreenErrorTitle}: $error',
                         style: Theme.of(context).textTheme.bodyLarge,
                         textAlign: TextAlign.center,
                       ),
@@ -86,7 +86,7 @@ class CardsScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => ref.invalidate(creditCardProvider),
-                      child: Text(AppStrings.buttonRetry),
+                      child: Text(context.l10n.buttonRetry),
                     ),
                   ],
                 ),
@@ -94,14 +94,14 @@ class CardsScreen extends ConsumerWidget {
         ),
       ),
       floatingActionButton: Semantics(
-        label: AppStrings.buttonAddCard,
+        label: context.l10n.buttonAddCard,
         child: FloatingActionButton(
           onPressed:
               () => NavigationService.navigateTo(
                 context,
                 AddCardScreen(user: user),
               ),
-          tooltip: AppStrings.buttonAddCard,
+          tooltip: context.l10n.buttonAddCard,
           child: const Icon(Icons.add),
         ),
       ),

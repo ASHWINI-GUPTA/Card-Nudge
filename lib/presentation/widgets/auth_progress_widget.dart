@@ -4,7 +4,7 @@ import '../../services/navigation_service.dart';
 import '../providers/supabase_provider.dart';
 import '../providers/sync_provider.dart';
 import '../providers/user_provider.dart';
-import '../widgets/credit_card_color_dot_indicator.dart';
+import 'credit_card_color_dot_indicator.dart';
 
 // Constants for UI elements
 const _emojiSize = 48.0;

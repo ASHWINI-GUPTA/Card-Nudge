@@ -1,11 +1,11 @@
 import 'package:card_nudge/data/hive/models/credit_card_model.dart';
 import 'package:card_nudge/data/hive/models/payment_model.dart';
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:card_nudge/helper/date_extension.dart';
 import 'package:card_nudge/presentation/providers/user_provider.dart';
 import 'package:card_nudge/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../constants/app_strings.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/payment_provider.dart';
 import '../widgets/payment_due_entry_bottom_sheet.dart';
@@ -28,7 +28,7 @@ class CardDetailsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Semantics(
-          label: AppStrings.cardDetailsTitle,
+          label: context.l10n.cardDetailsTitle,
           child: Text(card.name, style: theme.textTheme.titleLarge),
         ),
         actions: [
@@ -47,7 +47,7 @@ class CardDetailsScreen extends ConsumerWidget {
                       children: [
                         Icon(Icons.edit, color: theme.colorScheme.primary),
                         const SizedBox(width: 12),
-                        Text(AppStrings.editCard),
+                        Text(context.l10n.editCard),
                       ],
                     ),
                   ),
@@ -57,7 +57,7 @@ class CardDetailsScreen extends ConsumerWidget {
                       children: [
                         Icon(Icons.archive, color: theme.colorScheme.secondary),
                         const SizedBox(width: 12),
-                        Text(AppStrings.archiveCard),
+                        Text(context.l10n.archiveCard),
                       ],
                     ),
                   ),
@@ -68,7 +68,7 @@ class CardDetailsScreen extends ConsumerWidget {
                         const Icon(Icons.delete, color: Colors.red),
                         const SizedBox(width: 12),
                         Text(
-                          AppStrings.deleteCard,
+                          context.l10n.deleteCard,
                           style: const TextStyle(color: Colors.red),
                         ),
                       ],
@@ -80,7 +80,7 @@ class CardDetailsScreen extends ConsumerWidget {
         ],
       ),
       floatingActionButton: Semantics(
-        label: AppStrings.addPaymentDue,
+        label: context.l10n.addPaymentDue,
         child: FloatingActionButton.extended(
           onPressed:
               () => NavigationService.showBottomSheet(
@@ -88,8 +88,8 @@ class CardDetailsScreen extends ConsumerWidget {
                 builder: (context) => PaymentDueEntryBottomSheet(card: card),
               ),
           icon: const Icon(Icons.add),
-          label: Text(AppStrings.addDueButton),
-          tooltip: AppStrings.addPaymentDue,
+          label: Text(context.l10n.addDueButton),
+          tooltip: context.l10n.addPaymentDue,
         ),
       ),
       body: paymentsAsync.when(
@@ -109,7 +109,7 @@ class CardDetailsScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               children: [
                 Semantics(
-                  label: '${AppStrings.cardLabel}: ${card.name}',
+                  label: '${context.l10n.cardLabel}: ${card.name}',
                   child: CreditCardDetailsListTile(cardId: card.id),
                 ),
                 const SizedBox(height: 24),
@@ -117,9 +117,9 @@ class CardDetailsScreen extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: Semantics(
-                        label: AppStrings.upcomingPayment,
+                        label: context.l10n.upcomingPayment,
                         child: Text(
-                          AppStrings.upcomingPayment,
+                          context.l10n.upcomingPayment,
                           style: theme.textTheme.titleMedium,
                         ),
                       ),
@@ -127,7 +127,7 @@ class CardDetailsScreen extends ConsumerWidget {
                     if (upcoming.isNotEmpty)
                       IconButton(
                         icon: const Icon(Icons.edit),
-                        tooltip: AppStrings.editCard,
+                        tooltip: context.l10n.editCard,
                         onPressed: () {
                           NavigationService.showBottomSheet(
                             context: context,
@@ -142,7 +142,7 @@ class CardDetailsScreen extends ConsumerWidget {
                     if (upcoming.isNotEmpty)
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
-                        tooltip: AppStrings.deleteCard,
+                        tooltip: context.l10n.deleteCard,
                         onPressed: () {
                           _showDeletePaymentConfirmation(
                             context,
@@ -162,11 +162,11 @@ class CardDetailsScreen extends ConsumerWidget {
                       if (card.billingDate.isAfter(now)) {
                         final daysUntilBilling = card.billingDate
                             .differenceInDaysCeil(now);
-                        message = AppStrings.nextBillingDateMessage(
+                        message = context.l10n.nextBillingDateMessage(
                           daysUntilBilling,
                         );
                       } else {
-                        message = AppStrings.noUpcomingDueMessage;
+                        message = context.l10n.noUpcomingDueMessage;
                       }
 
                       return Container(
@@ -195,7 +195,7 @@ class CardDetailsScreen extends ConsumerWidget {
                   )
                 else
                   Semantics(
-                    label: AppStrings.upcomingPaymentCard,
+                    label: context.l10n.upcomingPaymentCard,
                     child: GestureDetector(
                       onTap:
                           () => NavigationService.showBottomSheet(
@@ -210,9 +210,9 @@ class CardDetailsScreen extends ConsumerWidget {
                   ),
                 const SizedBox(height: 24),
                 Semantics(
-                  label: AppStrings.paymentHistory,
+                  label: context.l10n.paymentHistory,
                   child: Text(
-                    AppStrings.paymentHistory,
+                    context.l10n.paymentHistory,
                     style: theme.textTheme.titleMedium,
                   ),
                 ),
@@ -233,9 +233,9 @@ class CardDetailsScreen extends ConsumerWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Semantics(
-                            label: AppStrings.noPastPayments,
+                            label: context.l10n.noPastPayments,
                             child: Text(
-                              AppStrings.noPastPayments,
+                              context.l10n.noPastPayments,
                               style: theme.textTheme.bodyMedium,
                             ),
                           ),
@@ -256,9 +256,9 @@ class CardDetailsScreen extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Semantics(
-                    label: AppStrings.paymentLoadError,
+                    label: context.l10n.paymentLoadError,
                     child: Text(
-                      '${AppStrings.paymentLoadError}: $error',
+                      '${context.l10n.paymentLoadError}: $error',
                       style: theme.textTheme.bodyLarge,
                       textAlign: TextAlign.center,
                     ),
@@ -266,7 +266,7 @@ class CardDetailsScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => ref.invalidate(paymentProvider),
-                    child: Text(AppStrings.buttonRetry),
+                    child: Text(context.l10n.buttonRetry),
                   ),
                 ],
               ),
@@ -286,7 +286,7 @@ class CardDetailsScreen extends ConsumerWidget {
       itemBuilder: (context, index) {
         final payment = sortedHistory[index];
         return Semantics(
-          label: '${AppStrings.paymentHistoryItem}: ${payment.paidAmount}',
+          label: '${context.l10n.paymentHistoryItem}: ${payment.paidAmount}',
           child: PaymentSummaryDisplayCard(payment: payment),
         );
       },
@@ -313,7 +313,7 @@ class CardDetailsScreen extends ConsumerWidget {
       case 'archive':
         await ref.read(creditCardProvider.notifier).markArchive(card.id);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text(AppStrings.cardArchivedSuccess)),
+          SnackBar(content: Text(context.l10n.cardArchivedSuccess)),
         );
         NavigationService.pop(context);
         break;
@@ -326,16 +326,16 @@ class CardDetailsScreen extends ConsumerWidget {
       builder:
           (context) => AlertDialog(
             title: Semantics(
-              label: AppStrings.deleteCardConfirmation,
-              child: Text(AppStrings.deleteCardConfirmation),
+              label: context.l10n.deleteCardConfirmation,
+              child: Text(context.l10n.deleteCardConfirmation),
             ),
-            content: Text(AppStrings.deleteCardMessage),
+            content: Text(context.l10n.deleteCardMessage),
             actions: [
               TextButton(
                 onPressed: () => NavigationService.pop(context),
                 child: Semantics(
-                  label: AppStrings.cancelButton,
-                  child: Text(AppStrings.cancelButton),
+                  label: context.l10n.cancelButton,
+                  child: Text(context.l10n.cancelButton),
                 ),
               ),
               TextButton(
@@ -344,9 +344,7 @@ class CardDetailsScreen extends ConsumerWidget {
                     await ref.read(creditCardProvider.notifier).delete(card.id);
                     if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(AppStrings.cardDeletedSuccess),
-                      ),
+                      SnackBar(content: Text(context.l10n.cardDeletedSuccess)),
                     );
                     NavigationService.pop(context); // Close dialog
                     NavigationService.pop(context); // Return to CardListScreen
@@ -354,14 +352,14 @@ class CardDetailsScreen extends ConsumerWidget {
                     if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('${AppStrings.cardDeleteError}: $e'),
+                        content: Text('${context.l10n.cardDeleteError}: $e'),
                       ),
                     );
                   }
                 },
                 child: Semantics(
-                  label: AppStrings.deleteButton,
-                  child: Text(AppStrings.deleteButton),
+                  label: context.l10n.deleteButton,
+                  child: Text(context.l10n.deleteButton),
                 ),
               ),
             ],
@@ -379,16 +377,16 @@ class CardDetailsScreen extends ConsumerWidget {
       builder:
           (context) => AlertDialog(
             title: Semantics(
-              label: AppStrings.deletePaymentConfirmation,
-              child: Text(AppStrings.deletePaymentConfirmation),
+              label: context.l10n.deletePaymentConfirmation,
+              child: Text(context.l10n.deletePaymentConfirmation),
             ),
-            content: Text(AppStrings.deletePaymentMessage),
+            content: Text(context.l10n.deletePaymentMessage),
             actions: [
               TextButton(
                 onPressed: () => NavigationService.pop(context),
                 child: Semantics(
-                  label: AppStrings.cancelButton,
-                  child: Text(AppStrings.cancelButton),
+                  label: context.l10n.cancelButton,
+                  child: Text(context.l10n.cancelButton),
                 ),
               ),
               TextButton(
@@ -411,8 +409,8 @@ class CardDetailsScreen extends ConsumerWidget {
                   }
                 },
                 child: Semantics(
-                  label: AppStrings.deleteButton,
-                  child: Text(AppStrings.deleteButton),
+                  label: context.l10n.deleteButton,
+                  child: Text(context.l10n.deleteButton),
                 ),
               ),
             ],

@@ -1,6 +1,6 @@
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../constants/app_strings.dart';
 
 class NavigationService {
   static Future<T?> navigateTo<T>(BuildContext context, Widget screen) async {
@@ -11,7 +11,7 @@ class NavigationService {
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${AppStrings.navigationError}: $e')),
+        SnackBar(content: Text('${context.l10n.navigationError}: $e')),
       );
       return null;
     }
@@ -22,7 +22,7 @@ class NavigationService {
       GoRouter.of(context).go(routeName);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${AppStrings.navigationError}: $e')),
+        SnackBar(content: Text('${context.l10n.navigationError}: $e')),
       );
     }
   }
@@ -46,7 +46,7 @@ class NavigationService {
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${AppStrings.navigationError}: $e')),
+        SnackBar(content: Text('${context.l10n.navigationError}: $e')),
       );
       return null;
     }

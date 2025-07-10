@@ -1,3 +1,4 @@
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:card_nudge/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,7 +6,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../constants/app_strings.dart';
 import '../providers/supabase_provider.dart';
 import '../widgets/credit_card_color_dot_indicator.dart';
 
@@ -72,7 +72,7 @@ class AuthScreen extends ConsumerWidget {
                   child: Column(
                     children: [
                       Text(
-                        AppStrings.welcomeTitle,
+                        context.l10n.welcomeTitle,
                         style: Theme.of(
                           context,
                         ).textTheme.headlineSmall?.copyWith(
@@ -80,11 +80,11 @@ class AuthScreen extends ConsumerWidget {
                           color: Colors.blueGrey[900],
                         ),
                         textAlign: TextAlign.center,
-                        semanticsLabel: AppStrings.welcomeTitle,
+                        semanticsLabel: context.l10n.welcomeTitle,
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        AppStrings.welcomeSubtitle,
+                        context.l10n.welcomeSubtitle,
                         style: Theme.of(
                           context,
                         ).textTheme.titleMedium?.copyWith(
@@ -160,7 +160,7 @@ class AuthScreen extends ConsumerWidget {
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           return Text(
-                            '${AppStrings.appVersion}: ${snapshot.data!.version}',
+                            '${context.l10n.appVersion}: ${snapshot.data!.version}',
                             style: TextStyle(
                               color: Colors.grey[700],
                               fontSize: 13,
@@ -168,15 +168,15 @@ class AuthScreen extends ConsumerWidget {
                           );
                         } else if (snapshot.hasError) {
                           return Text(
-                            '${AppStrings.versionError}: ${snapshot.error}',
+                            '${context.l10n.versionError}: ${snapshot.error}',
                             style: TextStyle(
                               color: Colors.red[700],
                               fontSize: 13,
                             ),
                           );
                         }
-                        return const Text(
-                          AppStrings.loadingVersion,
+                        return Text(
+                          context.l10n.loadingVersion,
                           style: TextStyle(color: Colors.grey, fontSize: 13),
                         );
                       },

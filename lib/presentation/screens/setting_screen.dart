@@ -1,8 +1,8 @@
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../constants/app_strings.dart';
 import '../../data/enums/currency.dart';
 import '../../data/enums/language.dart';
 import '../../data/enums/sync_status.dart';
@@ -29,7 +29,7 @@ class SettingsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppStrings.settingsScreenTitle),
+        title: Text(context.l10n.settingsScreenTitle),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
         bottom: const PreferredSize(
@@ -81,9 +81,9 @@ class SettingsScreen extends ConsumerWidget {
                     title: Text(name, style: theme.textTheme.titleMedium),
                     subtitle: Text(email),
                     trailing: Semantics(
-                      label: AppStrings.logout,
+                      label: context.l10n.logout,
                       child: IconButton(
-                        tooltip: AppStrings.logout,
+                        tooltip: context.l10n.logout,
                         icon: Icon(
                           Icons.logout,
                           color: theme.colorScheme.error,
@@ -109,7 +109,7 @@ class SettingsScreen extends ConsumerWidget {
               child: Column(
                 children: [
                   ListTile(
-                    title: Text(AppStrings.language),
+                    title: Text(context.l10n.language),
                     leading: Icon(
                       Icons.language,
                       color: theme.colorScheme.primary,
@@ -125,8 +125,8 @@ class SettingsScreen extends ConsumerWidget {
                                   value: lang,
                                   child: Text(
                                     lang == Language.English
-                                        ? AppStrings.english
-                                        : AppStrings.hindi,
+                                        ? context.l10n.english
+                                        : context.l10n.hindi,
                                   ),
                                 );
                               }).toList(),
@@ -142,7 +142,7 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                   ),
                   ListTile(
-                    title: Text(AppStrings.currency),
+                    title: Text(context.l10n.currency),
                     leading: Icon(
                       Icons.currency_rupee_rounded,
                       color: theme.colorScheme.primary,
@@ -175,7 +175,7 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                   ),
                   ListTile(
-                    title: Text(AppStrings.theme),
+                    title: Text(context.l10n.theme),
                     leading: Icon(
                       Icons.color_lens,
                       color: theme.colorScheme.primary,
@@ -190,13 +190,13 @@ class SettingsScreen extends ConsumerWidget {
                                 String text;
                                 switch (mode) {
                                   case ThemeMode.light:
-                                    text = AppStrings.light;
+                                    text = context.l10n.light;
                                     break;
                                   case ThemeMode.dark:
-                                    text = AppStrings.dark;
+                                    text = context.l10n.dark;
                                     break;
                                   case ThemeMode.system:
-                                    text = AppStrings.system;
+                                    text = context.l10n.system;
                                 }
                                 return DropdownMenuItem(
                                   value: mode,
@@ -227,7 +227,7 @@ class SettingsScreen extends ConsumerWidget {
               child: Column(
                 children: [
                   SwitchListTile(
-                    title: Text(AppStrings.paymentReminders),
+                    title: Text(context.l10n.paymentReminders),
                     value: settings.notificationsEnabled,
                     onChanged: (value) {
                       ref
@@ -236,7 +236,7 @@ class SettingsScreen extends ConsumerWidget {
                     },
                   ),
                   ListTile(
-                    title: Text(AppStrings.reminderTime),
+                    title: Text(context.l10n.reminderTime),
                     leading: Icon(
                       Icons.alarm,
                       color: theme.colorScheme.primary,
@@ -266,7 +266,7 @@ class SettingsScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          AppStrings.utilizationAlert,
+                          context.l10n.utilizationAlert,
                           style: theme.textTheme.bodyLarge,
                         ),
                         CreditLimitUtilizationSlider(
@@ -279,7 +279,7 @@ class SettingsScreen extends ConsumerWidget {
                           },
                         ),
                         Text(
-                          AppStrings.utilizationAlertDescription,
+                          context.l10n.utilizationAlertDescription,
                           style: theme.textTheme.bodyMedium,
                         ),
                       ],
@@ -299,9 +299,9 @@ class SettingsScreen extends ConsumerWidget {
               child: Column(
                 children: [
                   SwitchListTile(
-                    title: Text(AppStrings.syncPreference),
+                    title: Text(context.l10n.syncPreference),
                     value: settings.syncSettings,
-                    subtitle: Text(AppStrings.syncPreferenceSubtitle),
+                    subtitle: Text(context.l10n.syncPreferenceSubtitle),
                     onChanged: (value) {
                       ref
                           .read(settingsProvider.notifier)
@@ -311,7 +311,7 @@ class SettingsScreen extends ConsumerWidget {
                   ListTile(
                     leading: const Icon(Icons.sync),
                     title: Text(
-                      AppStrings.syncData,
+                      context.l10n.syncData,
                       style: TextStyle(color: theme.colorScheme.primary),
                     ),
                     onTap: () async {
@@ -322,7 +322,9 @@ class SettingsScreen extends ConsumerWidget {
                         try {
                           await syncService.syncData();
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(AppStrings.syncDataSuccess)),
+                            SnackBar(
+                              content: Text(context.l10n.syncDataSuccess),
+                            ),
                           );
                           ref.read(syncStatusProvider.notifier).state =
                               SyncStatus.idle;
@@ -344,7 +346,7 @@ class SettingsScreen extends ConsumerWidget {
                       color: theme.colorScheme.error,
                     ),
                     title: Text(
-                      AppStrings.clearData,
+                      context.l10n.clearData,
                       style: TextStyle(color: theme.colorScheme.error),
                     ),
                     onTap: () => _showClearDataDialog(context, ref),
@@ -391,7 +393,7 @@ class SettingsScreen extends ConsumerWidget {
                       Icons.description_outlined,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    title: Text(AppStrings.termsConditions),
+                    title: Text(context.l10n.termsConditions),
                     onTap: () {
                       launchUrl(Uri.parse('https://card.fnlsg.in/terms'));
                     },
@@ -401,7 +403,7 @@ class SettingsScreen extends ConsumerWidget {
                       Icons.privacy_tip_outlined,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    title: Text(AppStrings.privacyPolicy),
+                    title: Text(context.l10n.privacyPolicy),
                     onTap: () {
                       launchUrl(Uri.parse('https://card.fnlsg.in/privacy'));
                     },
@@ -440,12 +442,12 @@ class SettingsScreen extends ConsumerWidget {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: Text(AppStrings.clearData),
-            content: Text(AppStrings.clearDataConfirm),
+            title: Text(context.l10n.clearData),
+            content: Text(context.l10n.clearDataConfirm),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text(AppStrings.cancel),
+                child: Text(context.l10n.cancel),
               ),
               TextButton(
                 onPressed: () {
@@ -456,11 +458,11 @@ class SettingsScreen extends ConsumerWidget {
 
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(AppStrings.clearDataSuccess)),
+                    SnackBar(content: Text(context.l10n.clearDataSuccess)),
                   );
                 },
                 child: Text(
-                  AppStrings.delete,
+                  context.l10n.delete,
                   style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
               ),

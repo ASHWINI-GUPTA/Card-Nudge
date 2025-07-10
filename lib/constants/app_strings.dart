@@ -22,6 +22,7 @@ class AppStrings {
   static const buttonAddCard = 'Add Card';
   static const buttonUpdateCard = 'Update Card';
   static const buttonAddPayment = 'Create Payment Due';
+  static const retryButtonLabel = 'Retry';
 
   // Validation Messages
   static const validationRequired = 'This field is required.';
@@ -216,7 +217,7 @@ class AppStrings {
   static const reminderTime = 'Reminder Time';
   static const exportData = 'Export Data';
   static const exportDataSuccess = 'Data exported successfully!';
-  static const clearData = 'Clear All Data';
+  static const clearData = 'Clear Local Data';
   static const clearDataConfirm =
       'Are you sure you want to clear all data? This action cannot be undone.';
   static const clearDataSuccess = 'All data cleared successfully!';
@@ -252,4 +253,23 @@ class AppStrings {
   static const selectColorLabel = 'Select Color';
 
   static const logout = 'Logout';
+
+  // Payment Status
+  static const overdue = 'Overdue';
+  static const today = 'Today';
+  static const paid = 'Paid';
+  static const partiallyPaid = 'Partially Paid';
+  static const noPaymentDueStatus = 'No Payment Due';
+  static const upcomingDue = 'Upcoming Due';
+
+  // Due Messages
+  static const dueTomorrow = 'Due tomorrow';
+  static final overdueByDays =
+      (int days) => 'Overdue by $days day${days == 1 ? '' : 's'}';
+  static final dueInDays =
+      (int days) => 'Due in $days day${days == 1 ? '' : 's'}';
+  static const paidOn = 'Paid on';
+  static const dueOn = 'Due on';
+  static const statementAmount = 'Statement Amount';
+  static const partiallyPaidAmount = 'Partially Paid: ';
 }

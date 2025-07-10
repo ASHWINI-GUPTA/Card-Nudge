@@ -1,5 +1,5 @@
-import 'package:card_nudge/constants/app_strings.dart';
 import 'package:card_nudge/data/hive/models/payment_model.dart';
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:flutter/material.dart';
 
 class DashboardMonthWidget extends StatelessWidget {
@@ -14,19 +14,19 @@ class DashboardMonthWidget extends StatelessWidget {
     // Legend items
     final legendItems = [
       {
-        'label': AppStrings.monthOnTime,
+        'label': context.l10n.monthOnTime,
         'color': const Color(0xFF43A047), // Green 600
       },
       {
-        'label': AppStrings.monthDelayed,
+        'label': context.l10n.monthDelayed,
         'color': const Color(0xFFFFB300), // Amber 600
       },
       {
-        'label': AppStrings.monthNotPaid,
+        'label': context.l10n.monthNotPaid,
         'color': const Color(0xFFE53935), // Red 600
       },
       {
-        'label': AppStrings.monthNoData,
+        'label': context.l10n.monthNoData,
         'color': const Color(0xFFB0BEC5), // Blue Grey 200
       },
     ];

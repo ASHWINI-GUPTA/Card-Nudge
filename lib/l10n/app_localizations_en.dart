@@ -9,25 +9,159 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get dashboardTitle => 'Nudge 🔔';
+  String get appTitle => 'Card Nudge 🔔';
 
   @override
-  String get cardsTitle => 'Cards';
+  String get welcomeTitle => 'Welcome to Card Nudge 🔔';
 
   @override
-  String get noCardsMessage => 'No cards added yet.';
+  String get welcomeSubtitle => 'Your Credit Card Companion!';
 
   @override
-  String get errorLoadingCards => 'Couldn\'t load cards. Try again.';
+  String get welcomeDescription =>
+      'Track your credit cards, payment dues, and never miss a payment again.';
+
+  @override
+  String get buttonOk => 'OK';
+
+  @override
+  String get buttonCancel => 'Cancel';
+
+  @override
+  String get buttonClose => 'Close';
+
+  @override
+  String get buttonSave => 'Save';
+
+  @override
+  String get buttonAdd => 'Add';
+
+  @override
+  String get buttonDelete => 'Delete';
+
+  @override
+  String get buttonEdit => 'Edit';
+
+  @override
+  String get buttonArchive => 'Archive';
+
+  @override
+  String get buttonRetry => 'Retry';
+
+  @override
+  String get buttonUndo => 'Undo';
+
+  @override
+  String get buttonHome => 'Home';
+
+  @override
+  String get buttonAddCard => 'Add Card';
+
+  @override
+  String get buttonUpdateCard => 'Update Card';
+
+  @override
+  String get buttonAddPayment => 'Create Payment Due';
 
   @override
   String get retryButtonLabel => 'Retry';
 
   @override
-  String get addCard => 'Add New Card';
+  String get validationRequired => 'This field is required.';
+
+  @override
+  String get errorGeneric =>
+      'An unexpected error occurred. Please try again or return to the home screen. If the problem persists, contact support.';
+
+  @override
+  String get utilization => 'Utilization';
+
+  @override
+  String get overUtilization => 'Overutilized Cards';
+
+  @override
+  String get totalCreditLimit => 'Total Credit Limit';
+
+  @override
+  String get quickInsights => 'Quick Insights';
+
+  @override
+  String get monthlyOverview => 'Payment Overview by Month';
+
+  @override
+  String get cardsScreenTitle => 'Your Cards';
+
+  @override
+  String get cardsScreenSubtitle => 'Manage your credit cards and payments';
+
+  @override
+  String get cardsScreenDescription =>
+      'Keep track of your credit cards, payment dues, and upcoming payments.';
+
+  @override
+  String get cardsScreenEmptyStateTitle => 'No Cards Added';
+
+  @override
+  String get cardsScreenEmptyStateSubtitle =>
+      'Add your credit cards to start tracking payments and dues.';
+
+  @override
+  String get cardsScreenErrorTitle => 'Error Loading Cards';
+
+  @override
+  String get cardsScreenErrorSubtitle =>
+      'There was an error loading your cards. Please try again later.';
+
+  @override
+  String get cardDetailsScreenTitle => 'Card Details';
+
+  @override
+  String get cardDetailsScreenSubtitle => 'View and manage your card details';
+
+  @override
+  String get cardDetailsScreenDescription =>
+      'View your card details, upcoming payments, and payment history.';
+
+  @override
+  String get addCardScreenTitle => 'Add Card';
+
+  @override
+  String get updateCardScreenTitle => 'Update Card';
+
+  @override
+  String get addCardScreenSubtitle => 'Add a new credit card';
+
+  @override
+  String get updateCardScreenSubtitle => 'Update your credit card details';
+
+  @override
+  String get addCardScreenDescription =>
+      'Enter your card details to start tracking payments and dues.';
+
+  @override
+  String get updateCardScreenDescription =>
+      'Update your card details to keep your payment information current.';
+
+  @override
+  String get cardNameLabel => 'Card Name *';
+
+  @override
+  String get cardNameHint => 'Enter card name';
+
+  @override
+  String get cardNameError => 'Card name is required.';
+
+  @override
+  String get bankLabel => 'Bank *';
+
+  @override
+  String get bankHint => 'Select your bank';
 
   @override
   String get addPaymentDue => 'Add Payment Due';
+
+  @override
+  String get editPaymentDue => 'Edit Payment Due';
 
   @override
   String get dueAmountLabel => 'Due Amount *';
@@ -54,19 +188,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paymentAddedSuccess => 'Payment due added successfully!';
 
   @override
+  String get paymentUpdatedSuccess => 'Payment due updated successfully!';
+
+  @override
+  String get noDuePaymentAddedSuccess =>
+      'No payment due added. You can add it later.';
+
+  @override
   String get paymentAddError => 'Failed to add payment due.';
 
   @override
-  String get addDueButton => 'Add';
+  String get addDueButton => 'Payment';
 
   @override
-  String get updateCard => 'Update Card';
+  String get noPaymentDue => 'No Payment Required';
 
   @override
   String get cardLabel => 'Card Name';
-
-  @override
-  String get bankLabel => 'Bank';
 
   @override
   String get networkLabel => 'Card Network';
@@ -82,9 +220,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get creditLimitLabel => 'Credit Limit';
-
-  @override
-  String get requiredFieldError => 'This field is required.';
 
   @override
   String get last4DigitsError => 'Enter exactly 4 digits.';
@@ -103,6 +238,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cardSaveError => 'Failed to save card.';
+
+  @override
+  String get dueDateBeforeBillingError => 'Due date must be after billing date';
 
   @override
   String get saveButton => 'Save';
@@ -147,34 +285,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paymentNotFoundError => 'Payment not found.';
 
   @override
-  String get cardLoadError => 'Couldn\'t load cards.';
-
-  @override
   String get invalidBankError => 'Invalid bank selected.';
 
   @override
   String get cardDetailsTitle => 'Card Details';
 
   @override
-  String get editCard => 'Edit Card';
+  String get editCard => 'Update';
 
   @override
-  String get deleteCard => 'Delete Card';
+  String get deleteCard => 'Delete';
 
   @override
-  String get archiveCard => 'Archive Card';
+  String get archiveCard => 'Archive';
 
   @override
   String get upcomingPayment => 'Upcoming Payment';
 
   @override
-  String get noUpcomingDues => 'No upcoming payments.';
+  String get noUpcomingDueMessage => 'Add a payment to see it here.';
+
+  @override
+  String nextBillingDateMessage(num daysUntilBilling) {
+    String _temp0 = intl.Intl.pluralLogic(
+      daysUntilBilling,
+      locale: localeName,
+      other: '$daysUntilBilling days',
+      one: '1 day',
+    );
+    return 'Your next billing date is in $_temp0.';
+  }
 
   @override
   String get paymentHistory => 'Payment History';
 
   @override
-  String get noPastPayments => 'No past payments yet.';
+  String get noPastPayments => 'No past payments available.';
 
   @override
   String get paymentHistoryItem => 'Payment';
@@ -214,6 +360,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cardArchivedSuccess => 'Card archived successfully!';
 
   @override
+  String get deletePaymentMessage =>
+      'Are you sure you want to delete this payment? This action cannot be undone.';
+
+  @override
+  String get deletePaymentConfirmation => 'Confirm Delete Payment';
+
+  @override
   String get bankDetailsLoadError => 'Couldn\'t load bank details.';
 
   @override
@@ -250,13 +403,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get upcomingPaymentsTitle => 'Upcoming Payments';
 
   @override
-  String get noPaymentsMessage => 'No upcoming or overdue payments.';
+  String get noPaymentsMessage => 'No Upcoming or Overdue Payments available.';
 
   @override
   String get addCardButton => 'Add Card';
 
   @override
-  String get addPaymentButton => 'Add Payment';
+  String get addPaymentButton => 'Create Payment Due';
 
   @override
   String get invalidCardError => 'Invalid card selected.';
@@ -356,7 +509,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportDataSuccess => 'Data exported successfully!';
 
   @override
-  String get clearData => 'Clear All Data';
+  String get clearData => 'Clear Local Data';
 
   @override
   String get clearDataConfirm =>
@@ -390,6 +543,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get delete => 'Delete';
 
   @override
+  String get versionError => 'Error loading version';
+
+  @override
+  String get loadingVersion => 'Loading version...';
+
+  @override
+  String get syncData => 'Sync Data';
+
+  @override
+  String get syncDataSubtitle =>
+      'Sync Data with the cloud to keep your information safe.';
+
+  @override
+  String get syncDataSuccess => 'Data synced successfully!';
+
+  @override
+  String get syncDataError => 'Failed to sync data. Please try again.';
+
+  @override
+  String get syncDataInProgress => 'Syncing data...';
+
+  @override
+  String get syncPreference => 'Sync';
+
+  @override
+  String get syncPreferenceSubtitle =>
+      'Enable to sync your settings and data across devices.';
+
+  @override
+  String get utilizationAlertDescription =>
+      'Get notified when your credit card utilization exceeds this percentage.';
+
+  @override
+  String get utilizationAlert => 'Utilization Threshold';
+
+  @override
   String get bankName => 'Bank Name';
 
   @override
@@ -406,4 +595,62 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selectColorLabel => 'Select Color';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get overdue => 'Overdue';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get paid => 'Paid';
+
+  @override
+  String get partiallyPaid => 'Partially Paid';
+
+  @override
+  String get noPaymentDueStatus => 'No Payment Due';
+
+  @override
+  String get upcomingDue => 'Upcoming Due';
+
+  @override
+  String get dueTomorrow => 'Due tomorrow';
+
+  @override
+  String overdueByDays(num days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return 'Overdue by $_temp0.';
+  }
+
+  @override
+  String dueInDays(num days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return 'Due in $_temp0.';
+  }
+
+  @override
+  String get paidOn => 'Paid on';
+
+  @override
+  String get dueOn => 'Due on';
+
+  @override
+  String get statementAmount => 'Statement Amount';
+
+  @override
+  String get partiallyPaidAmount => 'Partially Paid: ';
 }

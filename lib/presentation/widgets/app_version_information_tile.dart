@@ -1,7 +1,7 @@
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '../../constants/app_strings.dart';
 import '../../helper/emoji_helper.dart';
 import 'emoji_celebration_animation.dart';
 
@@ -31,7 +31,7 @@ class _AppVersionInformationTileState extends State<AppVersionInformationTile> {
       clipBehavior: Clip.none,
       children: [
         ListTile(
-          title: Text(AppStrings.appVersion),
+          title: Text(context.l10n.appVersion),
           leading: Icon(
             Icons.info_outline,
             color: Theme.of(context).colorScheme.primary,
@@ -42,9 +42,9 @@ class _AppVersionInformationTileState extends State<AppVersionInformationTile> {
               if (snapshot.hasData) {
                 return Text(snapshot.data!.version);
               } else if (snapshot.hasError) {
-                return Text('${AppStrings.versionError}: ${snapshot.error}');
+                return Text('${context.l10n.versionError}: ${snapshot.error}');
               }
-              return const Text(AppStrings.loadingVersion);
+              return Text(context.l10n.loadingVersion);
             },
           ),
           onTap: _handleTap,

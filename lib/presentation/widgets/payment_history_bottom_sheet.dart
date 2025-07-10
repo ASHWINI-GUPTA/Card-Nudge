@@ -1,8 +1,8 @@
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:card_nudge/helper/date_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
-import '../../constants/app_strings.dart';
 import '../../data/enums/payment_option.dart';
 import '../../data/hive/models/payment_model.dart';
 import '../../services/navigation_service.dart';
@@ -64,11 +64,11 @@ class PaymentHistoryBottomSheet extends ConsumerWidget {
       await ref.read(creditCardProvider.notifier).save(updatedCard);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(AppStrings.paymentLoggedSuccess)),
+        SnackBar(content: Text(context.l10n.paymentLoggedSuccess)),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${AppStrings.paymentLogError}: $e')),
+        SnackBar(content: Text('${context.l10n.paymentLogError}: $e')),
       );
       return null;
     } finally {
@@ -100,9 +100,9 @@ class PaymentHistoryBottomSheet extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Semantics(
-                label: AppStrings.logPayment,
+                label: context.l10n.logPayment,
                 child: Text(
-                  AppStrings.logPayment,
+                  context.l10n.logPayment,
                   style: Theme.of(
                     context,
                   ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -119,7 +119,7 @@ class PaymentHistoryBottomSheet extends ConsumerWidget {
                             ref.read(selectedOptionProvider.notifier).state =
                                 value!,
                 title: Text(
-                  '${AppStrings.totalDue} (${formatHelper.formatCurrency(payment.dueAmount, decimalDigits: 2)})',
+                  '${context.l10n.totalDue} (${formatHelper.formatCurrency(payment.dueAmount, decimalDigits: 2)})',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
@@ -134,7 +134,7 @@ class PaymentHistoryBottomSheet extends ConsumerWidget {
                               ref.read(selectedOptionProvider.notifier).state =
                                   value!,
                   title: Text(
-                    '${AppStrings.minimumDue} (${formatHelper.formatCurrency(payment.minimumDueAmount!, decimalDigits: 2)}',
+                    '${context.l10n.minimumDue} (${formatHelper.formatCurrency(payment.minimumDueAmount!, decimalDigits: 2)}',
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
@@ -148,7 +148,7 @@ class PaymentHistoryBottomSheet extends ConsumerWidget {
                             ref.read(selectedOptionProvider.notifier).state =
                                 value!,
                 title: Text(
-                  AppStrings.customAmount,
+                  context.l10n.customAmount,
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
@@ -165,16 +165,16 @@ class PaymentHistoryBottomSheet extends ConsumerWidget {
                         RegExp(r'^\d*\.?\d{0,2}'),
                       ),
                     ],
-                    decoration: const InputDecoration(
-                      labelText: AppStrings.customAmountLabel,
+                    decoration: InputDecoration(
+                      labelText: context.l10n.customAmountLabel,
                     ),
                     validator: (value) {
                       final v = double.tryParse(value?.trim() ?? '');
                       if (v == null || v <= 0) {
-                        return AppStrings.invalidCustomAmountError;
+                        return context.l10n.invalidCustomAmountError;
                       }
                       if (v > payment.dueAmount) {
-                        return AppStrings.amountExceedsDueError;
+                        return context.l10n.amountExceedsDueError;
                       }
                       return null;
                     },
@@ -195,7 +195,7 @@ class PaymentHistoryBottomSheet extends ConsumerWidget {
                   label:
                       isSubmitting
                           ? const CreditCardColorDotIndicator()
-                          : Text(AppStrings.logPaymentButton),
+                          : Text(context.l10n.logPaymentButton),
                 ),
               ),
               const SizedBox(height: 16),

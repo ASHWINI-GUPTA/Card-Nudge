@@ -1,3 +1,4 @@
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:card_nudge/helper/date_extension.dart';
 import 'package:card_nudge/presentation/providers/filter_provider.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
-import '../../constants/app_strings.dart';
 import '../../data/hive/models/bank_model.dart';
 import '../../data/hive/models/credit_card_model.dart';
 import '../../data/hive/models/payment_model.dart';
@@ -33,7 +33,7 @@ class DueScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppStrings.upcomingPaymentsTitle,
+          context.l10n.upcomingPaymentsTitle,
           style: theme.textTheme.titleLarge?.copyWith(color: Colors.white),
         ),
         backgroundColor: theme.primaryColor,
@@ -63,14 +63,14 @@ class DueScreen extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '${AppStrings.cardsScreenErrorTitle}: $error',
+                    '${context.l10n.cardsScreenErrorTitle}: $error',
                     style: theme.textTheme.bodyLarge,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => ref.invalidate(creditCardProvider),
-                    child: Text(AppStrings.buttonRetry),
+                    child: Text(context.l10n.buttonRetry),
                   ),
                 ],
               ),
@@ -94,7 +94,7 @@ class DueScreen extends ConsumerWidget {
           return _buildEmptyStateNoPayments(context, ref, cards);
         }
 
-        final groupedCards = _groupPaymentsByDueDate(nonPaidPayments);
+        final groupedCards = _groupPaymentsByDueDate(context, nonPaidPayments);
 
         if (groupedCards.isEmpty) return _buildNoFilteredPayments(context, ref);
 
@@ -116,7 +116,8 @@ class DueScreen extends ConsumerWidget {
                       final card = cards.firstWhere(
                         (c) => c.id == payment.cardId,
                         orElse:
-                            () => throw Exception(AppStrings.invalidCardError),
+                            () =>
+                                throw Exception(context.l10n.invalidCardError),
                       );
                       final bank = banks.firstWhere((b) => b.id == card.bankId);
                       return DueCard(card: card, bank: bank, payment: payment);
@@ -133,14 +134,14 @@ class DueScreen extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '${AppStrings.bankDetailsLoadError}: $error',
+                      '${context.l10n.bankDetailsLoadError}: $error',
                       style: Theme.of(context).textTheme.bodyLarge,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => ref.invalidate(bankProvider),
-                      child: Text(AppStrings.buttonRetry),
+                      child: Text(context.l10n.buttonRetry),
                     ),
                   ],
                 ),
@@ -154,14 +155,14 @@ class DueScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '${AppStrings.paymentLoadError}: $error',
+                  '${context.l10n.paymentLoadError}: $error',
                   style: Theme.of(context).textTheme.bodyLarge,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () => ref.invalidate(paymentProvider),
-                  child: Text(AppStrings.buttonRetry),
+                  child: Text(context.l10n.buttonRetry),
                 ),
               ],
             ),
@@ -187,7 +188,7 @@ class DueScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            AppStrings.noPaymentsMessage,
+            context.l10n.noPaymentsMessage,
             style: theme.textTheme.bodyLarge?.copyWith(
               color: theme.colorScheme.onSurface,
             ),
@@ -202,7 +203,7 @@ class DueScreen extends ConsumerWidget {
                       (context) =>
                           PaymentDueEntryBottomSheet(card: cards.first),
                 ),
-            child: Text(AppStrings.addPaymentButton),
+            child: Text(context.l10n.addPaymentButton),
           ),
         ],
       ),
@@ -210,6 +211,7 @@ class DueScreen extends ConsumerWidget {
   }
 
   Map<String, List<PaymentModel>> _groupPaymentsByDueDate(
+    BuildContext context,
     List<PaymentModel> payments,
   ) {
     final now = DateTime.now();
@@ -226,9 +228,9 @@ class DueScreen extends ConsumerWidget {
       String label;
 
       if (diff < 0) {
-        label = 'Overdue';
+        label = context.l10n.overdue;
       } else if (diff == 0) {
-        label = 'Today';
+        label = context.l10n.today;
       } else {
         label = DateFormat.yMMMMd().format(dueDate);
       }
@@ -260,8 +262,8 @@ class DueScreen extends ConsumerWidget {
 
   Widget _buildNoFilteredPayments(BuildContext context, WidgetRef ref) {
     return NoDataPlaceholderWidget(
-      message: AppStrings.dueScreenNoFilterMessage,
-      buttonText: AppStrings.clearButton,
+      message: context.l10n.dueScreenNoFilterMessage,
+      buttonText: context.l10n.clearButton,
       onButtonPressed: () => ref.read(dueFilterProvider.notifier).resetFilter(),
     );
   }
@@ -394,18 +396,18 @@ class DueCardContent extends ConsumerWidget {
     required this.maxWidth,
   });
 
-  String _getStatusMessage(DateTime dueDate) {
+  String _getStatusMessage(BuildContext context, DateTime dueDate) {
     final now = DateTime.now();
     int days = dueDate.differenceInDaysCeil(now);
 
     if (days < 0) {
-      return 'Overdue by ${-days} day${-days.abs() == 1 ? '' : 's'}';
+      return context.l10n.overdueByDays(-days);
     } else if (days == 0) {
-      return 'Due today';
+      return context.l10n.dueToday;
     } else if (days == 1) {
-      return 'Due tomorrow';
+      return context.l10n.dueTomorrow;
     } else {
-      return 'Due in $days day${days == 1 ? '' : 's'}';
+      return context.l10n.dueInDays(days);
     }
   }
 
@@ -428,7 +430,7 @@ class DueCardContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final status = _getStatusMessage(payment.dueDate);
+    final status = _getStatusMessage(context, payment.dueDate);
     final formatHelper = ref.watch(formatHelperProvider);
 
     return Padding(
@@ -460,7 +462,7 @@ class DueCardContent extends ConsumerWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  '${AppStrings.totalDue}: ${formatHelper.formatCurrency(payment.dueAmount, decimalDigits: 2)}',
+                  '${context.l10n.totalDue}: ${formatHelper.formatCurrency(payment.dueAmount, decimalDigits: 2)}',
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: Colors.white,
                     fontSize: 14,
@@ -483,7 +485,7 @@ class DueCardContent extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Semantics(
-                label: '${AppStrings.bankLogo} ${bank.name}',
+                label: '${context.l10n.bankLogo} ${bank.name}',
                 child:
                     bank.logoPath != null
                         ? SvgPicture.asset(
@@ -498,9 +500,9 @@ class DueCardContent extends ConsumerWidget {
               ),
               const SizedBox(height: 20),
               Semantics(
-                label: AppStrings.logPaymentButton,
+                label: context.l10n.logPaymentButton,
                 child: IconButton(
-                  tooltip: AppStrings.logPaymentButton,
+                  tooltip: context.l10n.logPaymentButton,
                   icon: Icon(
                     Icons.payments_outlined,
                     color: _dueDateColor(payment.dueDate, context),

@@ -1,11 +1,13 @@
 import 'package:card_nudge/constants/app_strings.dart';
 import 'package:card_nudge/data/enums/language.dart';
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:card_nudge/presentation/widgets/offline_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+import 'l10n/app_localizations.dart';
 import 'presentation/providers/router_provider.dart';
 import 'presentation/providers/setting_provider.dart';
 import 'presentation/providers/sync_provider.dart';
@@ -33,7 +35,7 @@ class CreditCardApp extends ConsumerWidget {
           child: Stack(
             children: [
               MaterialApp.router(
-                title: AppStrings.appTitle,
+                title: context.l10n.appTitle,
                 theme: ThemeData(
                   useMaterial3: true,
                   colorSchemeSeed: Colors.blue,
@@ -45,12 +47,13 @@ class CreditCardApp extends ConsumerWidget {
                   brightness: Brightness.dark,
                 ),
                 themeMode: settings.themeMode,
-                locale: Locale(settings.language.name),
+                locale: Locale(settings.language.code),
                 supportedLocales: [
                   Locale(Language.English.code, 'US'),
                   Locale(Language.Hindi.code, 'IN'),
                 ],
                 localizationsDelegates: const [
+                  AppLocalizations.delegate,
                   GlobalMaterialLocalizations.delegate,
                   GlobalWidgetsLocalizations.delegate,
                   GlobalCupertinoLocalizations.delegate,

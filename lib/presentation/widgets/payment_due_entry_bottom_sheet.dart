@@ -1,9 +1,9 @@
 import 'package:card_nudge/data/hive/models/credit_card_model.dart';
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:card_nudge/helper/date_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../constants/app_strings.dart';
 import '../../data/hive/models/payment_model.dart';
 import '../../services/navigation_service.dart';
 import '../providers/credit_card_provider.dart';
@@ -71,9 +71,9 @@ class _PaymentDueEntryBottomSheet
 
       if (unpaidExists) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text(AppStrings.dueAlreadyExist)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(context.l10n.dueAlreadyExist)));
         }
         NavigationService.pop(context);
         return null;
@@ -111,14 +111,14 @@ class _PaymentDueEntryBottomSheet
 
       await ref.read(creditCardProvider.notifier).save(updatedCard);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(AppStrings.paymentAddedSuccess)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.paymentAddedSuccess)));
       return payment;
     } catch (e) {
       if (!mounted) return null;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${AppStrings.paymentAddError}: $e')),
+        SnackBar(content: Text('${context.l10n.paymentAddError}: $e')),
       );
       return null;
     } finally {
@@ -136,9 +136,9 @@ class _PaymentDueEntryBottomSheet
       );
       if (unpaidExists) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text(AppStrings.dueAlreadyExist)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(context.l10n.dueAlreadyExist)));
         }
         NavigationService.pop(context);
         return;
@@ -172,7 +172,7 @@ class _PaymentDueEntryBottomSheet
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(AppStrings.noDuePaymentAddedSuccess)),
+        SnackBar(content: Text(context.l10n.noDuePaymentAddedSuccess)),
       );
 
       NavigationService.pop(context);
@@ -203,12 +203,12 @@ class _PaymentDueEntryBottomSheet
             Semantics(
               label:
                   widget.payment == null
-                      ? AppStrings.addPaymentDue
-                      : AppStrings.editPaymentDue,
+                      ? context.l10n.addPaymentDue
+                      : context.l10n.editPaymentDue,
               child: Text(
                 widget.payment == null
-                    ? AppStrings.addPaymentDue
-                    : AppStrings.editPaymentDue,
+                    ? context.l10n.addPaymentDue
+                    : context.l10n.editPaymentDue,
                 style: Theme.of(
                   context,
                 ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -225,15 +225,15 @@ class _PaymentDueEntryBottomSheet
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
-                    decoration: const InputDecoration(
-                      labelText: AppStrings.dueAmountLabel,
+                    decoration: InputDecoration(
+                      labelText: context.l10n.dueAmountLabel,
                     ),
                     enabled: !_isNoPaymentDue,
                     validator: (val) {
                       if (_isNoPaymentDue) return null;
                       final v = double.tryParse(val?.trim() ?? '');
                       if (v == null || v <= 0) {
-                        return AppStrings.invalidAmountError;
+                        return context.l10n.invalidAmountError;
                       }
                       return null;
                     },
@@ -245,8 +245,8 @@ class _PaymentDueEntryBottomSheet
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
-                    decoration: const InputDecoration(
-                      labelText: AppStrings.minimumDueLabel,
+                    decoration: InputDecoration(
+                      labelText: context.l10n.minimumDueLabel,
                     ),
                     enabled: !_isNoPaymentDue,
                     validator: (val) {
@@ -255,13 +255,13 @@ class _PaymentDueEntryBottomSheet
                       }
                       final v = double.tryParse(val!.trim());
                       if (v == null || v <= 0) {
-                        return AppStrings.invalidAmountError;
+                        return context.l10n.invalidAmountError;
                       }
                       final dueAmount = double.tryParse(
                         _dueAmountController.text.trim(),
                       );
                       if (dueAmount != null && v > dueAmount) {
-                        return AppStrings.minimumDueExceedsError;
+                        return context.l10n.minimumDueExceedsError;
                       }
                       return null;
                     },
@@ -270,15 +270,13 @@ class _PaymentDueEntryBottomSheet
                   ListTile(
                     onTap: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(AppStrings.editDueDateOnCard),
-                        ),
+                        SnackBar(content: Text(context.l10n.editDueDateOnCard)),
                       );
                     },
                     key: const ValueKey('payment_date_picker'),
                     enabled: false,
                     contentPadding: EdgeInsets.zero,
-                    title: const Text(AppStrings.dueDateLabel),
+                    title: Text(context.l10n.dueDateLabel),
                     subtitle: Text(
                       DateFormat.yMMMd().format(widget.card.dueDate),
                       style: Theme.of(context).textTheme.bodyMedium,
@@ -297,7 +295,7 @@ class _PaymentDueEntryBottomSheet
                         const SizedBox(width: 4),
                         Flexible(
                           child: Text(
-                            AppStrings.editDueDateOnCard,
+                            context.l10n.editDueDateOnCard,
                             style: Theme.of(
                               context,
                             ).textTheme.bodySmall?.copyWith(color: Colors.grey),
@@ -308,7 +306,7 @@ class _PaymentDueEntryBottomSheet
                   ),
                   // No Payment Due Checkbox
                   CheckboxListTile(
-                    title: const Text(AppStrings.noPaymentDue),
+                    title: Text(context.l10n.noPaymentDue),
                     contentPadding: EdgeInsets.zero,
                     value: _isNoPaymentDue,
                     onChanged: (value) {
@@ -340,7 +338,7 @@ class _PaymentDueEntryBottomSheet
                               : Text(
                                 _isNoPaymentDue
                                     ? 'Confirm No Payment Due'
-                                    : AppStrings.addDueButton,
+                                    : context.l10n.addDueButton,
                               ),
                     ),
                   ),

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/supabase_provider.dart';
-import '../screens/auth_progress_screen.dart';
+import '../widgets/auth_progress_widget.dart';
 import '../screens/auth_screen.dart';
 import '../screens/error_screen.dart';
 import '../screens/card_details_screen.dart';

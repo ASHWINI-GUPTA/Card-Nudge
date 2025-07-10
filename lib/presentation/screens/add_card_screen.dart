@@ -1,9 +1,9 @@
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/services.dart';
 
-import '../../constants/app_strings.dart';
 import '../../data/enums/card_type.dart';
 import '../../data/hive/models/credit_card_model.dart';
 import '../../data/hive/models/user_model.dart';
@@ -86,15 +86,15 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
     });
   }
 
-  Future<CreditCardModel?> _saveCard() async {
+  Future<CreditCardModel?> _saveCard(BuildContext context) async {
     print('[DEBUG] AddCardScreen._saveCard called');
     if (_formKey.currentState?.validate() != true ||
         _billingDate == null ||
         _dueDate == null) {
       if (_billingDate == null || _dueDate == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text(AppStrings.selectDatesError)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.selectDatesError)));
       }
       return null;
     }
@@ -103,7 +103,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
     if (_dueDate!.isBefore(_billingDate!) ||
         _dueDate!.isAtSameMomentAs(_billingDate!)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(AppStrings.dueDateBeforeBillingError)),
+        SnackBar(content: Text(context.l10n.dueDateBeforeBillingError)),
       );
       return null;
     }
@@ -137,8 +137,8 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
         SnackBar(
           content: Text(
             widget.card == null
-                ? AppStrings.cardAddedSuccess
-                : AppStrings.cardUpdatedSuccess,
+                ? context.l10n.cardAddedSuccess
+                : context.l10n.cardUpdatedSuccess,
           ),
         ),
       );
@@ -146,7 +146,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
     } catch (e) {
       if (!mounted) return null;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${AppStrings.cardSaveError}: $e')),
+        SnackBar(content: Text('${context.l10n.cardSaveError}: $e')),
       );
       return null;
     } finally {
@@ -313,8 +313,8 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
       appBar: AppBar(
         title: Text(
           widget.card == null
-              ? AppStrings.addCardScreenTitle
-              : AppStrings.updateCardScreenTitle,
+              ? context.l10n.addCardScreenTitle
+              : context.l10n.updateCardScreenTitle,
           style: Theme.of(context).textTheme.titleLarge,
         ),
       ),
@@ -326,13 +326,13 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
             children: [
               TextFormField(
                 controller: _cardNameController,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.cardNameLabel,
+                decoration: InputDecoration(
+                  labelText: context.l10n.cardNameLabel,
                 ),
                 validator:
                     (v) =>
                         v == null || v.trim().isEmpty
-                            ? AppStrings.validationRequired
+                            ? context.l10n.validationRequired
                             : null,
               ),
               spacing,
@@ -340,7 +340,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                 controller: _bankNameController,
                 readOnly: true,
                 decoration: InputDecoration(
-                  labelText: AppStrings.bankLabel,
+                  labelText: context.l10n.bankLabel,
                   suffixIcon: const Icon(Icons.arrow_drop_down),
                   prefixIcon:
                       _selectedBank != null &&
@@ -366,7 +366,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                           if (banks.isEmpty) return;
                           final selectedId = await _showSearchBottomSheet(
                             context: context,
-                            title: AppStrings.bankLabel,
+                            title: context.l10n.bankLabel,
                             items:
                                 banks
                                     .map(
@@ -399,7 +399,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                 validator:
                     (v) =>
                         _selectedBank == null
-                            ? AppStrings.validationRequired
+                            ? context.l10n.validationRequired
                             : null,
               ),
               spacing,
@@ -407,7 +407,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                 controller: _cardTypeController,
                 readOnly: true,
                 decoration: InputDecoration(
-                  labelText: AppStrings.networkLabel,
+                  labelText: context.l10n.networkLabel,
                   suffixIcon: const Icon(Icons.arrow_drop_down),
                   prefixIcon:
                       _selectedCardType != null &&
@@ -440,7 +440,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                                   .toList();
                           final selectedId = await _showSearchBottomSheet(
                             context: context,
-                            title: AppStrings.networkLabel,
+                            title: context.l10n.networkLabel,
                             items: cardTypes,
                             selectedId:
                                 _selectedCardType != null
@@ -460,14 +460,14 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                 validator:
                     (v) =>
                         _selectedCardType == null
-                            ? AppStrings.validationRequired
+                            ? context.l10n.validationRequired
                             : null,
               ),
               spacing,
               TextFormField(
                 controller: _last4DigitsController,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.last4DigitsLabel,
+                decoration: InputDecoration(
+                  labelText: context.l10n.last4DigitsLabel,
                 ),
                 keyboardType: TextInputType.number,
                 maxLength: 4,
@@ -475,7 +475,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                 validator:
                     (v) =>
                         v == null || v.length != 4
-                            ? AppStrings.last4DigitsError
+                            ? context.l10n.last4DigitsError
                             : null,
               ),
               spacing,
@@ -486,8 +486,8 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                       icon: const Icon(Icons.calendar_today),
                       label: Text(
                         _billingDate == null
-                            ? AppStrings.billingDateLabel
-                            : '${AppStrings.billingDateLabel}: ${_billingDate!.day}/${_billingDate!.month}',
+                            ? context.l10n.billingDateLabel
+                            : '${context.l10n.billingDateLabel}: ${_billingDate!.day}/${_billingDate!.month}',
                         style: Theme.of(context).textTheme.labelMedium,
                       ),
                       onPressed:
@@ -500,8 +500,8 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                       icon: const Icon(Icons.event),
                       label: Text(
                         _dueDate == null
-                            ? AppStrings.dueDateLabel
-                            : '${AppStrings.dueDateLabel}: ${_dueDate!.day}/${_dueDate!.month}',
+                            ? context.l10n.dueDateLabel
+                            : '${context.l10n.dueDateLabel}: ${_dueDate!.day}/${_dueDate!.month}',
                         style: Theme.of(context).textTheme.labelMedium,
                       ),
                       onPressed:
@@ -515,8 +515,8 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
               spacing,
               TextFormField(
                 controller: _limitController,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.creditLimitLabel,
+                decoration: InputDecoration(
+                  labelText: context.l10n.creditLimitLabel,
                 ),
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
@@ -527,7 +527,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                 validator: (v) {
                   final value = double.tryParse(v?.trim() ?? '');
                   return value == null || value <= 0
-                      ? AppStrings.invalidCreditLimitError
+                      ? context.l10n.invalidCreditLimitError
                       : null;
                 },
               ),
@@ -537,7 +537,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                     _isSubmitting
                         ? null
                         : () async {
-                          final card = await _saveCard();
+                          final card = await _saveCard(context);
                           if (card != null) {
                             NavigationService.pop(context);
                           }
@@ -545,7 +545,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                 child:
                     _isSubmitting
                         ? const CreditCardColorDotIndicator()
-                        : Text(AppStrings.saveButton),
+                        : Text(context.l10n.saveButton),
               ),
             ],
           ),

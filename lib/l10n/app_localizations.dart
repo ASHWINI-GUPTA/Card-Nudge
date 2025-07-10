@@ -67,8 +67,8 @@ abstract class AppLocalizations {
 
   final String localeName;
 
-  static AppLocalizations? of(BuildContext context) {
-    return Localizations.of<AppLocalizations>(context, AppLocalizations);
+  static AppLocalizations of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
   static const LocalizationsDelegate<AppLocalizations> delegate =
@@ -98,29 +98,113 @@ abstract class AppLocalizations {
     Locale('hi'),
   ];
 
-  /// No description provided for @dashboardTitle.
+  /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'Nudge 🔔'**
-  String get dashboardTitle;
+  /// **'Card Nudge 🔔'**
+  String get appTitle;
 
-  /// No description provided for @cardsTitle.
+  /// No description provided for @welcomeTitle.
   ///
   /// In en, this message translates to:
-  /// **'Cards'**
-  String get cardsTitle;
+  /// **'Welcome to Card Nudge 🔔'**
+  String get welcomeTitle;
 
-  /// No description provided for @noCardsMessage.
+  /// No description provided for @welcomeSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'No cards added yet.'**
-  String get noCardsMessage;
+  /// **'Your Credit Card Companion!'**
+  String get welcomeSubtitle;
 
-  /// No description provided for @errorLoadingCards.
+  /// No description provided for @welcomeDescription.
   ///
   /// In en, this message translates to:
-  /// **'Couldn\'t load cards. Try again.'**
-  String get errorLoadingCards;
+  /// **'Track your credit cards, payment dues, and never miss a payment again.'**
+  String get welcomeDescription;
+
+  /// No description provided for @buttonOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get buttonOk;
+
+  /// No description provided for @buttonCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get buttonCancel;
+
+  /// No description provided for @buttonClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get buttonClose;
+
+  /// No description provided for @buttonSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get buttonSave;
+
+  /// No description provided for @buttonAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get buttonAdd;
+
+  /// No description provided for @buttonDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get buttonDelete;
+
+  /// No description provided for @buttonEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get buttonEdit;
+
+  /// No description provided for @buttonArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get buttonArchive;
+
+  /// No description provided for @buttonRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get buttonRetry;
+
+  /// No description provided for @buttonUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get buttonUndo;
+
+  /// No description provided for @buttonHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get buttonHome;
+
+  /// No description provided for @buttonAddCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Card'**
+  String get buttonAddCard;
+
+  /// No description provided for @buttonUpdateCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Card'**
+  String get buttonUpdateCard;
+
+  /// No description provided for @buttonAddPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Payment Due'**
+  String get buttonAddPayment;
 
   /// No description provided for @retryButtonLabel.
   ///
@@ -128,17 +212,185 @@ abstract class AppLocalizations {
   /// **'Retry'**
   String get retryButtonLabel;
 
-  /// No description provided for @addCard.
+  /// No description provided for @validationRequired.
   ///
   /// In en, this message translates to:
-  /// **'Add New Card'**
-  String get addCard;
+  /// **'This field is required.'**
+  String get validationRequired;
+
+  /// No description provided for @errorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred. Please try again or return to the home screen. If the problem persists, contact support.'**
+  String get errorGeneric;
+
+  /// No description provided for @utilization.
+  ///
+  /// In en, this message translates to:
+  /// **'Utilization'**
+  String get utilization;
+
+  /// No description provided for @overUtilization.
+  ///
+  /// In en, this message translates to:
+  /// **'Overutilized Cards'**
+  String get overUtilization;
+
+  /// No description provided for @totalCreditLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Credit Limit'**
+  String get totalCreditLimit;
+
+  /// No description provided for @quickInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Insights'**
+  String get quickInsights;
+
+  /// No description provided for @monthlyOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Overview by Month'**
+  String get monthlyOverview;
+
+  /// No description provided for @cardsScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Cards'**
+  String get cardsScreenTitle;
+
+  /// No description provided for @cardsScreenSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your credit cards and payments'**
+  String get cardsScreenSubtitle;
+
+  /// No description provided for @cardsScreenDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep track of your credit cards, payment dues, and upcoming payments.'**
+  String get cardsScreenDescription;
+
+  /// No description provided for @cardsScreenEmptyStateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Cards Added'**
+  String get cardsScreenEmptyStateTitle;
+
+  /// No description provided for @cardsScreenEmptyStateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your credit cards to start tracking payments and dues.'**
+  String get cardsScreenEmptyStateSubtitle;
+
+  /// No description provided for @cardsScreenErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Error Loading Cards'**
+  String get cardsScreenErrorTitle;
+
+  /// No description provided for @cardsScreenErrorSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'There was an error loading your cards. Please try again later.'**
+  String get cardsScreenErrorSubtitle;
+
+  /// No description provided for @cardDetailsScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Details'**
+  String get cardDetailsScreenTitle;
+
+  /// No description provided for @cardDetailsScreenSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'View and manage your card details'**
+  String get cardDetailsScreenSubtitle;
+
+  /// No description provided for @cardDetailsScreenDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'View your card details, upcoming payments, and payment history.'**
+  String get cardDetailsScreenDescription;
+
+  /// No description provided for @addCardScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Card'**
+  String get addCardScreenTitle;
+
+  /// No description provided for @updateCardScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Card'**
+  String get updateCardScreenTitle;
+
+  /// No description provided for @addCardScreenSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a new credit card'**
+  String get addCardScreenSubtitle;
+
+  /// No description provided for @updateCardScreenSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your credit card details'**
+  String get updateCardScreenSubtitle;
+
+  /// No description provided for @addCardScreenDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your card details to start tracking payments and dues.'**
+  String get addCardScreenDescription;
+
+  /// No description provided for @updateCardScreenDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your card details to keep your payment information current.'**
+  String get updateCardScreenDescription;
+
+  /// No description provided for @cardNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Name *'**
+  String get cardNameLabel;
+
+  /// No description provided for @cardNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter card name'**
+  String get cardNameHint;
+
+  /// No description provided for @cardNameError.
+  ///
+  /// In en, this message translates to:
+  /// **'Card name is required.'**
+  String get cardNameError;
+
+  /// No description provided for @bankLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank *'**
+  String get bankLabel;
+
+  /// No description provided for @bankHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your bank'**
+  String get bankHint;
 
   /// No description provided for @addPaymentDue.
   ///
   /// In en, this message translates to:
   /// **'Add Payment Due'**
   String get addPaymentDue;
+
+  /// No description provided for @editPaymentDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Payment Due'**
+  String get editPaymentDue;
 
   /// No description provided for @dueAmountLabel.
   ///
@@ -188,6 +440,18 @@ abstract class AppLocalizations {
   /// **'Payment due added successfully!'**
   String get paymentAddedSuccess;
 
+  /// No description provided for @paymentUpdatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment due updated successfully!'**
+  String get paymentUpdatedSuccess;
+
+  /// No description provided for @noDuePaymentAddedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'No payment due added. You can add it later.'**
+  String get noDuePaymentAddedSuccess;
+
   /// No description provided for @paymentAddError.
   ///
   /// In en, this message translates to:
@@ -197,26 +461,20 @@ abstract class AppLocalizations {
   /// No description provided for @addDueButton.
   ///
   /// In en, this message translates to:
-  /// **'Add'**
+  /// **'Payment'**
   String get addDueButton;
 
-  /// No description provided for @updateCard.
+  /// No description provided for @noPaymentDue.
   ///
   /// In en, this message translates to:
-  /// **'Update Card'**
-  String get updateCard;
+  /// **'No Payment Required'**
+  String get noPaymentDue;
 
   /// No description provided for @cardLabel.
   ///
   /// In en, this message translates to:
   /// **'Card Name'**
   String get cardLabel;
-
-  /// No description provided for @bankLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Bank'**
-  String get bankLabel;
 
   /// No description provided for @networkLabel.
   ///
@@ -247,12 +505,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Credit Limit'**
   String get creditLimitLabel;
-
-  /// No description provided for @requiredFieldError.
-  ///
-  /// In en, this message translates to:
-  /// **'This field is required.'**
-  String get requiredFieldError;
 
   /// No description provided for @last4DigitsError.
   ///
@@ -289,6 +541,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to save card.'**
   String get cardSaveError;
+
+  /// No description provided for @dueDateBeforeBillingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date must be after billing date'**
+  String get dueDateBeforeBillingError;
 
   /// No description provided for @saveButton.
   ///
@@ -374,12 +632,6 @@ abstract class AppLocalizations {
   /// **'Payment not found.'**
   String get paymentNotFoundError;
 
-  /// No description provided for @cardLoadError.
-  ///
-  /// In en, this message translates to:
-  /// **'Couldn\'t load cards.'**
-  String get cardLoadError;
-
   /// No description provided for @invalidBankError.
   ///
   /// In en, this message translates to:
@@ -395,19 +647,19 @@ abstract class AppLocalizations {
   /// No description provided for @editCard.
   ///
   /// In en, this message translates to:
-  /// **'Edit Card'**
+  /// **'Update'**
   String get editCard;
 
   /// No description provided for @deleteCard.
   ///
   /// In en, this message translates to:
-  /// **'Delete Card'**
+  /// **'Delete'**
   String get deleteCard;
 
   /// No description provided for @archiveCard.
   ///
   /// In en, this message translates to:
-  /// **'Archive Card'**
+  /// **'Archive'**
   String get archiveCard;
 
   /// No description provided for @upcomingPayment.
@@ -416,11 +668,17 @@ abstract class AppLocalizations {
   /// **'Upcoming Payment'**
   String get upcomingPayment;
 
-  /// No description provided for @noUpcomingDues.
+  /// No description provided for @noUpcomingDueMessage.
   ///
   /// In en, this message translates to:
-  /// **'No upcoming payments.'**
-  String get noUpcomingDues;
+  /// **'Add a payment to see it here.'**
+  String get noUpcomingDueMessage;
+
+  /// Message showing the number of days until the next billing date
+  ///
+  /// In en, this message translates to:
+  /// **'Your next billing date is in {daysUntilBilling,plural, one{1 day} other{{daysUntilBilling} days}}.'**
+  String nextBillingDateMessage(num daysUntilBilling);
 
   /// No description provided for @paymentHistory.
   ///
@@ -431,7 +689,7 @@ abstract class AppLocalizations {
   /// No description provided for @noPastPayments.
   ///
   /// In en, this message translates to:
-  /// **'No past payments yet.'**
+  /// **'No past payments available.'**
   String get noPastPayments;
 
   /// No description provided for @paymentHistoryItem.
@@ -505,6 +763,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Card archived successfully!'**
   String get cardArchivedSuccess;
+
+  /// No description provided for @deletePaymentMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this payment? This action cannot be undone.'**
+  String get deletePaymentMessage;
+
+  /// No description provided for @deletePaymentConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Delete Payment'**
+  String get deletePaymentConfirmation;
 
   /// No description provided for @bankDetailsLoadError.
   ///
@@ -581,7 +851,7 @@ abstract class AppLocalizations {
   /// No description provided for @noPaymentsMessage.
   ///
   /// In en, this message translates to:
-  /// **'No upcoming or overdue payments.'**
+  /// **'No Upcoming or Overdue Payments available.'**
   String get noPaymentsMessage;
 
   /// No description provided for @addCardButton.
@@ -593,7 +863,7 @@ abstract class AppLocalizations {
   /// No description provided for @addPaymentButton.
   ///
   /// In en, this message translates to:
-  /// **'Add Payment'**
+  /// **'Create Payment Due'**
   String get addPaymentButton;
 
   /// No description provided for @invalidCardError.
@@ -791,7 +1061,7 @@ abstract class AppLocalizations {
   /// No description provided for @clearData.
   ///
   /// In en, this message translates to:
-  /// **'Clear All Data'**
+  /// **'Clear Local Data'**
   String get clearData;
 
   /// No description provided for @clearDataConfirm.
@@ -854,6 +1124,72 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get delete;
 
+  /// No description provided for @versionError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading version'**
+  String get versionError;
+
+  /// No description provided for @loadingVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading version...'**
+  String get loadingVersion;
+
+  /// No description provided for @syncData.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Data'**
+  String get syncData;
+
+  /// No description provided for @syncDataSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Data with the cloud to keep your information safe.'**
+  String get syncDataSubtitle;
+
+  /// No description provided for @syncDataSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Data synced successfully!'**
+  String get syncDataSuccess;
+
+  /// No description provided for @syncDataError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to sync data. Please try again.'**
+  String get syncDataError;
+
+  /// No description provided for @syncDataInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing data...'**
+  String get syncDataInProgress;
+
+  /// No description provided for @syncPreference.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync'**
+  String get syncPreference;
+
+  /// No description provided for @syncPreferenceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable to sync your settings and data across devices.'**
+  String get syncPreferenceSubtitle;
+
+  /// No description provided for @utilizationAlertDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Get notified when your credit card utilization exceeds this percentage.'**
+  String get utilizationAlertDescription;
+
+  /// No description provided for @utilizationAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Utilization Threshold'**
+  String get utilizationAlert;
+
   /// No description provided for @bankName.
   ///
   /// In en, this message translates to:
@@ -889,6 +1225,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select Color'**
   String get selectColorLabel;
+
+  /// No description provided for @logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
+
+  /// No description provided for @overdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get overdue;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @paid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get paid;
+
+  /// No description provided for @partiallyPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Partially Paid'**
+  String get partiallyPaid;
+
+  /// No description provided for @noPaymentDueStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'No Payment Due'**
+  String get noPaymentDueStatus;
+
+  /// No description provided for @upcomingDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming Due'**
+  String get upcomingDue;
+
+  /// No description provided for @dueTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Due tomorrow'**
+  String get dueTomorrow;
+
+  /// Message indicating how many days a payment is overdue
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue by {days,plural, one{1 day} other{{days} days}}.'**
+  String overdueByDays(num days);
+
+  /// Message indicating how many days until a payment is due
+  ///
+  /// In en, this message translates to:
+  /// **'Due in {days,plural, one{1 day} other{{days} days}}.'**
+  String dueInDays(num days);
+
+  /// No description provided for @paidOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid on'**
+  String get paidOn;
+
+  /// No description provided for @dueOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Due on'**
+  String get dueOn;
+
+  /// No description provided for @statementAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Statement Amount'**
+  String get statementAmount;
+
+  /// No description provided for @partiallyPaidAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Partially Paid: '**
+  String get partiallyPaidAmount;
 }
 
 class _AppLocalizationsDelegate

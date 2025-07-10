@@ -1,9 +1,9 @@
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:card_nudge/helper/date_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../constants/app_strings.dart';
 import '../../data/hive/models/credit_card_model.dart';
 import '../../data/hive/models/payment_model.dart';
 import '../providers/credit_card_provider.dart';
@@ -81,7 +81,7 @@ class DashboardScreen extends ConsumerWidget {
               error:
                   (error, stack) => Center(
                     child: Text(
-                      '${AppStrings.paymentLoadError}: $error',
+                      '${context.l10n.paymentLoadError}: $error',
                       style: theme.textTheme.bodyLarge,
                       textAlign: TextAlign.center,
                     ),
@@ -91,7 +91,7 @@ class DashboardScreen extends ConsumerWidget {
         error:
             (error, stack) => Center(
               child: Text(
-                '${AppStrings.cardsScreenErrorTitle}: $error',
+                '${context.l10n.cardsScreenErrorTitle}: $error',
                 style: theme.textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),
@@ -242,7 +242,7 @@ class DashboardScreen extends ConsumerWidget {
 
         // Quick Insights
         Text(
-          AppStrings.quickInsights,
+          context.l10n.quickInsights,
           style: theme.textTheme.titleMedium?.copyWith(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -253,28 +253,28 @@ class DashboardScreen extends ConsumerWidget {
         Column(
           children: [
             DashboardMetricsDisplayCard(
-              title: AppStrings.totalCreditLimit,
+              title: context.l10n.totalCreditLimit,
               value: formatHelper.formatCurrency(totalCreditLimit),
               icon: Icons.credit_card,
               color: theme.colorScheme.primary,
             ),
             if (totalDue > 0)
               DashboardMetricsDisplayCard(
-                title: AppStrings.totalDue,
+                title: context.l10n.totalDue,
                 value: formatHelper.formatCurrency(totalDue),
                 icon: Icons.account_balance_wallet_outlined,
                 color: theme.colorScheme.error,
               ),
             if (utilization > 0)
               DashboardMetricsDisplayCard(
-                title: AppStrings.utilization,
+                title: context.l10n.utilization,
                 value: '${(utilization * 100).toStringAsFixed(0)}%',
                 icon: Icons.pie_chart_outline,
                 color: theme.colorScheme.secondary,
               ),
             if (overUtilizedCards > 0)
               DashboardMetricsDisplayCard(
-                title: AppStrings.overUtilization,
+                title: context.l10n.overUtilization,
                 value:
                     '$overUtilizedCards Card${overUtilizedCards == 1 ? '' : 's'}',
                 icon: Icons.warning_amber_rounded,
@@ -286,7 +286,7 @@ class DashboardScreen extends ConsumerWidget {
 
         // Spend Chart
         Text(
-          AppStrings.spendOverview,
+          context.l10n.spendOverview,
           style: theme.textTheme.titleMedium?.copyWith(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -299,7 +299,7 @@ class DashboardScreen extends ConsumerWidget {
 
         // Monthly Overview
         Text(
-          AppStrings.monthlyOverview,
+          context.l10n.monthlyOverview,
           style: theme.textTheme.titleMedium?.copyWith(
             fontSize: 16,
             fontWeight: FontWeight.bold,
