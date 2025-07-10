@@ -5,16 +5,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../constants/app_strings.dart';
 import '../providers/filter_provider.dart';
 
-class FilterBottomSheet extends StatefulWidget {
+class TransactionFilterBottomSheet extends StatefulWidget {
   final WidgetRef ref;
 
-  const FilterBottomSheet({super.key, required this.ref});
+  const TransactionFilterBottomSheet({super.key, required this.ref});
 
   @override
-  State<FilterBottomSheet> createState() => _FilterBottomSheetState();
+  State<TransactionFilterBottomSheet> createState() =>
+      _TransactionFilterBottomSheetState();
 }
 
-class _FilterBottomSheetState extends State<FilterBottomSheet> {
+class _TransactionFilterBottomSheetState
+    extends State<TransactionFilterBottomSheet> {
   late SortOrder _sort;
   late AmountRange _range;
 

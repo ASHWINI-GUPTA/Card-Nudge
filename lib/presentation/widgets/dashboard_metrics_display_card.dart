@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class DashboardCard extends StatelessWidget {
+class DashboardMetricsDisplayCard extends StatelessWidget {
   final String title;
   final String value;
   final IconData icon;
   final Color color;
 
-  const DashboardCard({
+  const DashboardMetricsDisplayCard({
     super.key,
     required this.title,
     required this.value,

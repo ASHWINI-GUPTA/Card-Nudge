@@ -17,10 +17,10 @@ final selectedOptionProvider = StateProvider<PaymentOption>(
 
 final isSubmittingProvider = StateProvider<bool>((ref) => false);
 
-class LogPaymentBottomSheet extends ConsumerWidget {
+class PaymentHistoryBottomSheet extends ConsumerWidget {
   final PaymentModel payment;
 
-  const LogPaymentBottomSheet({super.key, required this.payment});
+  const PaymentHistoryBottomSheet({super.key, required this.payment});
 
   Future<void> _logPayment(WidgetRef ref, BuildContext context) async {
     final formKey = GlobalKey<FormState>();

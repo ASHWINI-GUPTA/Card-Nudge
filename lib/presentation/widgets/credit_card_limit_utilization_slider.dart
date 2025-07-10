@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class UtilizationSlider extends ConsumerStatefulWidget {
-  const UtilizationSlider({
+class CreditLimitUtilizationSlider extends ConsumerStatefulWidget {
+  const CreditLimitUtilizationSlider({
     super.key,
     required this.initialValue,
     required this.onChanged,
@@ -13,10 +13,12 @@ class UtilizationSlider extends ConsumerStatefulWidget {
   final ValueChanged<int> onChanged;
 
   @override
-  ConsumerState<UtilizationSlider> createState() => _UtilizationSliderState();
+  ConsumerState<CreditLimitUtilizationSlider> createState() =>
+      _UtilizationSliderState();
 }
 
-class _UtilizationSliderState extends ConsumerState<UtilizationSlider> {
+class _UtilizationSliderState
+    extends ConsumerState<CreditLimitUtilizationSlider> {
   late int _sliderValue;
   Timer? _debounce;
 

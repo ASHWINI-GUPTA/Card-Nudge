@@ -13,9 +13,9 @@ import '../providers/setting_provider.dart';
 import '../providers/supabase_provider.dart';
 import '../providers/sync_provider.dart';
 import '../providers/user_provider.dart';
-import '../widgets/sync_progress_indicator.dart';
-import '../widgets/utilization_slider.dart';
-import '../widgets/version_list_tile_widget.dart';
+import '../widgets/data_sync_progress_bar.dart';
+import '../widgets/credit_card_limit_utilization_slider.dart';
+import '../widgets/app_version_information_tile.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -34,7 +34,7 @@ class SettingsScreen extends ConsumerWidget {
         foregroundColor: theme.colorScheme.onPrimary,
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(2),
-          child: SyncProgressIndicator(),
+          child: DataSynchronizationProgressBar(),
         ),
       ),
       body: SingleChildScrollView(
@@ -269,7 +269,7 @@ class SettingsScreen extends ConsumerWidget {
                           AppStrings.utilizationAlert,
                           style: theme.textTheme.bodyLarge,
                         ),
-                        UtilizationSlider(
+                        CreditLimitUtilizationSlider(
                           initialValue:
                               settings.utilizationAlertThreshold ?? 30,
                           onChanged: (value) {
@@ -361,7 +361,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
               child: Column(
                 children: [
-                  VersionListTile(),
+                  AppVersionInformationTile(),
                   ListTile(
                     leading: Icon(
                       Icons.language,

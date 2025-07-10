@@ -3,14 +3,15 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../constants/app_strings.dart';
 import '../../helper/emoji_helper.dart';
-import 'emoji_blast.dart';
+import 'emoji_celebration_animation.dart';
 
-class VersionListTile extends StatefulWidget {
+class AppVersionInformationTile extends StatefulWidget {
   @override
-  State<VersionListTile> createState() => _VersionListTileState();
+  State<AppVersionInformationTile> createState() =>
+      _AppVersionInformationTileState();
 }
 
-class _VersionListTileState extends State<VersionListTile> {
+class _AppVersionInformationTileState extends State<AppVersionInformationTile> {
   int _tapCount = 0;
   Key? _blastKey;
 
@@ -51,7 +52,7 @@ class _VersionListTileState extends State<VersionListTile> {
         if (_blastKey != null)
           Positioned.fill(
             child: IgnorePointer(
-              child: EmojiBlast(
+              child: EmojiCelebrationAnimation(
                 key: _blastKey,
                 count: 24,
                 emojis: blastEmojiList,

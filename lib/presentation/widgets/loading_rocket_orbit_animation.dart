@@ -1,14 +1,16 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-class OrbitRocketAnimation extends StatefulWidget {
-  const OrbitRocketAnimation({super.key});
+class LoadingRocketOrbitAnimation extends StatefulWidget {
+  const LoadingRocketOrbitAnimation({super.key});
 
   @override
-  State<OrbitRocketAnimation> createState() => _OrbitRocketAnimationState();
+  State<LoadingRocketOrbitAnimation> createState() =>
+      _LoadingRocketOrbitAnimationState();
 }
 
-class _OrbitRocketAnimationState extends State<OrbitRocketAnimation>
+class _LoadingRocketOrbitAnimationState
+    extends State<LoadingRocketOrbitAnimation>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;

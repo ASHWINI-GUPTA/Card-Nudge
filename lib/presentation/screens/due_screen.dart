@@ -15,12 +15,12 @@ import '../providers/bank_provider.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/format_provider.dart';
 import '../providers/payment_provider.dart';
-import '../widgets/add_due_bottom_sheet.dart';
+import '../widgets/payment_due_entry_bottom_sheet.dart';
 import '../widgets/credit_card_color_dot_indicator.dart';
-import '../widgets/empty_state_widget.dart';
-import '../widgets/no_card_available_widget.dart';
-import '../widgets/payment_log_sheet.dart';
-import '../widgets/sync_progress_indicator.dart';
+import '../widgets/no_data_placeholder_widget.dart';
+import '../widgets/empty_credit_card_list_widget.dart';
+import '../widgets/payment_history_bottom_sheet.dart';
+import '../widgets/data_sync_progress_bar.dart';
 
 class DueScreen extends ConsumerWidget {
   const DueScreen({super.key});
@@ -39,13 +39,13 @@ class DueScreen extends ConsumerWidget {
         backgroundColor: theme.primaryColor,
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(2),
-          child: SyncProgressIndicator(),
+          child: DataSynchronizationProgressBar(),
         ),
       ),
       body: cardsAsync.when(
         data: (cards) {
           if (cards.isEmpty) {
-            return NoCardAvailableWidget(context: context, ref: ref);
+            return EmptyCreditCardListWidget(context: context, ref: ref);
           }
           return RefreshIndicator(
             onRefresh: () async {
@@ -198,7 +198,9 @@ class DueScreen extends ConsumerWidget {
             onPressed:
                 () => NavigationService.showBottomSheet(
                   context: context,
-                  builder: (context) => AddDueBottomSheet(card: cards.first),
+                  builder:
+                      (context) =>
+                          PaymentDueEntryBottomSheet(card: cards.first),
                 ),
             child: Text(AppStrings.addPaymentButton),
           ),
@@ -257,7 +259,7 @@ class DueScreen extends ConsumerWidget {
   }
 
   Widget _buildNoFilteredPayments(BuildContext context, WidgetRef ref) {
-    return EmptyStateWidget(
+    return NoDataPlaceholderWidget(
       message: AppStrings.dueScreenNoFilterMessage,
       buttonText: AppStrings.clearButton,
       onButtonPressed: () => ref.read(dueFilterProvider.notifier).resetFilter(),
@@ -513,7 +515,7 @@ class DueCardContent extends ConsumerWidget {
                         context: context,
                         builder:
                             (context) =>
-                                LogPaymentBottomSheet(payment: payment),
+                                PaymentHistoryBottomSheet(payment: payment),
                       ),
                 ),
               ),

@@ -13,10 +13,10 @@ import '../providers/bank_provider.dart';
 import '../providers/payment_provider.dart';
 import 'credit_card_color_dot_indicator.dart';
 
-class CreditCardTile extends ConsumerWidget {
+class CreditCardDetailsListTile extends ConsumerWidget {
   final String cardId;
 
-  const CreditCardTile({super.key, required this.cardId});
+  const CreditCardDetailsListTile({super.key, required this.cardId});
 
   static const _defaultColor = Color(0xFF1A1A1A);
   static const _cardWidth = 400.0;

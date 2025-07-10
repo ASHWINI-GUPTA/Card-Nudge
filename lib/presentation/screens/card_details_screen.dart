@@ -8,11 +8,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../constants/app_strings.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/payment_provider.dart';
-import '../widgets/add_due_bottom_sheet.dart';
+import '../widgets/payment_due_entry_bottom_sheet.dart';
 import '../widgets/credit_card_color_dot_indicator.dart';
-import '../widgets/credit_card_tile.dart';
-import '../widgets/minimal_payment_display_card.dart';
-import '../widgets/payment_log_sheet.dart';
+import '../widgets/credit_card_details_list_tile.dart';
+import '../widgets/payment_summary_display_card.dart';
+import '../widgets/payment_history_bottom_sheet.dart';
 import 'add_card_screen.dart';
 
 class CardDetailsScreen extends ConsumerWidget {
@@ -85,7 +85,7 @@ class CardDetailsScreen extends ConsumerWidget {
           onPressed:
               () => NavigationService.showBottomSheet(
                 context: context,
-                builder: (context) => AddDueBottomSheet(card: card),
+                builder: (context) => PaymentDueEntryBottomSheet(card: card),
               ),
           icon: const Icon(Icons.add),
           label: Text(AppStrings.addDueButton),
@@ -110,7 +110,7 @@ class CardDetailsScreen extends ConsumerWidget {
               children: [
                 Semantics(
                   label: '${AppStrings.cardLabel}: ${card.name}',
-                  child: CreditCardTile(cardId: card.id),
+                  child: CreditCardDetailsListTile(cardId: card.id),
                 ),
                 const SizedBox(height: 24),
                 Row(
@@ -132,7 +132,7 @@ class CardDetailsScreen extends ConsumerWidget {
                           NavigationService.showBottomSheet(
                             context: context,
                             builder:
-                                (context) => AddDueBottomSheet(
+                                (context) => PaymentDueEntryBottomSheet(
                                   card: card,
                                   payment: upcoming.first,
                                 ),
@@ -201,11 +201,11 @@ class CardDetailsScreen extends ConsumerWidget {
                           () => NavigationService.showBottomSheet(
                             context: context,
                             builder:
-                                (context) => LogPaymentBottomSheet(
+                                (context) => PaymentHistoryBottomSheet(
                                   payment: upcoming.first,
                                 ),
                           ),
-                      child: MinimalPaymentCard(payment: upcoming.first),
+                      child: PaymentSummaryDisplayCard(payment: upcoming.first),
                     ),
                   ),
                 const SizedBox(height: 24),
@@ -287,7 +287,7 @@ class CardDetailsScreen extends ConsumerWidget {
         final payment = sortedHistory[index];
         return Semantics(
           label: '${AppStrings.paymentHistoryItem}: ${payment.paidAmount}',
-          child: MinimalPaymentCard(payment: payment),
+          child: PaymentSummaryDisplayCard(payment: payment),
         );
       },
     );

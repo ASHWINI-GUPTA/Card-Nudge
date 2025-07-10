@@ -5,10 +5,10 @@ import 'package:intl/intl.dart';
 
 import '../providers/format_provider.dart';
 
-class SpendChartWidget extends ConsumerWidget {
+class MonthlySpendingChartWidget extends ConsumerWidget {
   final List<Map<String, dynamic>>
   data; // [{'month': 'Jan', 'amount': 5000}, ...]
-  const SpendChartWidget({super.key, this.data = const []});
+  const MonthlySpendingChartWidget({super.key, this.data = const []});
 
   // Get the last 4 months (e.g., Jun, May, Apr, Mar for June 2025)
   List<String> _getLastFourMonths(DateTime now) {

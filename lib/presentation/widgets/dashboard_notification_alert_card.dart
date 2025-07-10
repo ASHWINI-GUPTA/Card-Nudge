@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class DashboardAlertCard extends StatelessWidget {
+class DashboardNotificationAlertCard extends StatelessWidget {
   final String text;
   final IconData icon;
   final Color color;
 
-  const DashboardAlertCard({
+  const DashboardNotificationAlertCard({
     super.key,
     required this.text,
     required this.icon,

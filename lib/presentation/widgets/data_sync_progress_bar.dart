@@ -4,15 +4,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/sync_provider.dart';
 
-class SyncProgressIndicator extends ConsumerStatefulWidget {
-  const SyncProgressIndicator({super.key});
+class DataSynchronizationProgressBar extends ConsumerStatefulWidget {
+  const DataSynchronizationProgressBar({super.key});
 
   @override
-  ConsumerState<SyncProgressIndicator> createState() =>
+  ConsumerState<DataSynchronizationProgressBar> createState() =>
       _SyncProgressIndicatorState();
 }
 
-class _SyncProgressIndicatorState extends ConsumerState<SyncProgressIndicator>
+class _SyncProgressIndicatorState
+    extends ConsumerState<DataSynchronizationProgressBar>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Color?> _colorAnimation;

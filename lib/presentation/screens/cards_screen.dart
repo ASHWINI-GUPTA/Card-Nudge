@@ -6,9 +6,9 @@ import '../../services/navigation_service.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/user_provider.dart';
 import '../widgets/credit_card_color_dot_indicator.dart';
-import '../widgets/credit_card_tile.dart';
-import '../widgets/no_card_available_widget.dart';
-import '../widgets/sync_progress_indicator.dart';
+import '../widgets/credit_card_details_list_tile.dart';
+import '../widgets/empty_credit_card_list_widget.dart';
+import '../widgets/data_sync_progress_bar.dart';
 import 'add_card_screen.dart';
 import 'card_details_screen.dart';
 
@@ -33,7 +33,7 @@ class CardsScreen extends ConsumerWidget {
         backgroundColor: theme.primaryColor,
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(2),
-          child: SyncProgressIndicator(),
+          child: DataSynchronizationProgressBar(),
         ),
       ),
       body: RefreshIndicator(
@@ -44,7 +44,7 @@ class CardsScreen extends ConsumerWidget {
           data:
               (cards) =>
                   cards.isEmpty
-                      ? NoCardAvailableWidget(context: context, ref: ref)
+                      ? EmptyCreditCardListWidget(context: context, ref: ref)
                       : ListView.separated(
                         padding: const EdgeInsets.all(8.0),
                         physics: const BouncingScrollPhysics(),
@@ -61,7 +61,7 @@ class CardsScreen extends ConsumerWidget {
                             child: Semantics(
                               label:
                                   '${AppStrings.cardsScreenTitle}: ${card.name}',
-                              child: CreditCardTile(
+                              child: CreditCardDetailsListTile(
                                 key: ValueKey(card.id),
                                 cardId: card.id,
                               ),

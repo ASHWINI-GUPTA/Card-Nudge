@@ -12,11 +12,11 @@ import '../providers/payment_provider.dart';
 import '../providers/setting_provider.dart';
 import '../providers/user_provider.dart';
 import '../widgets/credit_card_color_dot_indicator.dart';
-import '../widgets/dashboard_alert_card.dart';
-import '../widgets/dashboard_card.dart';
+import '../widgets/dashboard_notification_alert_card.dart';
+import '../widgets/dashboard_metrics_display_card.dart';
 import '../widgets/dashboard_month_widget.dart';
-import '../widgets/spend_chart_widget.dart';
-import '../widgets/sync_progress_indicator.dart';
+import '../widgets/monthly_spend_chart_widget.dart';
+import '../widgets/data_sync_progress_bar.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -69,7 +69,7 @@ class DashboardScreen extends ConsumerWidget {
         backgroundColor: theme.colorScheme.primary,
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(2),
-          child: SyncProgressIndicator(),
+          child: DataSynchronizationProgressBar(),
         ),
       ),
       body: cardsAsync.when(
@@ -252,28 +252,28 @@ class DashboardScreen extends ConsumerWidget {
         const SizedBox(height: 12),
         Column(
           children: [
-            DashboardCard(
+            DashboardMetricsDisplayCard(
               title: AppStrings.totalCreditLimit,
               value: formatHelper.formatCurrency(totalCreditLimit),
               icon: Icons.credit_card,
               color: theme.colorScheme.primary,
             ),
             if (totalDue > 0)
-              DashboardCard(
+              DashboardMetricsDisplayCard(
                 title: AppStrings.totalDue,
                 value: formatHelper.formatCurrency(totalDue),
                 icon: Icons.account_balance_wallet_outlined,
                 color: theme.colorScheme.error,
               ),
             if (utilization > 0)
-              DashboardCard(
+              DashboardMetricsDisplayCard(
                 title: AppStrings.utilization,
                 value: '${(utilization * 100).toStringAsFixed(0)}%',
                 icon: Icons.pie_chart_outline,
                 color: theme.colorScheme.secondary,
               ),
             if (overUtilizedCards > 0)
-              DashboardCard(
+              DashboardMetricsDisplayCard(
                 title: AppStrings.overUtilization,
                 value:
                     '$overUtilizedCards Card${overUtilizedCards == 1 ? '' : 's'}',
@@ -294,7 +294,7 @@ class DashboardScreen extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 12),
-        SpendChartWidget(data: monthlySpends),
+        MonthlySpendingChartWidget(data: monthlySpends),
         const SizedBox(height: 24),
 
         // Monthly Overview
@@ -332,7 +332,7 @@ class DashboardScreen extends ConsumerWidget {
         children:
             alerts
                 .map(
-                  (alert) => DashboardAlertCard(
+                  (alert) => DashboardNotificationAlertCard(
                     text: alert['text'] as String,
                     icon: alert['icon'] as IconData,
                     color: alert['color'] as Color,

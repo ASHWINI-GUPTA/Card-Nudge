@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class EmptyStateWidget extends StatelessWidget {
+class NoDataPlaceholderWidget extends StatelessWidget {
   final String message;
   final String buttonText;
   final VoidCallback onButtonPressed;
 
-  const EmptyStateWidget({
+  const NoDataPlaceholderWidget({
     super.key,
     required this.message,
     required this.buttonText,

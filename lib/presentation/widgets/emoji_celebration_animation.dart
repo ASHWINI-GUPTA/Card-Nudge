@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-class EmojiBlast extends StatefulWidget {
+class EmojiCelebrationAnimation extends StatefulWidget {
   final int count;
   final List<String> emojis;
   final Duration duration;
@@ -11,7 +11,7 @@ class EmojiBlast extends StatefulWidget {
   final VoidCallback? onBlastEnd;
   final Key? triggerKey;
 
-  const EmojiBlast({
+  const EmojiCelebrationAnimation({
     Key? key,
     required this.count,
     required this.emojis,
@@ -23,10 +23,12 @@ class EmojiBlast extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<EmojiBlast> createState() => _EmojiBlastState();
+  State<EmojiCelebrationAnimation> createState() =>
+      _EmojiCelebrationAnimationState();
 }
 
-class _EmojiBlastState extends State<EmojiBlast> with TickerProviderStateMixin {
+class _EmojiCelebrationAnimationState extends State<EmojiCelebrationAnimation>
+    with TickerProviderStateMixin {
   late List<_BlastParticle> _blasts;
   bool _visible = true;
 
@@ -37,7 +39,7 @@ class _EmojiBlastState extends State<EmojiBlast> with TickerProviderStateMixin {
   }
 
   @override
-  void didUpdateWidget(covariant EmojiBlast oldWidget) {
+  void didUpdateWidget(covariant EmojiCelebrationAnimation oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.triggerKey != oldWidget.triggerKey) {
       _startBlast();

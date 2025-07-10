@@ -1,4 +1,4 @@
-import 'package:card_nudge/presentation/widgets/emoji_blast.dart';
+import 'package:card_nudge/presentation/widgets/emoji_celebration_animation.dart';
 import 'package:flutter/material.dart';
 
 import '../../helper/emoji_helper.dart';
@@ -99,7 +99,7 @@ class _OfflineButtonState extends State<OfflineButton>
           ),
           if (_blastKey != null)
             Positioned(
-              child: EmojiBlast(
+              child: EmojiCelebrationAnimation(
                 key: _blastKey,
                 count: 24,
                 emojis: List.from(blastEmojiList),

@@ -11,17 +11,23 @@ import '../providers/payment_provider.dart';
 import '../providers/user_provider.dart';
 import 'credit_card_color_dot_indicator.dart';
 
-class AddDueBottomSheet extends ConsumerStatefulWidget {
+class PaymentDueEntryBottomSheet extends ConsumerStatefulWidget {
   final CreditCardModel card;
   final PaymentModel? payment;
 
-  const AddDueBottomSheet({super.key, required this.card, this.payment});
+  const PaymentDueEntryBottomSheet({
+    super.key,
+    required this.card,
+    this.payment,
+  });
 
   @override
-  ConsumerState<AddDueBottomSheet> createState() => _AddDueBottomSheetState();
+  ConsumerState<PaymentDueEntryBottomSheet> createState() =>
+      _PaymentDueEntryBottomSheet();
 }
 
-class _AddDueBottomSheetState extends ConsumerState<AddDueBottomSheet> {
+class _PaymentDueEntryBottomSheet
+    extends ConsumerState<PaymentDueEntryBottomSheet> {
   final _formKey = GlobalKey<FormState>();
   final _dueAmountController = TextEditingController();
   final _minimumDueController = TextEditingController();

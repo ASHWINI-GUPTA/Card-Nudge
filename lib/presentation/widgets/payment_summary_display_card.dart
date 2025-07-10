@@ -4,10 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/hive/models/payment_model.dart';
 import '../providers/format_provider.dart';
 
-class MinimalPaymentCard extends ConsumerWidget {
+class PaymentSummaryDisplayCard extends ConsumerWidget {
   final PaymentModel payment;
 
-  const MinimalPaymentCard({super.key, required this.payment});
+  const PaymentSummaryDisplayCard({super.key, required this.payment});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
