@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/user_provider.dart';
-import '../screens/add_card_screen.dart';
+import '../screens/card_card_form_screen.dart';
 import 'no_data_placeholder_widget.dart';
 
 class EmptyCreditCardListWidget extends StatelessWidget {
@@ -24,8 +24,10 @@ class EmptyCreditCardListWidget extends StatelessWidget {
       message: context.l10n.cardsScreenEmptyStateTitle,
       buttonText: context.l10n.buttonAddCard,
       onButtonPressed:
-          () =>
-              NavigationService.navigateTo(context, AddCardScreen(user: user)),
+          () => NavigationService.navigateTo(
+            context,
+            CreditCardFormScreen(user: user),
+          ),
     );
   }
 }

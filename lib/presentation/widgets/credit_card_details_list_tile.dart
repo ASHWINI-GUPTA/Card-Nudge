@@ -137,6 +137,12 @@ class CreditCardDetailsListTile extends ConsumerWidget {
                       left: 16,
                       child: _buildCardLogo(theme, bank),
                     ),
+                    if (card.isAutoDebitEnabled)
+                      Positioned(
+                        top: 16,
+                        right: 16,
+                        child: _autoDebitIcon(context),
+                      ),
                     Positioned(
                       bottom: 16,
                       left: 16,
@@ -188,6 +194,24 @@ class CreditCardDetailsListTile extends ConsumerWidget {
     }
   }
 
+  Widget _autoDebitIcon(BuildContext context) {
+    return Tooltip(
+      message: context.l10n.autoDebitEnabledTooltip,
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: Colors.white.withAlpha(51),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: const Icon(
+          Icons.auto_mode_rounded,
+          color: Colors.white,
+          size: 20,
+        ),
+      ),
+    );
+  }
+
   Widget _buildCardLogo(ThemeData theme, BankModel bank) {
     final bankLogo =
         bank.logoPath != null
@@ -227,6 +251,9 @@ class CreditCardDetailsListTile extends ConsumerWidget {
 
     final statmentGenerated = DateTime.now().isAfter(card.billingDate);
     final daysLeft = card.dueDate.differenceInDaysCeil(DateTime.now());
+    final billingDateLeft = card.billingDate.differenceInDaysCeil(
+      DateTime.now(),
+    );
 
     Color dueDateColor;
     if (daysLeft <= 5) {
@@ -235,6 +262,15 @@ class CreditCardDetailsListTile extends ConsumerWidget {
       dueDateColor = Colors.deepOrangeAccent;
     } else {
       dueDateColor = Colors.orangeAccent;
+    }
+
+    Color billingDateColor;
+    if (billingDateLeft == 0) {
+      billingDateColor = Colors.amberAccent;
+    } else if (hasDue || statmentGenerated) {
+      billingDateColor = Colors.redAccent;
+    } else {
+      billingDateColor = Colors.greenAccent;
     }
 
     return Column(
@@ -306,10 +342,7 @@ class CreditCardDetailsListTile extends ConsumerWidget {
                   card.billingDate,
                   format: 'MMMM d',
                 ),
-                valueColor:
-                    hasDue || statmentGenerated
-                        ? Colors.redAccent
-                        : Colors.greenAccent,
+                valueColor: billingDateColor,
               ),
           ],
         ),

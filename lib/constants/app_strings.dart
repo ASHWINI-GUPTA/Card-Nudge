@@ -70,6 +70,8 @@ class AppStrings {
   static const cardNameError = 'Card name is required.';
   static const bankLabel = 'Bank *';
   static const bankHint = 'Select your bank';
+  static const autoDebitEnabledLabel = 'Auto Debit Enabled';
+  static const autoDebitEnabledTooltip = '';
 
   // Payment Due Bottom Sheet
   static const addPaymentDue = 'Add Payment Due';

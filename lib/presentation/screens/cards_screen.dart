@@ -9,7 +9,7 @@ import '../widgets/credit_card_color_dot_indicator.dart';
 import '../widgets/credit_card_details_list_tile.dart';
 import '../widgets/empty_credit_card_list_widget.dart';
 import '../widgets/data_sync_progress_bar.dart';
-import 'add_card_screen.dart';
+import 'card_card_form_screen.dart';
 import 'card_details_screen.dart';
 
 class CardsScreen extends ConsumerWidget {
@@ -99,7 +99,7 @@ class CardsScreen extends ConsumerWidget {
           onPressed:
               () => NavigationService.navigateTo(
                 context,
-                AddCardScreen(user: user),
+                CreditCardFormScreen(user: user),
               ),
           tooltip: context.l10n.buttonAddCard,
           child: const Icon(Icons.add),

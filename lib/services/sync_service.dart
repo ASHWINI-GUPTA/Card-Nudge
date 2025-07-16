@@ -135,6 +135,7 @@ class SyncService {
             updatedAt: serverUpdatedAt,
             isArchived: serverCard['is_archived'] ?? false,
             isFavorite: serverCard['is_favorite'] ?? false,
+            isAutoDebitEnabled: serverCard['is_auto_debit_enabled'] ?? false,
             syncPending: false,
           );
           await cardBox.put(card.id, card);
@@ -156,6 +157,7 @@ class SyncService {
           'updated_at': localCard.updatedAt.toIso8601String(),
           'is_archived': localCard.isArchived,
           'is_favorite': localCard.isFavorite,
+          'is_auto_debit_enabled': localCard.isAutoDebitEnabled,
         };
         await supabase.from('cards').upsert(data);
         final updatedCard = localCard.copyWith(syncPending: false);

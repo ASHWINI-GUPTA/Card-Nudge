@@ -219,5 +219,7 @@
   "paidOn": "भुगतान किया गया",
   "dueOn": "बकाया है",
   "statementAmount": "विवरण राशि",
-  "partiallyPaidAmount": "आंशिक रूप से भुगतान: "
+  "partiallyPaidAmount": "आंशिक रूप से भुगतान: ",
+  "autoDebitEnabledLabel": "ऑटो डेबिट चालू किया गया है",
+  "autoDebitEnabledTooltip": "इस कार्ड के लिए स्वचालित भुगतान सक्रिय है"
 }

@@ -52,6 +52,9 @@ class CreditCardModel extends HiveObject {
   @HiveField(14)
   bool syncPending;
 
+  @HiveField(15, defaultValue: false)
+  bool isAutoDebitEnabled;
+
   CreditCardModel({
     String? id,
     required this.userId,
@@ -68,6 +71,7 @@ class CreditCardModel extends HiveObject {
     this.isArchived = false,
     this.isFavorite = false,
     this.syncPending = true,
+    this.isAutoDebitEnabled = false,
   }) : id = id ?? const Uuid().v4(),
        bankId = bankId,
        createdAt = (createdAt ?? DateTime.now()).toUtc(),
@@ -85,6 +89,7 @@ class CreditCardModel extends HiveObject {
     bool? isArchived,
     bool? isFavorite,
     bool? syncPending,
+    bool? isAutoDebitEnabled,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -102,6 +107,7 @@ class CreditCardModel extends HiveObject {
       isArchived: isArchived ?? this.isArchived,
       isFavorite: isFavorite ?? this.isFavorite,
       syncPending: syncPending ?? this.syncPending,
+      isAutoDebitEnabled: isAutoDebitEnabled ?? this.isAutoDebitEnabled,
       createdAt: createdAt?.toUtc() ?? this.createdAt,
       updatedAt: updatedAt?.toUtc() ?? DateTime.now().toUtc(),
     );

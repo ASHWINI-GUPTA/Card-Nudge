@@ -13,17 +13,18 @@ import '../providers/bank_provider.dart';
 import '../widgets/credit_card_color_dot_indicator.dart';
 import 'loading_screen.dart';
 
-class AddCardScreen extends ConsumerStatefulWidget {
+class CreditCardFormScreen extends ConsumerStatefulWidget {
   final CreditCardModel? card;
   final UserModel user;
 
-  const AddCardScreen({super.key, required this.user, this.card});
+  const CreditCardFormScreen({super.key, required this.user, this.card});
 
   @override
-  ConsumerState<AddCardScreen> createState() => _AddCardScreenState();
+  ConsumerState<CreditCardFormScreen> createState() =>
+      _CreditCardFormScreenState();
 }
 
-class _AddCardScreenState extends ConsumerState<AddCardScreen> {
+class _CreditCardFormScreenState extends ConsumerState<CreditCardFormScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _cardNameController;
   late final TextEditingController _bankNameController;
@@ -35,6 +36,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
   bool _isSubmitting = false;
   Map<String, String>? _selectedCardType;
   Map<String, String>? _selectedBank;
+  bool _isAutoDebitEnabled = false;
 
   @override
   void initState() {
@@ -53,6 +55,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
     );
     _billingDate = card?.billingDate;
     _dueDate = card?.dueDate;
+    _isAutoDebitEnabled = card?.isAutoDebitEnabled ?? false;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.card != null) {
@@ -127,6 +130,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
         creditLimit: double.parse(_limitController.text.trim()),
         currentUtilization: widget.card?.currentUtilization ?? 0.0,
         cardType: cardType,
+        isAutoDebitEnabled: _isAutoDebitEnabled,
       );
 
       print('[DEBUG] Calling creditCardProvider.save');
@@ -302,7 +306,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const spacing = SizedBox(height: 12);
+    const spacingBetweenInput = SizedBox(height: 12);
 
     final banksAsync = ref.watch(bankProvider);
     if (banksAsync.isLoading) {
@@ -335,7 +339,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                             ? context.l10n.validationRequired
                             : null,
               ),
-              spacing,
+              spacingBetweenInput,
               TextFormField(
                 controller: _bankNameController,
                 readOnly: true,
@@ -402,7 +406,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                             ? context.l10n.validationRequired
                             : null,
               ),
-              spacing,
+              spacingBetweenInput,
               TextFormField(
                 controller: _cardTypeController,
                 readOnly: true,
@@ -463,7 +467,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                             ? context.l10n.validationRequired
                             : null,
               ),
-              spacing,
+              spacingBetweenInput,
               TextFormField(
                 controller: _last4DigitsController,
                 decoration: InputDecoration(
@@ -478,7 +482,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                             ? context.l10n.last4DigitsError
                             : null,
               ),
-              spacing,
+              spacingBetweenInput,
               Row(
                 children: [
                   Expanded(
@@ -512,7 +516,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                   ),
                 ],
               ),
-              spacing,
+              spacingBetweenInput,
               TextFormField(
                 controller: _limitController,
                 decoration: InputDecoration(
@@ -531,7 +535,23 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                       : null;
                 },
               ),
-              const SizedBox(height: 20),
+              spacingBetweenInput,
+              Row(
+                children: [
+                  Text(context.l10n.autoDebitEnabledLabel),
+                  const Spacer(),
+                  Switch(
+                    value: _isAutoDebitEnabled,
+                    onChanged: (bool value) {
+                      setState(() {
+                        _isAutoDebitEnabled = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              spacingBetweenInput,
+              spacingBetweenInput,
               FilledButton(
                 onPressed:
                     _isSubmitting

@@ -1309,6 +1309,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Partially Paid: '**
   String get partiallyPaidAmount;
+
+  /// No description provided for @autoDebitEnabledLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Debit Enabled'**
+  String get autoDebitEnabledLabel;
+
+  /// No description provided for @autoDebitEnabledTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic payment is enabled for this card'**
+  String get autoDebitEnabledTooltip;
 }
 
 class _AppLocalizationsDelegate

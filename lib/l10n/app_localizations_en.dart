@@ -653,4 +653,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get partiallyPaidAmount => 'Partially Paid: ';
+
+  @override
+  String get autoDebitEnabledLabel => 'Auto Debit Enabled';
+
+  @override
+  String get autoDebitEnabledTooltip =>
+      'Automatic payment is enabled for this card';
 }

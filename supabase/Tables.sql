@@ -56,6 +56,7 @@ CREATE TABLE cards (
   is_archived BOOLEAN DEFAULT FALSE,
   is_favorite BOOLEAN DEFAULT FALSE,
   is_default_bank BOOLEAN DEFAULT FALSE,
+  is_auto_debit_enabled BOOLEAN DEFAULT FALSE,
   FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
 );
 

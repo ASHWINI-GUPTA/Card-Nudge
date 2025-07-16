@@ -661,4 +661,11 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get partiallyPaidAmount => 'आंशिक रूप से भुगतान: ';
+
+  @override
+  String get autoDebitEnabledLabel => 'ऑटो डेबिट चालू किया गया है';
+
+  @override
+  String get autoDebitEnabledTooltip =>
+      'इस कार्ड के लिए स्वचालित भुगतान सक्रिय है';
 }

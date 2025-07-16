@@ -13,7 +13,7 @@ import '../widgets/credit_card_color_dot_indicator.dart';
 import '../widgets/credit_card_details_list_tile.dart';
 import '../widgets/payment_summary_display_card.dart';
 import '../widgets/payment_history_bottom_sheet.dart';
-import 'add_card_screen.dart';
+import 'card_card_form_screen.dart';
 
 class CardDetailsScreen extends ConsumerWidget {
   final CreditCardModel card;
@@ -304,7 +304,7 @@ class CardDetailsScreen extends ConsumerWidget {
       case 'edit':
         NavigationService.navigateTo(
           context,
-          AddCardScreen(card: card, user: user),
+          CreditCardFormScreen(card: card, user: user),
         );
         break;
       case 'delete':

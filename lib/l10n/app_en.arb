@@ -219,5 +219,7 @@
   "paidOn": "Paid on",
   "dueOn": "Due on",
   "statementAmount": "Statement Amount",
-  "partiallyPaidAmount": "Partially Paid: "
+  "partiallyPaidAmount": "Partially Paid: ",
+  "autoDebitEnabledLabel": "Auto Debit Enabled",
+  "autoDebitEnabledTooltip": "Automatic payment is enabled for this card"
 }
