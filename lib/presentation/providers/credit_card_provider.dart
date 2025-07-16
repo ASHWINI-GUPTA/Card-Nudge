@@ -1,3 +1,4 @@
+import 'package:card_nudge/helper/date_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -37,8 +38,13 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
   @override
   Future<List<CreditCardModel>> build() async {
     _box.listenable().addListener(_onBoxChange);
-    return _box.values.where((card) => !card.isArchived).toList()
-      ..sort((a, b) => a.dueDate.compareTo(b.dueDate));
+    return _box.values.where((card) => !card.isArchived).toList()..sort((a, b) {
+      final dueDateComparison = a.dueDate.differenceInDaysCeil(b.dueDate);
+      if (dueDateComparison != 0) {
+        return dueDateComparison;
+      }
+      return a.billingDate.differenceInDaysCeil(b.billingDate);
+    });
   }
 
   Future<void> refresh() async {
