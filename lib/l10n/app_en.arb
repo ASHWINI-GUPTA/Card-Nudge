@@ -221,5 +221,8 @@
   "statementAmount": "Statement Amount",
   "partiallyPaidAmount": "Partially Paid: ",
   "autoDebitEnabledLabel": "Auto Debit Enabled",
-  "autoDebitEnabledTooltip": "Automatic payment is enabled for this card"
+  "autoDebitEnabledTooltip": "Automatic payment is enabled for this card",
+  "aiGeneratedSummary": "AI Generated Summary",
+  "cardBenefits": "Card Benefits",
+  "noBenefitsSummaryAvailable": "No benefits information available"
 }

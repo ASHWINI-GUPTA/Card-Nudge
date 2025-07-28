@@ -13,6 +13,7 @@ import '../widgets/credit_card_color_dot_indicator.dart';
 import '../widgets/credit_card_details_list_tile.dart';
 import '../widgets/payment_summary_display_card.dart';
 import '../widgets/payment_history_bottom_sheet.dart';
+import 'benefits_summary_screen.dart';
 import 'card_card_form_screen.dart';
 
 class CardDetailsScreen extends ConsumerWidget {
@@ -32,6 +33,18 @@ class CardDetailsScreen extends ConsumerWidget {
           child: Text(card.name, style: theme.textTheme.titleLarge),
         ),
         actions: [
+          IconButton(
+            icon: Icon(
+              Icons.smart_toy_outlined,
+              semanticLabel: context.l10n.cardBenefits,
+              color: theme.colorScheme.onSurface,
+            ),
+            onPressed:
+                () => NavigationService.navigateTo(
+                  context,
+                  BenefitsSummaryScreen(card: card),
+                ),
+          ),
           PopupMenuButton<String>(
             icon: Icon(Icons.more_vert, color: theme.colorScheme.onSurface),
             shape: RoundedRectangleBorder(

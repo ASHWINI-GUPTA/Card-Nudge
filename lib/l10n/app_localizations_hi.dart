@@ -668,4 +668,13 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get autoDebitEnabledTooltip =>
       'इस कार्ड के लिए स्वचालित भुगतान सक्रिय है';
+
+  @override
+  String get aiGeneratedSummary => 'एआई जनरेटेड सारांश';
+
+  @override
+  String get cardBenefits => 'कार्ड लाभ';
+
+  @override
+  String get noBenefitsSummaryAvailable => 'कोई लाभ जानकारी उपलब्ध नहीं है';
 }

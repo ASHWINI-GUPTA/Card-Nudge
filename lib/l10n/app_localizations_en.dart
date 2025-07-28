@@ -660,4 +660,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get autoDebitEnabledTooltip =>
       'Automatic payment is enabled for this card';
+
+  @override
+  String get aiGeneratedSummary => 'AI Generated Summary';
+
+  @override
+  String get cardBenefits => 'Card Benefits';
+
+  @override
+  String get noBenefitsSummaryAvailable => 'No benefits information available';
 }

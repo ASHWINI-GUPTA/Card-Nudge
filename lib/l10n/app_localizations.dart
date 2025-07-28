@@ -1321,6 +1321,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Automatic payment is enabled for this card'**
   String get autoDebitEnabledTooltip;
+
+  /// No description provided for @aiGeneratedSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Generated Summary'**
+  String get aiGeneratedSummary;
+
+  /// No description provided for @cardBenefits.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Benefits'**
+  String get cardBenefits;
+
+  /// No description provided for @noBenefitsSummaryAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No benefits information available'**
+  String get noBenefitsSummaryAvailable;
 }
 
 class _AppLocalizationsDelegate

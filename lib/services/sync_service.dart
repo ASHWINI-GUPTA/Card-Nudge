@@ -136,6 +136,7 @@ class SyncService {
             isArchived: serverCard['is_archived'] ?? false,
             isFavorite: serverCard['is_favorite'] ?? false,
             isAutoDebitEnabled: serverCard['is_auto_debit_enabled'] ?? false,
+            benefitSummary: serverCard['benefit_summary'],
             syncPending: false,
           );
           await cardBox.put(card.id, card);
