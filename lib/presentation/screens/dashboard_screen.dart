@@ -268,7 +268,10 @@ class DashboardScreen extends ConsumerWidget {
             if (utilization > 0)
               DashboardMetricsDisplayCard(
                 title: context.l10n.utilization,
-                value: '${(utilization * 100).toStringAsFixed(0)}%',
+                value:
+                    utilization < 0.01 && utilization > 0
+                        ? '< 1%'
+                        : '${(utilization * 100).toStringAsFixed(0)}%',
                 icon: Icons.pie_chart_outline,
                 color: theme.colorScheme.secondary,
               ),
