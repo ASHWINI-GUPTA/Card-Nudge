@@ -1,7 +1,7 @@
-import { SupabaseService } from "./services/SupabaseService.ts";
+import { SupabaseService } from "../shared/SupabaseService.ts";
 import { FirebaseService } from "./services/FirebaseService.ts";
 import { NotificationSender } from "./notification/NotificationSender.ts";
-import { NotificationLog } from "./models.ts";
+import { NotificationLog } from "../shared/models.ts";
 
 // --- Service Initialization ---
 const supabaseService = new SupabaseService(
@@ -21,7 +21,15 @@ const notificationSender = new NotificationSender(
 /**
  * Main handler for the notification routine.
  */
-Deno.serve(async () => {
+Deno.serve(async (req) => {
+  // Only allow GET requests
+  if (req.method !== "GET") {
+    return new Response(JSON.stringify({ error: "Method Not Allowed" }), {
+      headers: { "Content-Type": "application/json" },
+      status: 405,
+    });
+  }
+
   if (!supabaseService.isInitialized() || !firebaseService.isInitialized()) {
     return new Response("Firebase/Supabase not initialized", { status: 500 });
   }

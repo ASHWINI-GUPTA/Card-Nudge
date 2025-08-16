@@ -1,8 +1,13 @@
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import {
-  createClient,
-  SupabaseClient,
-} from "npm:@supabase/supabase-js@^2.50.1";
-import { Card, NotificationLog, Payment, Setting } from "../models.ts";
+  Bank,
+  Card,
+  CreditCardSummary,
+  NotificationLog,
+  Payment,
+  ProcessingStatus,
+  Setting,
+} from "./models.ts";
 
 export class SupabaseService {
   private client: SupabaseClient | undefined;
@@ -209,5 +214,110 @@ export class SupabaseService {
     } else {
       console.log(`Inserted ${logs.length} notification logs.`);
     }
+  }
+
+  /**
+   * Inserts or updates a credit card summary in the credit_card_summaries table.
+   * Uses `onConflict: 'card_id'` to handle upsert logic.
+   * @param {Partial<CreditCardSummary>} summaryData The summary data to insert/update.
+   * `card_id` and `status` are required.
+   * @returns {Promise<void>} A promise that resolves when the operation is complete.
+   */
+  async upsertCreditCardSummary(summaryData: {
+    card_id: string;
+    markdown_summary?: string;
+    status: ProcessingStatus;
+    error_message?: string | null;
+  }): Promise<void> {
+    if (!this.client) return;
+
+    const dataToUpsert: Partial<CreditCardSummary> = {
+      card_id: summaryData.card_id,
+      status: summaryData.status,
+      error_message: summaryData.error_message || null,
+      markdown_summary: summaryData.markdown_summary || "",
+    };
+
+    const { error } = await this.client
+      .from("credit_card_summaries")
+      .upsert(dataToUpsert, { onConflict: "card_id", ignoreDuplicates: false })
+      .select("id");
+
+    if (error) {
+      console.error(
+        `Error upserting summary for card ${summaryData.card_id}:`,
+        error,
+      );
+    }
+  }
+
+  /**
+   * Fetches all cards that do not have a summary in the credit_card_summaries table.
+   * @returns {Promise<Card[]>} A promise that resolves to an array of cards without summaries.
+   * This method filters out cards that have an associated summary in the credit_card_summaries table.
+   * It returns only those cards that are not archived and do not have a summary.
+   */
+  async getCardsWithoutSummary(): Promise<Card[]> {
+    if (!this.client) return [];
+
+    const { data, error } = await this.client
+      .from("cards")
+      .select("id, name, is_archived, credit_card_summaries(id)")
+      .is("credit_card_summaries.id", null)
+      .eq("is_archived", false);
+
+    if (error) {
+      console.error("Error fetching cards without summary:", error);
+      return [];
+    }
+
+    const allCards = (data as Card[]) ?? [];
+    return allCards.filter((card) => !card.credit_card_summaries?.length);
+  }
+
+  /**
+   * Retrieves a bank record by its unique identifier.
+   *
+   * @param id - The unique identifier of the bank to retrieve.
+   * @returns A promise that resolves to the `Bank` object if found, or `null` if not found or on error.
+   */
+  async getBankById(id: string) {
+    if (!this.client) return null;
+
+    const { data, error } = await this.client
+      .from("default_banks")
+      .select("id, name, code")
+      .eq("id", id)
+      .single();
+
+    if (error) {
+      console.error(`Error fetching bank by ID ${id}:`, error);
+      return null;
+    }
+
+    return data as Bank | null;
+  }
+
+  /**
+   * Retrieves a user's bank record by its unique identifier.
+   *
+   * @param id - The unique identifier of the bank to retrieve.
+   * @returns A promise that resolves to the `Bank` object if found, or `null` if not found or on error.
+   */
+  async getUserBankById(id: string) {
+    if (!this.client) return null;
+
+    const { data, error } = await this.client
+      .from("banks")
+      .select("id, name, code")
+      .eq("id", id)
+      .single();
+
+    if (error) {
+      console.error(`Error fetching bank by ID ${id}:`, error);
+      return null;
+    }
+
+    return data as Bank | null;
   }
 }

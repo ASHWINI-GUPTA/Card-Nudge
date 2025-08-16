@@ -57,9 +57,22 @@ CREATE TABLE cards (
   is_favorite BOOLEAN DEFAULT FALSE,
   is_default_bank BOOLEAN DEFAULT FALSE,
   is_auto_debit_enabled BOOLEAN DEFAULT FALSE,
-  benefit_summary TEXT,
   FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE credit_card_summaries (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  card_id UUID NOT NULL,
+  markdown_summary TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  status INT DEFAULT 1, -- 1: Pending, 2: Completed, 3: Failed
+  error_message TEXT, -- Stores details if summary generation fails
+  user_liked BOOLEAN, -- NULL for no feedback, TRUE for liked, FALSE for disliked
+  FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_credit_card_summaries_card_id ON credit_card_summaries (card_id);
 
 -- Create payments table
 CREATE TABLE payments (

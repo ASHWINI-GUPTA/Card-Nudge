@@ -1,4 +1,4 @@
-import { NotificationStrings } from "../../models.ts";
+import { NotificationStrings } from "../../../shared/models.ts";
 import { formatCurrency } from "../../utils/currencyUtils.ts";
 
 export const en: NotificationStrings = {

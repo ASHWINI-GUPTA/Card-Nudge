@@ -1,7 +1,7 @@
-import { SupabaseService } from "../services/SupabaseService.ts";
+import { SupabaseService } from "../../shared/SupabaseService.ts";
 import { FirebaseService } from "../services/FirebaseService.ts";
 import { NotificationMessageBuilder } from "./NotificationBuilder.ts";
-import { NotificationLog } from "../models.ts";
+import { NotificationLog } from "../../shared/models.ts";
 import { getDaysDifference } from "../utils/dateUtils.ts";
 
 export class NotificationSender {

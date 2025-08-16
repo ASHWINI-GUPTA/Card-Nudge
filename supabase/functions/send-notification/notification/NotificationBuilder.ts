@@ -1,4 +1,4 @@
-import { NotificationStrings } from "../models.ts";
+import { NotificationStrings } from "../../shared/models.ts";
 import { en } from "./lang/en.ts";
 import { hi } from "./lang/hi.ts";
 

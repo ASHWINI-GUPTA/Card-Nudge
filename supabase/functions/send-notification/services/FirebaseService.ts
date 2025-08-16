@@ -1,5 +1,5 @@
 import admin from "npm:firebase-admin@^11.11.1";
-import { NotificationLog } from "../models.ts";
+import { NotificationLog } from "../../shared/models.ts";
 
 export class FirebaseService {
   private app: admin.app.App | undefined;

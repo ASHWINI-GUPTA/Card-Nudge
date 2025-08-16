@@ -7,6 +7,9 @@ export interface Card {
   last_4_digits: string;
   billing_date: string;
   is_archived: boolean;
+  card_type: string;
+  bank_id: string;
+  credit_card_summaries: CreditCardSummary[] | null;
 }
 
 /**
@@ -80,4 +83,37 @@ export interface NotificationStrings {
     remaining: number,
     currencyCode: string,
   ) => { title: string; body: string };
+}
+
+/**
+ * ProcessingStatus type representing the status of a processing task.
+ */
+export enum ProcessingStatus {
+  Pending = 1,
+  Completed = 2,
+  Failed = 3,
+}
+
+/**
+ * CreditCardSummary entity representing a summary of credit card benefits.
+ */
+export interface CreditCardSummary {
+  id: string;
+  card_id: string;
+  markdown_summary: string;
+  status: ProcessingStatus;
+  error_message: string | null;
+  user_liked: boolean | null;
+}
+
+/**
+ * Bank entity representing a financial institution.
+ *
+ * A Bank is identified by a unique `id` and has a `name` and `code`.
+ * This entity provides foundational information about the bank.
+ */
+export interface Bank {
+  id: string;
+  name: string;
+  code: string;
 }
