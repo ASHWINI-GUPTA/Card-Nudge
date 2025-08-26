@@ -10,7 +10,7 @@ const supabaseService = new SupabaseService(
 /**
  * Main handler for the generate card summaries function.
  */
-Deno.serve(async (req) => {
+Deno.serve(async (req: Request): Promise<Response> => {
   // Only allow GET requests
   if (req.method !== "GET") {
     return new Response(JSON.stringify({ error: "Method Not Allowed" }), {
@@ -56,4 +56,6 @@ Deno.serve(async (req) => {
       `Successfully generated and saved summary for card ${card.id}.`,
     );
   }
+
+  return new Response("Summaries processed", { status: 200 });
 });

@@ -19,11 +19,11 @@ export class SupabaseService {
    */
   constructor(
     supabaseUrl: string | undefined,
-    supabaseKey: string | undefined,
+    supabaseKey: string | undefined
   ) {
     if (!supabaseUrl || !supabaseKey) {
       console.error(
-        "❌ Critical: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variables are missing.",
+        "❌ Critical: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variables are missing."
       );
       return;
     }
@@ -114,13 +114,13 @@ export class SupabaseService {
     const { data, error } = (await this.client
       .from("payments")
       .select(
-        "id, due_date, due_amount, paid_amount, statement_amount, is_paid, cards(id, name, last_4_digits, billing_date, is_archived)",
+        "id, due_date, due_amount, paid_amount, statement_amount, is_paid, cards(id, name, last_4_digits, billing_date, is_archived)"
       )
       .eq("user_id", userId)
       .eq("is_paid", false)) as {
-        data: Payment[] | null;
-        error: Error | null;
-      };
+      data: Payment[] | null;
+      error: Error | null;
+    };
 
     if (error) {
       console.error(`Error fetching payments for user ${userId}:`, error);
@@ -159,7 +159,7 @@ export class SupabaseService {
   async getLastNotificationLog(
     userId: string,
     cardId: string,
-    notificationType: NotificationLog["notification_type"],
+    notificationType: NotificationLog["notification_type"]
   ): Promise<NotificationLog | null> {
     if (!this.client) return null;
 
@@ -177,7 +177,7 @@ export class SupabaseService {
       // PGRST116 is 'No rows found', which is expected
       console.error(
         `Error fetching last notification log for user ${userId}, card ${cardId}, type ${notificationType}:`,
-        error,
+        error
       );
     }
     return data as NotificationLog | null;
@@ -246,7 +246,7 @@ export class SupabaseService {
     if (error) {
       console.error(
         `Error upserting summary for card ${summaryData.card_id}:`,
-        error,
+        error
       );
     }
   }
@@ -262,7 +262,9 @@ export class SupabaseService {
 
     const { data, error } = await this.client
       .from("cards")
-      .select("id, name, is_archived, credit_card_summaries(id)")
+      .select(
+        "id, name, last_4_digits, billing_date, is_archived, card_type, bank_id, credit_card_summaries(id)"
+      )
       .is("credit_card_summaries.id", null)
       .eq("is_archived", false);
 

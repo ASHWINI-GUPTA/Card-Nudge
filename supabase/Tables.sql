@@ -253,6 +253,13 @@ CREATE POLICY "Allow delete for own settings"
   TO authenticated
   USING (user_id = (SELECT auth.uid()));
 
+
+CREATE POLICY "Allow read access to credit_card_summaries"
+  ON credit_card_summaries
+  FOR SELECT
+  TO authenticated
+  USING (TRUE);
+
 -- Insert default banks
 INSERT INTO default_banks (name, code, logo_path, support_number, website, color_hex, priority)
 VALUES 
