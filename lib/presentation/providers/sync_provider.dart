@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../data/hive/storage/bank_storage.dart';
 import '../../data/hive/storage/credit_card_storage.dart';
+import '../../data/hive/storage/credit_card_summary_storage.dart';
 import '../../data/hive/storage/setting_storage.dart';
 import '../../services/sync_service.dart';
 
@@ -16,6 +17,7 @@ final syncServiceProvider = Provider<SyncService>((ref) {
   final supabase = Supabase.instance.client;
   final bankBox = BankStorage.getBox();
   final cardBox = CreditCardStorage.getBox();
+  final cardSummaryBox = CreditCardSummaryStorage.getBox();
   final paymentBox = PaymentStorage.getBox();
   final settingsBox = SettingStorage.getBox();
   final connectivity = Connectivity();
@@ -23,6 +25,7 @@ final syncServiceProvider = Provider<SyncService>((ref) {
     supabase: supabase,
     bankBox: bankBox,
     cardBox: cardBox,
+    cardSummaryBox: cardSummaryBox,
     paymentBox: paymentBox,
     settingsBox: settingsBox,
     connectivity: connectivity,

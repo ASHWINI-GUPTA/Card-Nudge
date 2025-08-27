@@ -33,14 +33,13 @@ class CreditCardModelAdapter extends TypeAdapter<CreditCardModel> {
       isFavorite: fields[13] == null ? false : fields[13] as bool,
       syncPending: fields[14] as bool,
       isAutoDebitEnabled: fields[15] == null ? false : fields[15] as bool,
-      benefitSummary: fields[16] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, CreditCardModel obj) {
     writer
-      ..writeByte(17)
+      ..writeByte(16)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -72,9 +71,7 @@ class CreditCardModelAdapter extends TypeAdapter<CreditCardModel> {
       ..writeByte(14)
       ..write(obj.syncPending)
       ..writeByte(15)
-      ..write(obj.isAutoDebitEnabled)
-      ..writeByte(16)
-      ..write(obj.benefitSummary);
+      ..write(obj.isAutoDebitEnabled);
   }
 
   @override

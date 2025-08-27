@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { Bank, Card } from "../shared/models.ts";
 
 const AI_API_KEY = Deno.env.get("AI_API_KEY");
@@ -6,7 +6,7 @@ const AI_MODEL = Deno.env.get("AI_MODEL");
 
 // Initialize the AI client outside the function to reuse connections if possible
 // Ensure AI_API_KEY is available during the Deno deploy process for function initialization
-const genAI = AI_API_KEY ? new GoogleGenerativeAI(AI_API_KEY) : null;
+const genAI = AI_API_KEY ? new GoogleGenAI({ apiKey: AI_API_KEY }) : null;
 
 // --- PROMPT DEFINITION ---
 // This prompt will be used to guide the AI in generating the summary.
@@ -65,14 +65,12 @@ export async function generateSummary(card: Card, bank: Bank): Promise<string> {
   }
 
   try {
-    const model = genAI.getGenerativeModel({
+    const response = await genAI.models.generateContent({
       model: AI_MODEL ?? "gemini-2.0-flash",
+      contents: generateSummaryPrompt(card, bank),
     });
-    const result = await model.generateContent(
-      generateSummaryPrompt(card, bank)
-    );
-    const response = result.response;
-    const summary = response.text();
+
+    const summary = response.text;
 
     if (!summary) {
       throw new Error("Model did not return a summary.");
@@ -100,11 +98,15 @@ ${rawSummaryText}
 
 **Instructions:**
 1.  **Strictly Reformat, Do Not Alter:** Do not add, remove, or change any information. Your only job is to change the formatting.
-2.  **Use Markdown Headings:** Use Markdown headings (e.g., '## Key Benefits', '### Rewards', '### Travel Perks') to logically group related information.
-3.  **Use Bullet Points:** Use bullet points ('*' or '-') to list individual features and benefits.
+2.  **Use Markdown Headings:** Use Markdown headings (e.g., '## Key Benefits', '## Rewards', '## Travel Perks') to logically group related information.
+3.  **Use Bullet Points:** Use bullet points ('*' or '-') to list individual features and benefits, mind the spacing.
 4.  **Bold Keywords:** Bold important numbers, percentages, names, or key phrases to make them stand out (e.g., '**5X points**', '**₹2,999**', '**complimentary lounge access**').
 5.  **Clean and Professional:** The final output must be easy to read and have a professional appearance.
 6.  **Direct Output:** The response should contain only the Markdown-formatted text, with no introductory or concluding sentences.
+7.  **No Code Blocks:** Do not include any code blocks in the output.
+8.  **Emojis:** Use emojis to enhance the visual appeal and readability of the Markdown output.
+9.  **No Placeholder Text:** Do not include any placeholder text (e.g., "[Insert benefit here]") in the output.
+10. **Use of Tables:** Where applicable, use tables to present information in a clear and organized manner.
 
 Markdown Output:
 
@@ -127,15 +129,12 @@ export async function convertToMarkdown(
   }
 
   try {
-    const model = genAI.getGenerativeModel({
+    const response = await genAI.models.generateContent({
       model: AI_MODEL ?? "gemini-2.0-flash",
+      contents: convertToMarkdownPrompt(rawSummaryText),
     });
-    const result = await model.generateContent(
-      convertToMarkdownPrompt(rawSummaryText)
-    );
 
-    const response = result.response;
-    const markdownSummary = response.text();
+    const markdownSummary = response.text;
 
     if (!markdownSummary) {
       throw new Error("AI did not return a markdown summary.");

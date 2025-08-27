@@ -236,6 +236,7 @@ export class SupabaseService {
       status: summaryData.status,
       error_message: summaryData.error_message || null,
       markdown_summary: summaryData.markdown_summary || "",
+      updated_at: new Date(),
     };
 
     const { error } = await this.client

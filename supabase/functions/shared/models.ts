@@ -61,27 +61,27 @@ export interface NotificationStrings {
   billing: (
     cardName: string,
     last4Digits: string,
-    billingInDays: number,
+    billingInDays: number
   ) => { title: string; body: string };
   due: (
     cardName: string,
     last4Digits: string,
     dueInDays: number,
     remaining: number,
-    currencyCode: string,
+    currencyCode: string
   ) => { title: string; body: string };
   overdue: (
     cardName: string,
     last4Digits: string,
     remaining: number,
-    currencyCode: string,
+    currencyCode: string
   ) => { title: string; body: string };
   partial: (
     cardName: string,
     last4Digits: string,
     paid: number,
     remaining: number,
-    currencyCode: string,
+    currencyCode: string
   ) => { title: string; body: string };
 }
 
@@ -104,6 +104,7 @@ export interface CreditCardSummary {
   status: ProcessingStatus;
   error_message: string | null;
   user_liked: boolean | null;
+  updated_at: Date;
 }
 
 /**

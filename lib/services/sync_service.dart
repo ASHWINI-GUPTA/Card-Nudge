@@ -9,6 +9,7 @@ import '../data/enums/currency.dart';
 import '../data/enums/language.dart';
 import '../data/hive/models/bank_model.dart';
 import '../data/hive/models/credit_card_model.dart';
+import '../data/hive/models/credit_card_summary_model.dart';
 import '../data/hive/models/payment_model.dart';
 import '../data/hive/models/settings_model.dart';
 
@@ -16,6 +17,7 @@ class SyncService {
   final SupabaseClient supabase;
   final Box<BankModel> bankBox;
   final Box<CreditCardModel> cardBox;
+  final Box<CreditCardSummaryModel> cardSummaryBox;
   final Box<PaymentModel> paymentBox;
   final Box<SettingsModel> settingsBox;
   final Connectivity connectivity;
@@ -25,6 +27,7 @@ class SyncService {
     required this.supabase,
     required this.bankBox,
     required this.cardBox,
+    required this.cardSummaryBox,
     required this.paymentBox,
     required this.settingsBox,
     required this.connectivity,
@@ -68,6 +71,11 @@ class SyncService {
           .from('settings')
           .select()
           .eq('user_id', userId);
+
+      final serverCardSummaries = await supabase
+          .from('credit_card_summaries')
+          .select()
+          .inFilter('card_id', serverCards.map((card) => card['id']).toList());
 
       // Sync banks
       for (var serverBank in serverBanks) {
@@ -163,6 +171,25 @@ class SyncService {
         await supabase.from('cards').upsert(data);
         final updatedCard = localCard.copyWith(syncPending: false);
         await cardBox.put(updatedCard.id, updatedCard);
+      }
+
+      // Sync Card Summary
+      for (var serverCardSummary in serverCardSummaries) {
+        final localCardSummary = cardSummaryBox.get(serverCardSummary['id']);
+        final serverUpdatedAt = DateTime.parse(serverCardSummary['updated_at']);
+        if (localCardSummary == null ||
+            serverUpdatedAt.isAfter(localCardSummary.updatedAt)) {
+          final cardSummary = CreditCardSummaryModel(
+            id: serverCardSummary['id'],
+            cardId: serverCardSummary['card_id'],
+            markdownSummary: serverCardSummary['markdown_summary'],
+            createdAt: DateTime.parse(serverCardSummary['created_at']),
+            updatedAt: serverUpdatedAt,
+            status: serverCardSummary['status'],
+            userLiked: serverCardSummary['user_liked'] ?? false,
+          );
+          await cardSummaryBox.put(cardSummary.id, cardSummary);
+        }
       }
 
       // Sync payments

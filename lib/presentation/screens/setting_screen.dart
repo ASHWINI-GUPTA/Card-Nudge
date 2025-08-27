@@ -1,4 +1,5 @@
 import 'package:card_nudge/helper/app_localizations_extension.dart';
+import 'package:card_nudge/providers/credit_card_summary_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -453,8 +454,7 @@ class SettingsScreen extends ConsumerWidget {
                 onPressed: () {
                   ref.watch(paymentProvider.notifier).reset();
                   ref.watch(creditCardProvider.notifier).reset();
-
-                  // TODO: Clear from Supabase too?
+                  ref.watch(creditCardSummariesProvider.notifier).reset();
 
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(

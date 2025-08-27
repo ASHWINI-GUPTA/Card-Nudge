@@ -55,9 +55,6 @@ class CreditCardModel extends HiveObject {
   @HiveField(15, defaultValue: false)
   bool isAutoDebitEnabled;
 
-  @HiveField(16)
-  String? benefitSummary;
-
   CreditCardModel({
     String? id,
     required this.userId,
@@ -79,8 +76,7 @@ class CreditCardModel extends HiveObject {
   }) : id = id ?? const Uuid().v4(),
        bankId = bankId,
        createdAt = (createdAt ?? DateTime.now()).toUtc(),
-       updatedAt = (updatedAt ?? DateTime.now()).toUtc(),
-       benefitSummary = benefitSummary ?? '';
+       updatedAt = (updatedAt ?? DateTime.now()).toUtc();
 
   CreditCardModel copyWith({
     String? name,
@@ -97,7 +93,6 @@ class CreditCardModel extends HiveObject {
     bool? isAutoDebitEnabled,
     DateTime? createdAt,
     DateTime? updatedAt,
-    String? benefitSummary,
   }) {
     return CreditCardModel(
       id: id,
@@ -114,7 +109,6 @@ class CreditCardModel extends HiveObject {
       isFavorite: isFavorite ?? this.isFavorite,
       syncPending: syncPending ?? this.syncPending,
       isAutoDebitEnabled: isAutoDebitEnabled ?? this.isAutoDebitEnabled,
-      benefitSummary: benefitSummary ?? this.benefitSummary,
       createdAt: createdAt?.toUtc() ?? this.createdAt,
       updatedAt: updatedAt?.toUtc() ?? DateTime.now().toUtc(),
     );

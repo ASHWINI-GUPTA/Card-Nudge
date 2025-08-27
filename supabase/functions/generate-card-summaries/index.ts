@@ -4,7 +4,7 @@ import { SupabaseService } from "../shared/SupabaseService.ts";
 // --- Service Initialization ---
 const supabaseService = new SupabaseService(
   Deno.env.get("SUPABASE_URL"),
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")
 );
 
 /**
@@ -35,7 +35,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
     if (!bank) {
       console.error(
-        `Bank not found for card ${card.id}. Skipping summary generation.`,
+        `Bank not found for card ${card.id}. Skipping summary generation.`
       );
       continue;
     }
@@ -53,7 +53,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
     });
 
     console.log(
-      `Successfully generated and saved summary for card ${card.id}.`,
+      `Successfully generated and saved summary for card ${card.id}.`
     );
   }
 
