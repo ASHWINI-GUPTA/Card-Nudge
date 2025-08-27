@@ -265,7 +265,7 @@ export class SupabaseService {
       .select(
         "id, name, last_4_digits, billing_date, is_archived, card_type, bank_id, credit_card_summaries(id)"
       )
-      .is("credit_card_summaries.id", null)
+      .is("credit_card_summaries", null)
       .eq("is_archived", false);
 
     if (error) {

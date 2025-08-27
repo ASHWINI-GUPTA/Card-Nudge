@@ -2,6 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Bank, Card } from "../shared/models.ts";
 
 const AI_API_KEY = Deno.env.get("AI_API_KEY");
+const AI_MODEL = Deno.env.get("AI_MODEL");
 
 // Initialize the AI client outside the function to reuse connections if possible
 // Ensure AI_API_KEY is available during the Deno deploy process for function initialization
@@ -9,26 +10,43 @@ const genAI = AI_API_KEY ? new GoogleGenerativeAI(AI_API_KEY) : null;
 
 // --- PROMPT DEFINITION ---
 // This prompt will be used to guide the AI in generating the summary.
-const generateSummaryPrompt = (
-  card: Card,
-  bank: Bank,
-): string => {
-  return `You are an expert in credit card analysis. Your task is to provide a concise and clear summary of the key benefits for a credit card.
+const generateSummaryPrompt = (card: Card, bank: Bank): string => {
+  return `You are an expert and highly factual credit card analyst. Your sole purpose is to extract and present a credit card's benefits in a structured, objective, and accurate format.
 
-  Card Name: ${card.name}
-  Bank Name: ${bank.name}
-  Card Payment Network: ${card.card_type}
+Your task is to provide a comprehensive and structured breakdown of the key features and benefits for the **${card.name}** credit card from **${bank.name}** on the **${card.card_type}** network.
 
-  Instructions:
-  - Identify the primary advantages for the cardholder.
-  - Focus on rewards (cash back, points, miles), travel perks, insurances, annual fees, and other significant features.
-  - Do not include details about interest rates, APR, or balance transfers unless they are explicitly a *benefit* (e.g., 0% intro APR).
-  - The summary should be easy to understand for a layperson.
-  - Keep the summary to approximately 3-5 concise sentences or 50-100 words.
-  - Start directly with the benefits, do not use an introductory phrase like "This card offers..."
-  - If there's an annual fee and other charges, mention it clearly at the end.
+**Instructions to Prevent Hallucination and Ensure Accuracy:**
+1.  **Strictly adhere to the exact structure provided below.** Do not add, remove, or change the heading titles or sub-headings.
+2.  **Only use information that is directly available** about the card. Do not infer or invent any numbers, percentages, or features.
+3.  **For any section where information is not specified, use the phrase "Not specified."** Do not leave any section or bullet point blank.
+4.  **Do not include any details about interest rates, APR, or balance transfers.**
+5.  Maintain a completely neutral and factual tone. Avoid any subjective or marketing language.
 
-  Summary:
+**Output Structure:**
+
+**Welcome Benefits**
+- [Detail any welcome offers or vouchers. If none, write "Not specified."]
+
+**Rewards**
+- **Rewards Rate:** [State points earned per spend and on which categories, e.g., "10 Reward Points per ₹100 on dining, movies, groceries, and departmental store purchases. 2 RPs on every ₹100 on all other retail." If not specified, write "Not specified."]
+- **Reward Redemption:** [Explain how points can be redeemed and their value, e.g., "Redeem for Gift Vouchers or Statement Credit. 1 Reward Point = ₹0.25." If not specified, write "Not specified."]
+
+**Travel**
+- **Domestic Lounge Access:** [State the number of complimentary visits per year and quarter. If not specified, write "Not specified."]
+- **International Lounge Access:** [State the number of complimentary visits per year and quarter, along with any associated membership. If not specified, write "Not specified."]
+- **Other Travel Perks:** [List any additional travel benefits like special memberships or discounts on hotels/car rentals. If none, write "Not specified."]
+
+**Milestone Benefits**
+- **Spend-Based Rewards:** [Detail any rewards earned at specific spending thresholds, e.g., "e-Gift voucher worth ₹7,000 on spending ₹5 lakh in a year." If not specified, write "Not specified."]
+- **Annual Fee Waiver:** [State the spending threshold for the annual fee waiver, e.g., "Waived on spending ₹3 lakh or more in the last year." If not specified, write "Not specified."]
+
+**Other Benefits**
+- **Insurance:** [Describe any insurance coverage, e.g., "Fraud liability cover (worth ₹1 lakh) applicable from 48 hours prior to 7 days post-reporting." If not specified, write "Not specified."]
+- **Golf:** [Detail any golf-related perks. If none, write "Not specified."]
+- **Exclusive Discounts:** [List any specific brand or network-exclusive discounts. If none, write "Not specified."]
+
+**Annual Fee**
+- [State the annual fee, e.g., "₹2,999 + GST." If not specified, write "Not specified."]
   `;
 };
 
@@ -39,20 +57,19 @@ const generateSummaryPrompt = (
  * @returns A promise that resolves to the AI-generated summary string.
  * @throws Error if AI_API_KEY is not set or if the AI call fails.
  */
-export async function generateSummary(
-  card: Card,
-  bank: Bank,
-): Promise<string> {
+export async function generateSummary(card: Card, bank: Bank): Promise<string> {
   if (!AI_API_KEY || !genAI) {
     throw new Error(
-      "AI_API_KEY environment variable not set or AI client not initialized.",
+      "AI_API_KEY environment variable not set or AI client not initialized."
     );
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({
+      model: AI_MODEL ?? "gemini-2.0-flash",
+    });
     const result = await model.generateContent(
-      generateSummaryPrompt(card, bank),
+      generateSummaryPrompt(card, bank)
     );
     const response = result.response;
     const summary = response.text();
@@ -62,8 +79,9 @@ export async function generateSummary(
     }
 
     console.log(
-      `Generated raw summary for "${card.name}": ${summary.substring(0, 100) // Shorten summary to 100 chars
-      }...`,
+      `Generated raw summary for "${card.name}": ${
+        summary.substring(0, 100) // Shorten summary to 100 chars
+      }...`
     );
     return summary;
   } catch (error) {
@@ -73,26 +91,24 @@ export async function generateSummary(
 }
 
 const convertToMarkdownPrompt = (rawSummaryText: string): string => {
-  return (
-    `Your task is to convert the following credit card benefit summary into well-structured and readable Markdown format.
+  return `Your task is to convert the following credit card benefit summary into a clean, well-structured, and highly readable Markdown format.
 
-  Summary to Convert:
-  """
-  ${rawSummaryText}
-  """
+Summary to Convert:
+"""
+${rawSummaryText}
+"""
 
-  Instructions:
-    - Use appropriate Markdown headings (e1.g., '## Key Benefits', '### Rewards', '### Perks') if the content naturally divides into sections.
-    - Use bullet points (* or -) for listing distinct benefits.
-    - Bold (**text**) key numbers, percentages, card names, or important features (e.g., "**5% cash back**", "**No annual fee**", "**Travel insurance**").
-    - Ensure the output is clean, professional, and easy to read.
-    - **Crucially: Do NOT add, remove, or alter any information from the original summary. Only reformat it.**
-    - Do not include any introductory or concluding remarks (e.g., "Here is the summary in Markdown:"). Just provide the Markdown.
+**Instructions:**
+1.  **Strictly Reformat, Do Not Alter:** Do not add, remove, or change any information. Your only job is to change the formatting.
+2.  **Use Markdown Headings:** Use Markdown headings (e.g., '## Key Benefits', '### Rewards', '### Travel Perks') to logically group related information.
+3.  **Use Bullet Points:** Use bullet points ('*' or '-') to list individual features and benefits.
+4.  **Bold Keywords:** Bold important numbers, percentages, names, or key phrases to make them stand out (e.g., '**5X points**', '**₹2,999**', '**complimentary lounge access**').
+5.  **Clean and Professional:** The final output must be easy to read and have a professional appearance.
+6.  **Direct Output:** The response should contain only the Markdown-formatted text, with no introductory or concluding sentences.
 
-  Markdown Output:
+Markdown Output:
 
-  `
-  );
+  `;
 };
 
 /**
@@ -102,20 +118,23 @@ const convertToMarkdownPrompt = (rawSummaryText: string): string => {
  * @throws Error if AI_API_KEY is not set or if the AI call fails.
  */
 export async function convertToMarkdown(
-  rawSummaryText: string,
+  rawSummaryText: string
 ): Promise<string> {
   if (!AI_API_KEY || !genAI) {
     throw new Error(
-      "AI_API_KEY environment variable not set or AI client not initialized.",
+      "AI_API_KEY environment variable not set or AI client not initialized."
     );
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" }); // Use the same model
+    const model = genAI.getGenerativeModel({
+      model: AI_MODEL ?? "gemini-2.0-flash",
+    });
     const result = await model.generateContent(
-      convertToMarkdownPrompt(rawSummaryText),
+      convertToMarkdownPrompt(rawSummaryText)
     );
-    const response = await result.response;
+
+    const response = result.response;
     const markdownSummary = response.text();
 
     if (!markdownSummary) {
@@ -123,7 +142,7 @@ export async function convertToMarkdown(
     }
 
     console.log(
-      `Generated Markdown summary: ${markdownSummary.substring(0, 100)}...`,
+      `Generated Markdown summary: ${markdownSummary.substring(0, 100)}...`
     );
     return markdownSummary;
   } catch (error) {

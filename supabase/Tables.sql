@@ -74,6 +74,12 @@ CREATE TABLE credit_card_summaries (
 
 CREATE INDEX idx_credit_card_summaries_card_id ON credit_card_summaries (card_id);
 
+ALTER TABLE credit_card_summaries
+  ADD CONSTRAINT uq_credit_card_summaries_card_id
+  UNIQUE (card_id);
+
+ALTER TABLE credit_card_summaries ENABLE ROW LEVEL SECURITY;
+
 -- Create payments table
 CREATE TABLE payments (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
