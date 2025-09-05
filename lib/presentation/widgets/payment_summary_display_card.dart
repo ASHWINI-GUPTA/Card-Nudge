@@ -17,7 +17,6 @@ class PaymentSummaryDisplayCard extends ConsumerWidget {
 
     final isPaid = payment.isPaid;
     final amount = isPaid ? payment.paidAmount : payment.dueAmount;
-    final date = isPaid ? payment.paymentDate : payment.dueDate;
 
     return Card(
       elevation: 2,
@@ -72,7 +71,12 @@ class PaymentSummaryDisplayCard extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      formatHelper.formatDate(date!),
+                      isPaid
+                          ? '${formatHelper.formatDate(payment.paymentDate!, format: 'MMM d, yyyy')} (${context.l10n.dueOn} ${formatHelper.formatShortDate(payment.dueDate)})'
+                          : formatHelper.formatDate(
+                            payment.dueDate,
+                            format: 'MMM d, yyyy',
+                          ),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w500,
                       ),

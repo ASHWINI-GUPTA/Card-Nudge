@@ -1,4 +1,5 @@
 import 'package:card_nudge/helper/app_localizations_extension.dart';
+import 'package:card_nudge/helper/date_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -32,11 +33,14 @@ class _CreditCardFormScreenState extends ConsumerState<CreditCardFormScreen> {
   late final TextEditingController _last4DigitsController;
   late final TextEditingController _limitController;
   DateTime? _billingDate;
-  DateTime? _dueDate;
   bool _isSubmitting = false;
   Map<String, String>? _selectedCardType;
   Map<String, String>? _selectedBank;
   bool _isAutoDebitEnabled = false;
+  int _dueGracePeriodDays = 20;
+  final TextEditingController _gracePeriodController = TextEditingController(
+    text: '20',
+  );
 
   @override
   void initState() {
@@ -54,8 +58,9 @@ class _CreditCardFormScreenState extends ConsumerState<CreditCardFormScreen> {
       text: card?.creditLimit.toString() ?? '',
     );
     _billingDate = card?.billingDate;
-    _dueDate = card?.dueDate;
     _isAutoDebitEnabled = card?.isAutoDebitEnabled ?? false;
+    _dueGracePeriodDays = card?.dueGracePeriodDays ?? 20;
+    _gracePeriodController.text = _dueGracePeriodDays.toString();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.card != null) {
@@ -91,23 +96,12 @@ class _CreditCardFormScreenState extends ConsumerState<CreditCardFormScreen> {
 
   Future<CreditCardModel?> _saveCard(BuildContext context) async {
     print('[DEBUG] AddCardScreen._saveCard called');
-    if (_formKey.currentState?.validate() != true ||
-        _billingDate == null ||
-        _dueDate == null) {
-      if (_billingDate == null || _dueDate == null) {
+    if (_formKey.currentState?.validate() != true || _billingDate == null) {
+      if (_billingDate == null) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(context.l10n.selectDatesError)));
       }
-      return null;
-    }
-
-    // Validate due date is after billing date
-    if (_dueDate!.isBefore(_billingDate!) ||
-        _dueDate!.isAtSameMomentAs(_billingDate!)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.dueDateBeforeBillingError)),
-      );
       return null;
     }
 
@@ -126,11 +120,12 @@ class _CreditCardFormScreenState extends ConsumerState<CreditCardFormScreen> {
         bankId: _selectedBank?['id'],
         last4Digits: _last4DigitsController.text.trim(),
         billingDate: _billingDate!,
-        dueDate: _dueDate!,
+        dueDate: _billingDate!.dueDateFromBillingGrace(_dueGracePeriodDays),
         creditLimit: double.parse(_limitController.text.trim()),
         currentUtilization: widget.card?.currentUtilization ?? 0.0,
         cardType: cardType,
         isAutoDebitEnabled: _isAutoDebitEnabled,
+        dueGracePeriodDays: _dueGracePeriodDays,
       );
 
       print('[DEBUG] Calling creditCardProvider.save');
@@ -167,12 +162,8 @@ class _CreditCardFormScreenState extends ConsumerState<CreditCardFormScreen> {
       firstDate = DateTime(2020);
       initialDate = _billingDate ?? now;
     } else {
-      // Due date: firstDate is day after billingDate or now
-      firstDate =
-          _billingDate != null
-              ? _billingDate!.add(const Duration(days: 1))
-              : now;
-      initialDate = _dueDate ?? firstDate;
+      // no-op: dueDate is not edited on this screen
+      return;
     }
 
     final selected = await showDatePicker(
@@ -186,14 +177,8 @@ class _CreditCardFormScreenState extends ConsumerState<CreditCardFormScreen> {
       setState(() {
         if (isBilling) {
           _billingDate = selected;
-          // Reset dueDate if it's not after the new billingDate
-          if (_dueDate != null &&
-              (_dueDate!.isBefore(selected) ||
-                  _dueDate!.isAtSameMomentAs(selected))) {
-            _dueDate = null;
-          }
         } else {
-          _dueDate = selected;
+          return;
         }
       });
     }
@@ -301,6 +286,7 @@ class _CreditCardFormScreenState extends ConsumerState<CreditCardFormScreen> {
     _cardTypeController.dispose();
     _last4DigitsController.dispose();
     _limitController.dispose();
+    _gracePeriodController.dispose();
     super.dispose();
   }
 
@@ -498,22 +484,6 @@ class _CreditCardFormScreenState extends ConsumerState<CreditCardFormScreen> {
                           _isSubmitting ? null : () => _pickDate(context, true),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      icon: const Icon(Icons.event),
-                      label: Text(
-                        _dueDate == null
-                            ? context.l10n.dueDateLabel
-                            : '${context.l10n.dueDateLabel}: ${_dueDate!.day}/${_dueDate!.month}',
-                        style: Theme.of(context).textTheme.labelMedium,
-                      ),
-                      onPressed:
-                          _isSubmitting
-                              ? null
-                              : () => _pickDate(context, false),
-                    ),
-                  ),
                 ],
               ),
               spacingBetweenInput,
@@ -533,6 +503,32 @@ class _CreditCardFormScreenState extends ConsumerState<CreditCardFormScreen> {
                   return value == null || value <= 0
                       ? context.l10n.invalidCreditLimitError
                       : null;
+                },
+              ),
+              spacingBetweenInput,
+              // Due grace period input
+              TextFormField(
+                controller: _gracePeriodController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Due Grace Period (days)',
+                  helperText: 'How many days after billing the payment is due',
+                ),
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                validator: (v) {
+                  final val = int.tryParse(v?.trim() ?? '');
+                  if (val == null || val < 0 || val > 60) {
+                    return 'Enter valid days (0-60)';
+                  }
+                  return null;
+                },
+                onChanged: (v) {
+                  final val = int.tryParse(v.trim());
+                  if (val != null) {
+                    setState(() {
+                      _dueGracePeriodDays = val;
+                    });
+                  }
                 },
               ),
               spacingBetweenInput,

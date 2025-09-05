@@ -55,6 +55,9 @@ class CreditCardModel extends HiveObject {
   @HiveField(15, defaultValue: false)
   bool isAutoDebitEnabled;
 
+  @HiveField(16, defaultValue: 20)
+  int dueGracePeriodDays;
+
   CreditCardModel({
     String? id,
     required this.userId,
@@ -72,6 +75,7 @@ class CreditCardModel extends HiveObject {
     this.isFavorite = false,
     this.syncPending = true,
     this.isAutoDebitEnabled = false,
+    this.dueGracePeriodDays = 20,
     String? benefitSummary,
   }) : id = id ?? const Uuid().v4(),
        bankId = bankId,
@@ -91,6 +95,7 @@ class CreditCardModel extends HiveObject {
     bool? isFavorite,
     bool? syncPending,
     bool? isAutoDebitEnabled,
+    int? dueGracePeriodDays,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -109,6 +114,7 @@ class CreditCardModel extends HiveObject {
       isFavorite: isFavorite ?? this.isFavorite,
       syncPending: syncPending ?? this.syncPending,
       isAutoDebitEnabled: isAutoDebitEnabled ?? this.isAutoDebitEnabled,
+      dueGracePeriodDays: dueGracePeriodDays ?? this.dueGracePeriodDays,
       createdAt: createdAt?.toUtc() ?? this.createdAt,
       updatedAt: updatedAt?.toUtc() ?? DateTime.now().toUtc(),
     );
@@ -118,7 +124,8 @@ class CreditCardModel extends HiveObject {
     return copyWith(currentUtilization: newUtilization);
   }
 
-  bool get isNearDueDate => dueDate.differenceInDaysCeil(DateTime.now()) <= 7;
-  bool get isOverUtilized => currentUtilization > creditLimit * 0.3;
+  DateTime get getNextDueDate =>
+      billingDate.dueDateFromBillingGrace(dueGracePeriodDays);
+  bool get isDueIn7Days => dueDate.differenceInDaysCeil(DateTime.now()) <= 7;
   double get utilizationPercentage => (currentUtilization / creditLimit) * 100;
 }

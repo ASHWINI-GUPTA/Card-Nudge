@@ -145,6 +145,7 @@ class SyncService {
             isFavorite: serverCard['is_favorite'] ?? false,
             isAutoDebitEnabled: serverCard['is_auto_debit_enabled'] ?? false,
             benefitSummary: serverCard['benefit_summary'],
+            dueGracePeriodDays: serverCard['due_grace_period_days'] ?? 20,
             syncPending: false,
           );
           await cardBox.put(card.id, card);
@@ -167,10 +168,18 @@ class SyncService {
           'is_archived': localCard.isArchived,
           'is_favorite': localCard.isFavorite,
           'is_auto_debit_enabled': localCard.isAutoDebitEnabled,
+          'due_grace_period_days': localCard.dueGracePeriodDays,
         };
         await supabase.from('cards').upsert(data);
         final updatedCard = localCard.copyWith(syncPending: false);
         await cardBox.put(updatedCard.id, updatedCard);
+      }
+
+      // Delete any local card summaries that are no longer present on the server
+      for (final localCardSummary in cardSummaryBox.values) {
+        if (!serverCardSummaries.any((s) => s['id'] == localCardSummary.id)) {
+          await cardSummaryBox.delete(localCardSummary.id);
+        }
       }
 
       // Sync Card Summary

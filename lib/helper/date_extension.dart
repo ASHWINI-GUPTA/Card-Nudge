@@ -55,6 +55,12 @@ extension CreditCardDateExtension on DateTime {
   /// Returns the next due date for cards with a custom interval (e.g., every N days).
   DateTime nextCustomInterval(int days) => add(Duration(days: days));
 
+  /// Returns a due date computed as billing date + [graceDays].
+  /// Uses simple day addition which is appropriate for "grace period" logic.
+  DateTime dueDateFromBillingGrace(int graceDays) {
+    return add(Duration(days: graceDays));
+  }
+
   /// Returns a positive number if [other] is in the past,
   /// zero if same day, and a negative number if [other] is in the future.
   int differenceInDaysCeil(DateTime other) {
