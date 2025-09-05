@@ -47,7 +47,7 @@ CREATE TABLE cards (
   bank_id UUID NOT NULL,
   last_4_digits TEXT NOT NULL,
   billing_date DATE,
-  due_date DATE,
+  due_grace_period_days INTEGER,
   card_type TEXT NOT NULL,
   credit_limit DOUBLE PRECISION,
   current_utilization DOUBLE PRECISION,
