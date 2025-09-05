@@ -10,6 +10,8 @@ export interface Card {
   card_type: string;
   bank_id: string;
   credit_card_summaries: CreditCardSummary[] | null;
+  // Added: whether auto debit is enabled for this card
+  is_auto_debit_enabled?: boolean;
 }
 
 /**
@@ -54,6 +56,7 @@ export type NotificationLog = {
   body: string;
   payload: string;
   sent_at: string;
+  is_auto_debit_enabled: boolean;
 };
 
 // Interface for language strings
@@ -68,20 +71,23 @@ export interface NotificationStrings {
     last4Digits: string,
     dueInDays: number,
     remaining: number,
-    currencyCode: string
+    currencyCode: string,
+    isAutoDebit?: boolean
   ) => { title: string; body: string };
   overdue: (
     cardName: string,
     last4Digits: string,
     remaining: number,
-    currencyCode: string
+    currencyCode: string,
+    isAutoDebit?: boolean
   ) => { title: string; body: string };
   partial: (
     cardName: string,
     last4Digits: string,
     paid: number,
     remaining: number,
-    currencyCode: string
+    currencyCode: string,
+    isAutoDebit?: boolean
   ) => { title: string; body: string };
 }
 

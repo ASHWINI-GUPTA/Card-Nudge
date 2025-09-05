@@ -1,4 +1,8 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import {
+  createClient,
+  SupabaseClient,
+} from "npm:@supabase/supabase-js@^2.50.1";
+
 import {
   Bank,
   Card,
@@ -92,7 +96,9 @@ export class SupabaseService {
 
     const { data, error } = await this.client
       .from("cards")
-      .select("id, name, last_4_digits, billing_date, is_archived")
+      .select(
+        "id, name, last_4_digits, billing_date, is_archived, is_auto_debit_enabled"
+      )
       .eq("user_id", userId)
       .eq("is_archived", false);
 
@@ -114,7 +120,7 @@ export class SupabaseService {
     const { data, error } = (await this.client
       .from("payments")
       .select(
-        "id, due_date, due_amount, paid_amount, statement_amount, is_paid, cards(id, name, last_4_digits, billing_date, is_archived)"
+        "id, due_date, due_amount, paid_amount, statement_amount, is_paid, cards(id, name, last_4_digits, billing_date, is_archived, is_auto_debit_enabled)"
       )
       .eq("user_id", userId)
       .eq("is_paid", false)) as {

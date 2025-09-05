@@ -7,14 +7,14 @@ import { getDaysDifference } from "../utils/dateUtils.ts";
 export class NotificationSender {
   constructor(
     private supabaseService: SupabaseService,
-    private firebaseService: FirebaseService,
+    private firebaseService: FirebaseService
   ) {}
 
   async processUserNotifications(
     userId: string,
     now: Date,
     logs: NotificationLog[],
-    failedTokens: string[],
+    failedTokens: string[]
   ): Promise<void> {
     // Fetch all necessary data in parallel to minimize latency.
     const [userSetting, tokens, payments, cards] = await Promise.all([
@@ -43,23 +43,24 @@ export class NotificationSender {
       // --- ⏰  Due Reminder ---
       if (diffDaysDue >= 0) {
         let shouldSendDue = false;
-        if (diffDaysDue <= 10) {
-          // Always send if due in 10 days or less (including today/tomorrow).
+        // Changed: start reminders from 5 days before (not 10)
+        if (diffDaysDue <= 5) {
+          // Always send if due in 5 days or less (including today/tomorrow).
           shouldSendDue = true;
         } else {
           const lastLog = await this.supabaseService.getLastNotificationLog(
             userId,
             card.id,
-            "due",
+            "due"
           );
           if (!lastLog) {
             shouldSendDue = true; // Send if no previous due log
           } else {
             const daysSinceLastSend = getDaysDifference(
               new Date(lastLog.sent_at),
-              now,
+              now
             );
-            // More than 10 days out, send every 3 days.
+            // More than 5 days out, send every 3 days.
             shouldSendDue = daysSinceLastSend >= 3;
           }
         }
@@ -71,6 +72,8 @@ export class NotificationSender {
             diffDaysDue,
             remaining,
             currency,
+            // pass auto-debit flag if available
+            Boolean(card.is_auto_debit_enabled)
           );
           await this.firebaseService.sendNotification(
             userId,
@@ -81,7 +84,7 @@ export class NotificationSender {
             payload,
             tokens,
             logs,
-            failedTokens,
+            failedTokens
           );
         }
       } else {
@@ -95,7 +98,7 @@ export class NotificationSender {
           const lastLog = await this.supabaseService.getLastNotificationLog(
             userId,
             card.id,
-            "overdue",
+            "overdue"
           );
           if (!lastLog) {
             // Always send if record not available for overdue reminder.
@@ -103,7 +106,7 @@ export class NotificationSender {
           } else {
             const daysSinceLastSend = getDaysDifference(
               new Date(lastLog.sent_at),
-              now,
+              now
             );
             // Overdue for more than 7 days, send once every 3 days.
             shouldSendOverdue = daysSinceLastSend >= 3;
@@ -116,6 +119,7 @@ export class NotificationSender {
             card.last_4_digits,
             remaining,
             currency,
+            Boolean(card.is_auto_debit_enabled)
           );
           await this.firebaseService.sendNotification(
             userId,
@@ -126,7 +130,7 @@ export class NotificationSender {
             payload,
             tokens,
             logs,
-            failedTokens,
+            failedTokens
           );
         }
       }
@@ -137,6 +141,12 @@ export class NotificationSender {
 
     // --- 📅 Billing Reminder ---
     for (const card of cards) {
+      // Skip billing notifications for cards that already have an unpaid payment
+      const hasUnpaidPayment = payments.some((p) => p.cards?.id === card.id);
+      if (hasUnpaidPayment) {
+        continue;
+      }
+
       const billingDate = new Date(card.billing_date);
       const diffDaysBilling = getDaysDifference(now, billingDate);
       let shouldSendBilling = false;
@@ -147,7 +157,7 @@ export class NotificationSender {
         const lastLog = await this.supabaseService.getLastNotificationLog(
           userId,
           card.id,
-          "billing",
+          "billing"
         );
 
         if (!lastLog) {
@@ -155,7 +165,7 @@ export class NotificationSender {
         } else {
           const daysSinceLastSend = getDaysDifference(
             new Date(lastLog.sent_at),
-            now,
+            now
           );
 
           shouldSendBilling = daysSinceLastSend >= 3; // Once in 3 days
@@ -166,7 +176,7 @@ export class NotificationSender {
         const msg = builder.billingReminder(
           card.name,
           card.last_4_digits,
-          diffDaysBilling,
+          diffDaysBilling
         );
         await this.firebaseService.sendNotification(
           userId,
@@ -177,7 +187,7 @@ export class NotificationSender {
           `/cards/${card.id}`,
           tokens,
           logs,
-          failedTokens,
+          failedTokens
         );
       }
     }

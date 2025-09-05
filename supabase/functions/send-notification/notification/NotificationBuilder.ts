@@ -20,7 +20,7 @@ export class NotificationMessageBuilder {
   billingReminder(
     cardName: string,
     last4Digits: string,
-    diffDaysBilling: number,
+    diffDaysBilling: number
   ): { title: string; body: string } {
     return this.strings.billing(cardName, last4Digits, diffDaysBilling);
   }
@@ -31,6 +31,7 @@ export class NotificationMessageBuilder {
     dueInDays: number,
     remaining: number,
     currencyCode: string,
+    isAutoDebit?: boolean
   ): { title: string; body: string } {
     return this.strings.due(
       cardName,
@@ -38,6 +39,7 @@ export class NotificationMessageBuilder {
       dueInDays,
       remaining,
       currencyCode,
+      isAutoDebit
     );
   }
 
@@ -46,8 +48,15 @@ export class NotificationMessageBuilder {
     last4Digits: string,
     remaining: number,
     currencyCode: string,
+    isAutoDebit?: boolean
   ): { title: string; body: string } {
-    return this.strings.overdue(cardName, last4Digits, remaining, currencyCode);
+    return this.strings.overdue(
+      cardName,
+      last4Digits,
+      remaining,
+      currencyCode,
+      isAutoDebit
+    );
   }
 
   partial(
@@ -56,6 +65,7 @@ export class NotificationMessageBuilder {
     paid: number,
     remaining: number,
     currencyCode: string,
+    isAutoDebit?: boolean
   ): { title: string; body: string } {
     return this.strings.partial(
       cardName,
@@ -63,6 +73,7 @@ export class NotificationMessageBuilder {
       paid,
       remaining,
       currencyCode,
+      isAutoDebit
     );
   }
 }

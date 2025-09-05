@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI } from "npm:@google/genai@1.15.0";
 import { Bank, Card } from "../shared/models.ts";
 
 const AI_API_KEY = Deno.env.get("AI_API_KEY");
