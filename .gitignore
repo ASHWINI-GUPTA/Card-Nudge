@@ -62,3 +62,5 @@ ios/Runner/GoogleService-Info.plist
 lib/firebase_options.dart
 supabase/functions/send-notification/*.json
 pubspec.yaml.bak
+/supabase/
+/web/
