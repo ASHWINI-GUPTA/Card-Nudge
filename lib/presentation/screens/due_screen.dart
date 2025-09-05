@@ -45,7 +45,8 @@ class DueScreen extends ConsumerWidget {
       ),
       body: cardsAsync.when(
         data: (cards) {
-          if (cards.isEmpty) {
+          final activeCards = cards.where((card) => !card.isArchived).toList();
+          if (activeCards.isEmpty) {
             return EmptyCreditCardListWidget(context: context, ref: ref);
           }
           return RefreshIndicator(
@@ -54,7 +55,7 @@ class DueScreen extends ConsumerWidget {
               ref.invalidate(bankProvider);
               ref.invalidate(paymentProvider);
             },
-            child: _buildPaymentList(context, ref, cards),
+            child: _buildPaymentList(context, ref, activeCards),
           );
         },
         loading: () => const Center(child: CreditCardColorDotIndicator()),
@@ -83,16 +84,23 @@ class DueScreen extends ConsumerWidget {
   Widget _buildPaymentList(
     BuildContext context,
     WidgetRef ref,
-    List<CreditCardModel> cards,
+    List<CreditCardModel> activeCards,
   ) {
     final paymentsAsync = ref.watch(paymentProvider);
     final banksAsync = ref.watch(bankProvider);
 
+    // Filter out archived cards
+    final activeCardIds = activeCards.map((c) => c.id).toSet();
+
     return paymentsAsync.when(
       data: (payments) {
-        final nonPaidPayments = payments.where((p) => !p.isPaid).toList();
+        // Only include payments for non-archived cards
+        final nonPaidPayments =
+            payments
+                .where((p) => !p.isPaid && activeCardIds.contains(p.cardId))
+                .toList();
         if (nonPaidPayments.isEmpty) {
-          return _buildEmptyStateNoPayments(context, ref, cards);
+          return _buildEmptyStateNoPayments(context, ref, activeCards);
         }
 
         final groupedCards = _groupPaymentsByDueDate(context, nonPaidPayments);
@@ -114,7 +122,7 @@ class DueScreen extends ConsumerWidget {
                   children: [
                     DateHeader(label: label),
                     ...payments.map((payment) {
-                      final card = cards.firstWhere(
+                      final card = activeCards.firstWhere(
                         (c) => c.id == payment.cardId,
                         orElse:
                             () =>

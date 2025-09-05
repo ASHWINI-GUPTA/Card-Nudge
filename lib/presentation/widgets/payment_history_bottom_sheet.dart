@@ -1,8 +1,8 @@
 import 'package:card_nudge/helper/app_localizations_extension.dart';
-import 'package:card_nudge/helper/date_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
+
 import '../../data/enums/payment_option.dart';
 import '../../data/hive/models/payment_model.dart';
 import '../../services/navigation_service.dart';
@@ -57,7 +57,7 @@ class PaymentHistoryBottomSheet extends ConsumerWidget {
           .firstWhere((c) => c.id == payment.cardId);
 
       final updatedCard = card.copyWith(
-        dueDate: card.dueDate.next30DayCycleDate,
+        dueDate: card.getNextDueDate,
         syncPending: true,
       );
 

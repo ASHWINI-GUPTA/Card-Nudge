@@ -91,7 +91,7 @@ class _PaymentDueEntryBottomSheet
         cardId: widget.card.id,
         dueAmount: dueAmount,
         minimumDueAmount: minimumDue,
-        dueDate: widget.card.dueDate,
+        dueDate: widget.card.getNextDueDate,
         statementAmount: dueAmount,
         id: isEditing ? widget.payment!.id : null,
       );
@@ -105,7 +105,7 @@ class _PaymentDueEntryBottomSheet
           .firstWhere((c) => c.id == payment.cardId);
 
       final updatedCard = card.copyWith(
-        billingDate: card.billingDate.next30DayCycleDate,
+        billingDate: widget.card.billingDate.nextMonthlyCycleDate,
         syncPending: true,
       );
 
@@ -150,7 +150,7 @@ class _PaymentDueEntryBottomSheet
         cardId: card.id,
         dueAmount: 0.0,
         minimumDueAmount: 0.0,
-        dueDate: card.dueDate,
+        dueDate: card.getNextDueDate,
         statementAmount: 0.0,
         isPaid: true,
         paymentDate: DateTime.now().toUtc(),
@@ -161,9 +161,14 @@ class _PaymentDueEntryBottomSheet
       await ref.read(paymentProvider.notifier).save(payment);
 
       // Update card
+      final nextBillingDate = card.billingDate.nextMonthlyCycleDate;
+      final nextDueDate = nextBillingDate.dueDateFromBillingGrace(
+        card.dueGracePeriodDays,
+      );
+
       final updatedCard = card.copyWith(
-        dueDate: card.dueDate.next30DayCycleDate,
-        billingDate: card.billingDate.next30DayCycleDate,
+        dueDate: nextDueDate,
+        billingDate: nextBillingDate,
         syncPending: true,
       );
 
@@ -278,7 +283,7 @@ class _PaymentDueEntryBottomSheet
                     contentPadding: EdgeInsets.zero,
                     title: Text(context.l10n.dueDateLabel),
                     subtitle: Text(
-                      DateFormat.yMMMd().format(widget.card.dueDate),
+                      DateFormat.yMMMd().format(widget.card.getNextDueDate),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     trailing: const Icon(Icons.calendar_today),

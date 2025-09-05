@@ -41,34 +41,35 @@ class CardsScreen extends ConsumerWidget {
           ref.invalidate(creditCardProvider);
         },
         child: cardsAsync.when(
-          data:
-              (cards) =>
-                  cards.isEmpty
-                      ? EmptyCreditCardListWidget(context: context, ref: ref)
-                      : ListView.separated(
-                        padding: const EdgeInsets.all(8.0),
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: cards.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 0),
-                        itemBuilder: (context, index) {
-                          final card = cards[index];
-                          return GestureDetector(
-                            onTap:
-                                () => NavigationService.navigateTo(
-                                  context,
-                                  CardDetailsScreen(card: card),
-                                ),
-                            child: Semantics(
-                              label:
-                                  '${context.l10n.cardsScreenTitle}: ${card.name}',
-                              child: CreditCardDetailsListTile(
-                                key: ValueKey(card.id),
-                                cardId: card.id,
-                              ),
-                            ),
-                          );
-                        },
+          data: (cards) {
+            final activeCards =
+                cards.where((card) => !card.isArchived).toList();
+            return activeCards.isEmpty
+                ? EmptyCreditCardListWidget(context: context, ref: ref)
+                : ListView.separated(
+                  padding: const EdgeInsets.all(8.0),
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: activeCards.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 0),
+                  itemBuilder: (context, index) {
+                    final card = activeCards[index];
+                    return GestureDetector(
+                      onTap:
+                          () => NavigationService.navigateTo(
+                            context,
+                            CardDetailsScreen(card: card),
+                          ),
+                      child: Semantics(
+                        label: '${context.l10n.cardsScreenTitle}: ${card.name}',
+                        child: CreditCardDetailsListTile(
+                          key: ValueKey(card.id),
+                          cardId: card.id,
+                        ),
                       ),
+                    );
+                  },
+                );
+          },
           loading: () => const Center(child: CreditCardColorDotIndicator()),
           error:
               (error, stack) => Center(
