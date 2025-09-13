@@ -1,4 +1,5 @@
 import 'package:card_nudge/data/hive/storage/credit_card_summary_storage.dart';
+import 'package:card_nudge/data/hive/storage/delete_queue_entry_storage.dart';
 import 'package:card_nudge/data/hive/storage/payment_storage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -59,6 +60,7 @@ void main() async {
   await PaymentStorage.initHive();
   await UserStorage.initHive();
   await SettingStorage.initHive();
+  await DeleteQueueEntryStorage.initHive();
 
   runApp(const ProviderScope(child: CreditCardApp()));
 }

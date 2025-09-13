@@ -82,6 +82,7 @@
   "customAmount": "Custom Amount",
   "customAmountLabel": "Custom Amount",
   "enterCustomAmount": "Enter amount",
+  "customAmountRequiredError": "Custom amount is required.",
   "invalidCustomAmountError": "Enter a valid positive amount.",
   "amountExceedsDueError": "Amount cannot exceed total due.",
   "paymentLoggedSuccess": "Payment logged successfully!",
@@ -224,5 +225,6 @@
   "autoDebitEnabledTooltip": "Automatic payment is enabled for this card",
   "aiGeneratedSummary": "AI Generated Summary",
   "cardBenefits": "Card Benefits",
-  "noBenefitsSummaryAvailable": "No benefits information available"
+  "noBenefitsSummaryAvailable": "No benefits information available.",
+  "paymentDeletedSuccess": "Payment deleted successfully!"
 }

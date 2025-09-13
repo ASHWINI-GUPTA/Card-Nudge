@@ -2,6 +2,7 @@ import 'package:card_nudge/data/hive/models/credit_card_model.dart';
 import 'package:card_nudge/data/hive/models/payment_model.dart';
 import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:card_nudge/helper/date_extension.dart';
+import 'package:card_nudge/presentation/providers/format_provider.dart';
 import 'package:card_nudge/presentation/providers/user_provider.dart';
 import 'package:card_nudge/services/navigation_service.dart';
 import 'package:flutter/material.dart';
@@ -125,7 +126,11 @@ class CardDetailsScreen extends ConsumerWidget {
                   label: '${context.l10n.cardLabel}: ${card.name}',
                   child: CreditCardDetailsListTile(cardId: card.id),
                 ),
-                const SizedBox(height: 24),
+
+                const SizedBox(height: 18),
+                buildBillingDueInfoBox(context, ref, card),
+                const SizedBox(height: 18),
+
                 Row(
                   children: [
                     Expanded(
@@ -352,15 +357,16 @@ class CardDetailsScreen extends ConsumerWidget {
                 ),
               ),
               TextButton(
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
                 onPressed: () async {
                   try {
-                    await ref.read(creditCardProvider.notifier).delete(card.id);
                     if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(context.l10n.cardDeletedSuccess)),
                     );
                     NavigationService.pop(context); // Close dialog
                     NavigationService.pop(context); // Return to CardListScreen
+                    await ref.read(creditCardProvider.notifier).delete(card.id);
                   } catch (e) {
                     if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -403,17 +409,19 @@ class CardDetailsScreen extends ConsumerWidget {
                 ),
               ),
               TextButton(
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
                 onPressed: () async {
                   try {
-                    await ref.read(paymentProvider.notifier).delete(payment.id);
                     if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Upcoming payment deleted successfully'),
+                      SnackBar(
+                        content: Text(context.l10n.paymentDeletedSuccess),
                       ),
                     );
-                    NavigationService.pop(context); // Close dialog
-                    ref.invalidate(paymentProvider); // Refresh payment list
+                    NavigationService.pop(context);
+                    await ref.read(paymentProvider.notifier).delete(payment.id);
+
+                    ref.invalidate(paymentProvider);
                   } catch (e) {
                     if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -428,6 +436,94 @@ class CardDetailsScreen extends ConsumerWidget {
               ),
             ],
           ),
+    );
+  }
+
+  Widget buildBillingDueInfoBox(
+    BuildContext context,
+    WidgetRef ref,
+    CreditCardModel card,
+  ) {
+    final theme = Theme.of(context);
+    final formatHelper = ref.watch(formatHelperProvider);
+    final l10n = context.l10n;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primary.withAlpha(26),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Semantics(
+                  label:
+                      '${l10n.billingDateLabel}: ${formatHelper.formatDate(card.billingDate, format: 'MMM d, yyyy')}',
+                  child: Text(
+                    l10n.billingDateLabel,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Semantics(
+                  label:
+                      '${l10n.billingDateLabel}: ${formatHelper.formatDate(card.billingDate, format: 'MMM d, yyyy')}',
+                  child: Text(
+                    formatHelper.formatDate(
+                      card.billingDate,
+                      format: 'MMM d, yyyy',
+                    ),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.end, // Align right for due date
+              children: [
+                Semantics(
+                  label:
+                      '${l10n.dueDateLabel}: ${formatHelper.formatDate(card.dueDate, format: 'MMM d, yyyy')}',
+                  child: Text(
+                    l10n.dueDateLabel,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Semantics(
+                  label:
+                      '${l10n.dueDateLabel}: ${formatHelper.formatDate(card.dueDate, format: 'MMM d, yyyy')}',
+                  child: Text(
+                    formatHelper.formatDate(
+                      card.dueDate,
+                      format: 'MMM d, yyyy',
+                    ),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

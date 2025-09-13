@@ -1,70 +1,53 @@
-extension CreditCardDateExtension on DateTime {
-  /// Returns the next billing/due date for a monthly cycle.
-  /// - If the next month has the same day, returns that date.
-  /// - If the next month is shorter (e.g., Jan 31 → Feb 28/29), returns the last day of next month.
-  DateTime get nextMonthlyCycleDate {
-    int year = this.year;
-    int month = this.month + 1;
-    if (month > 12) {
-      month = 1;
-      year++;
+import 'package:intl/intl.dart';
+
+extension DateExtension on DateTime {
+  // Advances to the next monthly cycle, preserving day or adjusting to end of month
+  DateTime nextMonthlyCycleDate() {
+    int targetYear = year;
+    int targetMonth = month + 1;
+    if (targetMonth > 12) {
+      targetMonth = 1;
+      targetYear += 1;
     }
-    // Try same day next month
-    DateTime tentative = DateTime(year, month, this.day);
-    // If overflowed, fallback to last day of next month
-    if (tentative.month != month) {
-      tentative = DateTime(year, month + 1, 0);
+    // Handle end-of-month (e.g., Jan 31 → Feb 28/29)
+    int targetDay = day;
+    final daysInTargetMonth = DateTime(targetYear, targetMonth + 1, 0).day;
+    if (targetDay > daysInTargetMonth) {
+      targetDay = daysInTargetMonth;
     }
-    return tentative;
+    return DateTime(targetYear, targetMonth, targetDay);
   }
 
-  /// Returns the date exactly 30 days after this date.
-  /// Use for cards with a fixed 30-day cycle (not calendar month).
-  DateTime get next30DayCycleDate => add(const Duration(days: 30));
-
-  /// Returns the next due date for cards that always use the last day of the next month.
-  /// E.g., if billing date is 31st, always returns last day of next month.
-  DateTime get nextLastDayOfMonth {
-    int year = this.year;
-    int month = this.month + 1;
-    if (month > 12) {
-      month = 1;
-      year++;
+  // NEW: Reverts to the previous monthly cycle
+  DateTime previousMonthlyCycleDate() {
+    int targetYear = year;
+    int targetMonth = month - 1;
+    if (targetMonth < 1) {
+      targetMonth = 12;
+      targetYear -= 1;
     }
-    return DateTime(year, month + 1, 0);
+    // Handle end-of-month (e.g., Mar 31 → Feb 28/29)
+    int targetDay = day;
+    final daysInTargetMonth = DateTime(targetYear, targetMonth + 1, 0).day;
+    if (targetDay > daysInTargetMonth) {
+      targetDay = daysInTargetMonth;
+    }
+    return DateTime(targetYear, targetMonth, targetDay);
   }
 
-  /// Returns the next due date for cards that always use a fixed day of month (e.g., always 15th).
-  /// If the next month doesn't have that day (e.g., Feb 30), returns last day of next month.
-  DateTime nextFixedDayOfMonth(int day) {
-    int year = this.year;
-    int month = this.month + 1;
-    if (month > 12) {
-      month = 1;
-      year++;
-    }
-    // Try fixed day next month
-    DateTime tentative = DateTime(year, month, day);
-    // If overflowed, fallback to last day of next month
-    if (tentative.month != month) {
-      tentative = DateTime(year, month + 1, 0);
-    }
-    return tentative;
-  }
-
-  /// Returns the next due date for cards with a custom interval (e.g., every N days).
-  DateTime nextCustomInterval(int days) => add(Duration(days: days));
-
-  /// Returns a due date computed as billing date + [graceDays].
-  /// Uses simple day addition which is appropriate for "grace period" logic.
+  // Calculates due date by adding grace days
   DateTime dueDateFromBillingGrace(int graceDays) {
     return add(Duration(days: graceDays));
   }
 
-  /// Returns a positive number if [other] is in the past,
-  /// zero if same day, and a negative number if [other] is in the future.
+  // Ceiling difference in days between two dates
   int differenceInDaysCeil(DateTime other) {
-    final difference = this.difference(other);
-    return (difference.inHours / 24).ceil();
+    final difference = this.difference(other).inDays;
+    return difference >= 0 ? difference : difference - 1;
+  }
+
+  // Format date using intl package
+  String formatDate({String format = 'MMM d, yyyy'}) {
+    return DateFormat(format).format(this);
   }
 }

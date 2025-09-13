@@ -1,3 +1,4 @@
+import 'package:card_nudge/data/enums/entities.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
@@ -85,5 +86,20 @@ class TimeOfDayAdapter extends TypeAdapter<TimeOfDay> {
       for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return TimeOfDay(hour: fields[0] as int, minute: fields[1] as int);
+  }
+}
+
+class EntitiesAdapter extends TypeAdapter<Entities> {
+  @override
+  final int typeId = 102;
+
+  @override
+  Entities read(BinaryReader reader) {
+    return Entities.values[reader.readByte()];
+  }
+
+  @override
+  void write(BinaryWriter writer, Entities obj) {
+    writer.writeByte(obj.index);
   }
 }

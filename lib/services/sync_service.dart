@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:card_nudge/data/enums/entities.dart';
+import 'package:card_nudge/data/hive/models/delete_queue_entry.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -21,6 +23,7 @@ class SyncService {
   final Box<PaymentModel> paymentBox;
   final Box<SettingsModel> settingsBox;
   final Connectivity connectivity;
+  final Box<DeleteQueueEntry> deleteQueueBox;
   final defaultSettingId = '00000000-0000-0000-0000-000000000000';
 
   SyncService({
@@ -31,6 +34,7 @@ class SyncService {
     required this.paymentBox,
     required this.settingsBox,
     required this.connectivity,
+    required this.deleteQueueBox,
   });
 
   Future<bool> isOnline() async {
@@ -51,7 +55,32 @@ class SyncService {
     }
 
     try {
-      // Pull server changes
+      // Before pulling server data, clear entities from server based on local delete queue
+      if (deleteQueueBox.isNotEmpty) {
+        print('Processing delete queue with ${deleteQueueBox.length} entries.');
+
+        final grouped = <Entities, List<dynamic>>{};
+
+        for (var entry in deleteQueueBox.values) {
+          grouped.putIfAbsent(entry.entityType, () => []).add(entry.id);
+        }
+
+        for (final entry in grouped.entries) {
+          final entityType = entry.key;
+          final idsToDelete = entry.value;
+
+          if (idsToDelete.isNotEmpty) {
+            await supabase
+                .from(entityType.table)
+                .delete()
+                .inFilter('id', idsToDelete);
+
+            print('Deleted ${idsToDelete.length} from ${entityType.table}');
+          }
+        }
+      }
+
+      // Now, Pull server changes
       final serverBanks = await supabase
           .from('banks')
           .select()
@@ -349,6 +378,8 @@ class SyncService {
       await bankBox.clear();
       await cardBox.clear();
       await paymentBox.clear();
+      await deleteQueueBox.clear();
+
       // Fetch default banks
       final defaultBanksData = await supabase.from('default_banks').select();
       for (var data in defaultBanksData) {

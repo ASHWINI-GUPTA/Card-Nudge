@@ -124,8 +124,48 @@ class CreditCardModel extends HiveObject {
     return copyWith(currentUtilization: newUtilization);
   }
 
-  DateTime get getNextDueDate =>
-      billingDate.dueDateFromBillingGrace(dueGracePeriodDays);
   bool get isDueIn7Days => dueDate.differenceInDaysCeil(DateTime.now()) <= 7;
   double get utilizationPercentage => (currentUtilization / creditLimit) * 100;
+
+  CreditCardModel advanceToNextCycle() {
+    final nextBillingDate = billingDate.nextMonthlyCycleDate();
+    final nextDueDate = nextBillingDate.dueDateFromBillingGrace(
+      dueGracePeriodDays,
+    );
+    return copyWith(
+      billingDate: nextBillingDate,
+      dueDate: nextDueDate,
+      updatedAt: DateTime.now().toUtc(),
+      syncPending: true,
+    );
+  }
+
+  CreditCardModel revertToPreviousCycle() {
+    final prevBillingDate = billingDate.previousMonthlyCycleDate();
+    final prevDueDate = prevBillingDate.dueDateFromBillingGrace(
+      dueGracePeriodDays,
+    );
+    return copyWith(
+      billingDate: prevBillingDate,
+      dueDate: prevDueDate,
+      updatedAt: DateTime.now().toUtc(),
+      syncPending: true,
+    );
+  }
+
+  void _syncDates() {
+    final calculatedDue = billingDate.dueDateFromBillingGrace(
+      dueGracePeriodDays,
+    );
+    if (dueDate != calculatedDue) {
+      dueDate = calculatedDue;
+      updatedAt = DateTime.now().toUtc();
+      syncPending = true;
+    }
+  }
+
+  DateTime get getNextDueDate {
+    _syncDates();
+    return dueDate;
+  }
 }

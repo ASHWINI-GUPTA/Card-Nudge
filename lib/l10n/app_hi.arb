@@ -82,6 +82,7 @@
   "customAmount": "कस्टम राशि",
   "customAmountLabel": "कस्टम राशि",
   "enterCustomAmount": "राशि दर्ज करें",
+  "customAmountRequiredError": "राशि ज़रूरी है।",
   "invalidCustomAmountError": "सही सकारात्मक राशि दर्ज करें।",
   "amountExceedsDueError": "राशि कुल बकाया से अधिक नहीं हो सकती।",
   "paymentLoggedSuccess": "भुगतान सफलतापूर्वक दर्ज किया गया!",
@@ -224,5 +225,6 @@
   "autoDebitEnabledTooltip": "इस कार्ड के लिए स्वचालित भुगतान सक्रिय है",
   "aiGeneratedSummary": "एआई जनरेटेड सारांश",
   "cardBenefits": "कार्ड लाभ",
-  "noBenefitsSummaryAvailable": "कोई लाभ जानकारी उपलब्ध नहीं है"
+  "noBenefitsSummaryAvailable": "कोई लाभ जानकारी उपलब्ध नहीं है",
+  "paymentDeletedSuccess": "भुगतान सफलतापूर्वक हटाया गया!"
 }

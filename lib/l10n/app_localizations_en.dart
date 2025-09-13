@@ -264,6 +264,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterCustomAmount => 'Enter amount';
 
   @override
+  String get customAmountRequiredError => 'Custom amount is required.';
+
+  @override
   String get invalidCustomAmountError => 'Enter a valid positive amount.';
 
   @override
@@ -668,5 +671,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cardBenefits => 'Card Benefits';
 
   @override
-  String get noBenefitsSummaryAvailable => 'No benefits information available';
+  String get noBenefitsSummaryAvailable => 'No benefits information available.';
+
+  @override
+  String get paymentDeletedSuccess => 'Payment deleted successfully!';
 }

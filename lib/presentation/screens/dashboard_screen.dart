@@ -73,20 +73,24 @@ class DashboardScreen extends ConsumerWidget {
         ),
       ),
       body: cardsAsync.when(
-        data:
-            (cards) => paymentsAsync.when(
-              data:
-                  (payments) => _buildDashboard(context, ref, cards, payments),
-              loading: () => const Center(child: CreditCardColorDotIndicator()),
-              error:
-                  (error, stack) => Center(
-                    child: Text(
-                      '${context.l10n.paymentLoadError}: $error',
-                      style: theme.textTheme.bodyLarge,
-                      textAlign: TextAlign.center,
-                    ),
+        data: (cards) {
+          final activeCards = cards.where((card) => !card.isArchived).toList();
+
+          return paymentsAsync.when(
+            data:
+                (payments) =>
+                    _buildDashboard(context, ref, activeCards, payments),
+            loading: () => const Center(child: CreditCardColorDotIndicator()),
+            error:
+                (error, stack) => Center(
+                  child: Text(
+                    '${context.l10n.paymentLoadError}: $error',
+                    style: theme.textTheme.bodyLarge,
+                    textAlign: TextAlign.center,
                   ),
-            ),
+                ),
+          );
+        },
         loading: () => const Center(child: CreditCardColorDotIndicator()),
         error:
             (error, stack) => Center(
@@ -109,7 +113,13 @@ class DashboardScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final formatHelper = ref.watch(formatHelperProvider);
     final now = DateTime.now();
-    final nonPaidPayments = payments.where((p) => !p.isPaid).toList();
+    // Filter out archived cards
+    final activeCardIds = cards.map((c) => c.id).toSet();
+
+    final nonPaidPayments =
+        payments
+            .where((p) => !p.isPaid && activeCardIds.contains(p.cardId))
+            .toList();
 
     final setting = ref.watch(settingsProvider);
     final utilizationThreshold =
@@ -124,10 +134,7 @@ class DashboardScreen extends ConsumerWidget {
       0,
       (sum, payment) => sum + payment.dueAmount,
     );
-    final utilization =
-        totalCreditLimit > 0
-            ? totalDue / totalCreditLimit
-            : utilizationThreshold;
+    final utilization = totalCreditLimit == 0 ? 0 : totalDue / totalCreditLimit;
 
     // Calculate overutilized cards (utilization > X% per card)
     final cardUtilization = <String, double>{};

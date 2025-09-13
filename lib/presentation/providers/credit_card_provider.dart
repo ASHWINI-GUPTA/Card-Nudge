@@ -3,10 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../constants/app_strings.dart';
+import '../../data/enums/entities.dart';
 import '../../data/enums/sync_status.dart';
 import '../../data/hive/models/credit_card_model.dart';
+import '../../data/hive/models/delete_queue_entry.dart';
 import '../../data/hive/storage/credit_card_storage.dart';
 import 'payment_provider.dart';
+import 'queue_provider.dart';
 import 'sync_provider.dart';
 
 final creditCardBoxProvider = Provider<Box<CreditCardModel>>((ref) {
@@ -105,6 +108,13 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
       if (!_box.containsKey(cardId)) {
         throw const FormatException(AppStrings.cardNotFoundError);
       }
+
+      final deleteQueue = ref.read(deleteQueueBoxProvider);
+      await deleteQueue.put(
+        cardId,
+        DeleteQueueEntry(id: cardId, entityType: Entities.card),
+      );
+
       final card = _box.get(cardId)!;
       await _box.delete(cardId);
       final cardPayments =
@@ -113,11 +123,18 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
               .values
               .where((p) => p.cardId == card.id)
               .toList();
+
       for (var payment in cardPayments) {
+        await deleteQueue.put(
+          payment.id,
+          DeleteQueueEntry(id: payment.id, entityType: Entities.payment),
+        );
         await ref.read(paymentBoxProvider).delete(payment.id);
       }
+      await _triggerSync();
       state = AsyncValue.data(_box.values.toList());
     } catch (e, stack) {
+      // AG TODO: Rollback delete queue entry if needed
       state = AsyncValue.error(e, stack);
       ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
       rethrow;

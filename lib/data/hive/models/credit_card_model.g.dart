@@ -33,7 +33,7 @@ class CreditCardModelAdapter extends TypeAdapter<CreditCardModel> {
       isFavorite: fields[13] == null ? false : fields[13] as bool,
       syncPending: fields[14] as bool,
       isAutoDebitEnabled: fields[15] == null ? false : fields[15] as bool,
-      dueGracePeriodDays: fields[16] == null ? 19 : fields[16] as int,
+      dueGracePeriodDays: fields[16] == null ? 20 : fields[16] as int,
     );
   }
 

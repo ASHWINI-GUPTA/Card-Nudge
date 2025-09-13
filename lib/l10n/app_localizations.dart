@@ -590,6 +590,12 @@ abstract class AppLocalizations {
   /// **'Enter amount'**
   String get enterCustomAmount;
 
+  /// No description provided for @customAmountRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom amount is required.'**
+  String get customAmountRequiredError;
+
   /// No description provided for @invalidCustomAmountError.
   ///
   /// In en, this message translates to:
@@ -1337,8 +1343,14 @@ abstract class AppLocalizations {
   /// No description provided for @noBenefitsSummaryAvailable.
   ///
   /// In en, this message translates to:
-  /// **'No benefits information available'**
+  /// **'No benefits information available.'**
   String get noBenefitsSummaryAvailable;
+
+  /// No description provided for @paymentDeletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment deleted successfully!'**
+  String get paymentDeletedSuccess;
 }
 
 class _AppLocalizationsDelegate

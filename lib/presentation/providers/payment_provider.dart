@@ -1,9 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import '../../data/enums/entities.dart';
 import '../../data/enums/sync_status.dart';
+import '../../data/hive/models/delete_queue_entry.dart';
 import '../../data/hive/models/payment_model.dart';
 import '../../data/hive/storage/payment_storage.dart';
 import '../../constants/app_strings.dart';
+import 'queue_provider.dart';
 import 'sync_provider.dart';
 
 final paymentBoxProvider = Provider<Box<PaymentModel>>((ref) {
@@ -95,9 +98,15 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
       if (!_box.containsKey(paymentId)) {
         throw const FormatException(AppStrings.paymentNotFoundError);
       }
+      final deleteQueue = ref.read(deleteQueueBoxProvider);
+      await deleteQueue.put(
+        paymentId,
+        DeleteQueueEntry(id: paymentId, entityType: Entities.payment),
+      );
+
       await _box.delete(paymentId);
       state = AsyncValue.data(_box.values.toList());
-      // await _triggerSync();
+      await _triggerSync();
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
       ref.read(syncStatusProvider.notifier).state = SyncStatus.error;

@@ -269,6 +269,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get enterCustomAmount => 'राशि दर्ज करें';
 
   @override
+  String get customAmountRequiredError => 'राशि ज़रूरी है।';
+
+  @override
   String get invalidCustomAmountError => 'सही सकारात्मक राशि दर्ज करें।';
 
   @override
@@ -677,4 +680,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get noBenefitsSummaryAvailable => 'कोई लाभ जानकारी उपलब्ध नहीं है';
+
+  @override
+  String get paymentDeletedSuccess => 'भुगतान सफलतापूर्वक हटाया गया!';
 }

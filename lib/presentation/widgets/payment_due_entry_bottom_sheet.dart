@@ -1,6 +1,5 @@
 import 'package:card_nudge/data/hive/models/credit_card_model.dart';
 import 'package:card_nudge/helper/app_localizations_extension.dart';
-import 'package:card_nudge/helper/date_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -8,7 +7,6 @@ import '../../data/hive/models/payment_model.dart';
 import '../../services/navigation_service.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/payment_provider.dart';
-import '../providers/user_provider.dart';
 import 'credit_card_color_dot_indicator.dart';
 
 class PaymentDueEntryBottomSheet extends ConsumerStatefulWidget {
@@ -55,65 +53,57 @@ class _PaymentDueEntryBottomSheet
   }
 
   Future<PaymentModel?> _submit() async {
+    if (!_formKey.currentState!.validate()) return null;
+
     setState(() => _isSubmitting = true);
 
     try {
-      final payments = ref.read(paymentBoxProvider);
-      final user = ref.watch(userProvider)!;
+      final dueAmount = double.parse(_dueAmountController.text.trim());
+      final minimumDueAmount =
+          _minimumDueController.text.trim().isEmpty
+              ? null
+              : double.parse(_minimumDueController.text.trim());
 
-      final isEditing = widget.payment != null;
-      final unpaidExists = payments.values.any((p) {
-        final isSameCard = p.cardId == widget.card.id;
-        final isUnpaid = !p.isPaid;
-        final isNotCurrentPayment = !isEditing || p.key != widget.payment!.key;
-        return isSameCard && isUnpaid && isNotCurrentPayment;
-      });
+      // UPDATED: Use card's synced dueDate for payment
+      final paymentDueDate = widget.card.getNextDueDate;
 
-      if (unpaidExists) {
-        if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(context.l10n.dueAlreadyExist)));
-        }
-        NavigationService.pop(context);
-        return null;
-      }
-
-      final dueAmount =
-          double.tryParse(_dueAmountController.text.trim()) ?? 0.0;
-      final minimumDue =
-          _minimumDueController.text.trim().isNotEmpty
-              ? double.tryParse(_minimumDueController.text.trim())
-              : null;
-
-      final payment = PaymentModel(
-        userId: user.id,
+      var payment = PaymentModel(
+        id: widget.payment?.id,
+        userId: widget.card.userId,
         cardId: widget.card.id,
         dueAmount: dueAmount,
-        minimumDueAmount: minimumDue,
-        dueDate: widget.card.getNextDueDate,
+        minimumDueAmount: minimumDueAmount,
+        dueDate: paymentDueDate,
         statementAmount: dueAmount,
-        id: isEditing ? widget.payment!.id : null,
+        isPaid: false,
+        paymentDate: null,
+        paidAmount: 0.0,
+        syncPending: true,
       );
 
       await ref.read(paymentProvider.notifier).save(payment);
 
-      // Update the due date on Card.
-      final card = await ref
-          .read(creditCardBoxProvider)
-          .values
-          .firstWhere((c) => c.id == payment.cardId);
-
-      final updatedCard = card.copyWith(
-        billingDate: widget.card.billingDate.nextMonthlyCycleDate,
-        syncPending: true,
+      // NEW: Sync card dates if this is the first unpaid payment (but don't advance yet; wait for pay)
+      final payments = ref.read(paymentBoxProvider);
+      final unpaidExists = payments.values.any(
+        (p) => p.cardId == widget.card.id && !p.isPaid && p.id != payment.id,
       );
+      if (!unpaidExists) {
+        // Ensure card.dueDate matches payment dueDate
+        final updatedCard = widget.card.copyWith(dueDate: paymentDueDate);
+        await ref.read(creditCardProvider.notifier).save(updatedCard);
+      }
 
-      await ref.read(creditCardProvider.notifier).save(updatedCard);
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(context.l10n.paymentAddedSuccess)));
+      if (!mounted) return null;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            widget.payment == null
+                ? context.l10n.paymentAddedSuccess
+                : context.l10n.paymentUpdatedSuccess,
+          ),
+        ),
+      );
       return payment;
     } catch (e) {
       if (!mounted) return null;
@@ -143,14 +133,14 @@ class _PaymentDueEntryBottomSheet
         NavigationService.pop(context);
         return;
       }
-      final card = widget.card;
 
-      var payment = PaymentModel(
-        userId: card.userId,
-        cardId: card.id,
+      // UPDATED: Create no-due payment with synced dates
+      final payment = PaymentModel(
+        userId: widget.card.userId,
+        cardId: widget.card.id,
         dueAmount: 0.0,
         minimumDueAmount: 0.0,
-        dueDate: card.getNextDueDate,
+        dueDate: widget.card.getNextDueDate, // Synced
         statementAmount: 0.0,
         isPaid: true,
         paymentDate: DateTime.now().toUtc(),
@@ -160,18 +150,8 @@ class _PaymentDueEntryBottomSheet
 
       await ref.read(paymentProvider.notifier).save(payment);
 
-      // Update card
-      final nextBillingDate = card.billingDate.nextMonthlyCycleDate;
-      final nextDueDate = nextBillingDate.dueDateFromBillingGrace(
-        card.dueGracePeriodDays,
-      );
-
-      final updatedCard = card.copyWith(
-        dueDate: nextDueDate,
-        billingDate: nextBillingDate,
-        syncPending: true,
-      );
-
+      // UPDATED: Use centralized advance
+      final updatedCard = widget.card.advanceToNextCycle();
       await ref.read(creditCardProvider.notifier).save(updatedCard);
 
       if (!mounted) return;
@@ -205,6 +185,16 @@ class _PaymentDueEntryBottomSheet
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Drag handle
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade400,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
             Semantics(
               label:
                   widget.payment == null
