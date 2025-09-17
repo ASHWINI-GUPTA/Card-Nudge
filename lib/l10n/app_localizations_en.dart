@@ -675,4 +675,74 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paymentDeletedSuccess => 'Payment deleted successfully!';
+
+  @override
+  String get january => '🎉 Jan';
+
+  @override
+  String get february => '❤️ Feb';
+
+  @override
+  String get march => '🌍 March';
+
+  @override
+  String get april => '🌱 April';
+
+  @override
+  String get may => '👩 May';
+
+  @override
+  String get june => '🌈 June';
+
+  @override
+  String get july => '🇺🇳 July';
+
+  @override
+  String get august => '☀️ Aug';
+
+  @override
+  String get september => '📚 Sept';
+
+  @override
+  String get october => '🎃 Oct';
+
+  @override
+  String get november => '✊ Nov';
+
+  @override
+  String get december => '🎄 Dec';
+
+  @override
+  String get morningGreeting => 'Good Morning';
+
+  @override
+  String get afternoonGreeting => 'Good Afternoon';
+
+  @override
+  String get eveningGreeting => 'Good Evening';
+
+  @override
+  String get nightGreeting => 'Good Night';
+
+  @override
+  String overUtilizedCards(int count, String threshold) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cards over-utilized (> $threshold%)',
+      one: '$count card over-utilized (> $threshold%)',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String dueSoonCards(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cards due in next 7 days',
+      one: '$count card due in next 7 days',
+    );
+    return '$_temp0';
+  }
 }

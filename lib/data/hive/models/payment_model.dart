@@ -1,3 +1,4 @@
+import 'package:card_nudge/helper/date_extension.dart';
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 
@@ -96,4 +97,8 @@ class PaymentModel extends HiveObject {
   double get remainingAmount => statementAmount - paidAmount;
   bool get isNoPaymentRequired =>
       statementAmount == 0 && dueAmount == 0 && paidAmount == 0;
+
+  bool get isdueDateInNext7Days =>
+      dueDate.differenceInDaysCeil(DateTime.now()) >= 0 &&
+      dueDate.differenceInDaysCeil(DateTime.now()) <= 7;
 }

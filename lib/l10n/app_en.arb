@@ -226,5 +226,47 @@
   "aiGeneratedSummary": "AI Generated Summary",
   "cardBenefits": "Card Benefits",
   "noBenefitsSummaryAvailable": "No benefits information available.",
-  "paymentDeletedSuccess": "Payment deleted successfully!"
+  "paymentDeletedSuccess": "Payment deleted successfully!",
+
+  "january": "🎉 Jan",
+  "february": "❤️ Feb",
+  "march": "🌍 March",
+  "april": "🌱 April",
+  "may": "👩 May",
+  "june": "🌈 June",
+  "july": "🇺🇳 July",
+  "august": "☀️ Aug",
+  "september": "📚 Sept",
+  "october": "🎃 Oct",
+  "november": "✊ Nov",
+  "december": "🎄 Dec",
+  "morningGreeting": "Good Morning",
+  "afternoonGreeting": "Good Afternoon",
+  "eveningGreeting": "Good Evening",
+  "nightGreeting": "Good Night"  ,
+  "overUtilizedCards": "{count, plural, one{{count} card over-utilized (> {threshold}%)} other{{count} cards over-utilized (> {threshold}%)} }",
+  "@overUtilizedCards": {
+    "description": "Message showing number of credit cards that are over-utilized beyond threshold",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of over-utilized cards"
+      },
+      "threshold": {
+        "type": "String",
+        "description": "Utilization threshold percentage"
+      }
+    }
+  },
+
+  "dueSoonCards": "{count, plural, one{{count} card due in next 7 days} other{{count} cards due in next 7 days}}",
+  "@dueSoonCards": {
+    "description": "Message showing number of credit cards due soon within next 7 days",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of cards due soon"
+      }
+    }
+  }
 }

@@ -1351,6 +1351,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Payment deleted successfully!'**
   String get paymentDeletedSuccess;
+
+  /// No description provided for @january.
+  ///
+  /// In en, this message translates to:
+  /// **'🎉 Jan'**
+  String get january;
+
+  /// No description provided for @february.
+  ///
+  /// In en, this message translates to:
+  /// **'❤️ Feb'**
+  String get february;
+
+  /// No description provided for @march.
+  ///
+  /// In en, this message translates to:
+  /// **'🌍 March'**
+  String get march;
+
+  /// No description provided for @april.
+  ///
+  /// In en, this message translates to:
+  /// **'🌱 April'**
+  String get april;
+
+  /// No description provided for @may.
+  ///
+  /// In en, this message translates to:
+  /// **'👩 May'**
+  String get may;
+
+  /// No description provided for @june.
+  ///
+  /// In en, this message translates to:
+  /// **'🌈 June'**
+  String get june;
+
+  /// No description provided for @july.
+  ///
+  /// In en, this message translates to:
+  /// **'🇺🇳 July'**
+  String get july;
+
+  /// No description provided for @august.
+  ///
+  /// In en, this message translates to:
+  /// **'☀️ Aug'**
+  String get august;
+
+  /// No description provided for @september.
+  ///
+  /// In en, this message translates to:
+  /// **'📚 Sept'**
+  String get september;
+
+  /// No description provided for @october.
+  ///
+  /// In en, this message translates to:
+  /// **'🎃 Oct'**
+  String get october;
+
+  /// No description provided for @november.
+  ///
+  /// In en, this message translates to:
+  /// **'✊ Nov'**
+  String get november;
+
+  /// No description provided for @december.
+  ///
+  /// In en, this message translates to:
+  /// **'🎄 Dec'**
+  String get december;
+
+  /// No description provided for @morningGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Morning'**
+  String get morningGreeting;
+
+  /// No description provided for @afternoonGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Afternoon'**
+  String get afternoonGreeting;
+
+  /// No description provided for @eveningGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Evening'**
+  String get eveningGreeting;
+
+  /// No description provided for @nightGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Night'**
+  String get nightGreeting;
+
+  /// Message showing number of credit cards that are over-utilized beyond threshold
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} card over-utilized (> {threshold}%)} other{{count} cards over-utilized (> {threshold}%)} }'**
+  String overUtilizedCards(int count, String threshold);
+
+  /// Message showing number of credit cards due soon within next 7 days
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} card due in next 7 days} other{{count} cards due in next 7 days}}'**
+  String dueSoonCards(int count);
 }
 
 class _AppLocalizationsDelegate

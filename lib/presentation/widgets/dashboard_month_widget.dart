@@ -32,18 +32,18 @@ class DashboardMonthWidget extends StatelessWidget {
     ];
 
     final months = [
-      '🎉 Jan', // New Year's Day (Jan 1)
-      '❤️ Feb', // Valentine's Day (Feb 14)
-      '🌍 Mar', // Earth Hour (March) or Int'l Women's Day (March 8)
-      '🌱 Apr', // Earth Day (April 22)
-      '👩 May', // Mother's Day (varies, but often May) or Int'l Workers' Day (May 1)
-      '🌈 Jun', // Pride Month
-      '🇺🇳 Jul', // No major global events - using UN emblem as July has smaller observances
-      '👨 Aug', // Father's Day (in many countries)
-      '📚 Sep', // International Literacy Day (Sep 8)
-      '🎃 Oct', // Halloween (Oct 31)
-      '✊ Nov', // Movember (men's health) or World Kindness Day (Nov 13)
-      '🎄 Dec', // Christmas (Dec 25)
+      context.l10n.january,
+      context.l10n.february,
+      context.l10n.march,
+      context.l10n.april,
+      context.l10n.may,
+      context.l10n.june,
+      context.l10n.july,
+      context.l10n.august,
+      context.l10n.september,
+      context.l10n.october,
+      context.l10n.november,
+      context.l10n.december,
     ];
 
     // Group payments by month

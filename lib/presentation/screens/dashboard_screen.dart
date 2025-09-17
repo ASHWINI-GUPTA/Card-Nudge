@@ -1,5 +1,4 @@
 import 'package:card_nudge/helper/app_localizations_extension.dart';
-import 'package:card_nudge/helper/date_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -31,16 +30,16 @@ class DashboardScreen extends ConsumerWidget {
     String greeting;
     String emoji;
     if (hour >= 5 && hour < 12) {
-      greeting = 'Morning';
+      greeting = context.l10n.morningGreeting;
       emoji = '🌅';
     } else if (hour >= 12 && hour < 17) {
-      greeting = 'Afternoon';
+      greeting = context.l10n.afternoonGreeting;
       emoji = '🌞';
     } else if (hour >= 17 && hour < 21) {
-      greeting = 'Evening';
+      greeting = context.l10n.eveningGreeting;
       emoji = '🌇';
     } else {
-      greeting = 'Night';
+      greeting = context.l10n.nightGreeting;
       emoji = '🌙';
     }
     final username = user?.firstName ?? '';
@@ -53,7 +52,7 @@ class DashboardScreen extends ConsumerWidget {
               color: theme.colorScheme.onPrimary,
             ),
             children: [
-              TextSpan(text: 'Good $greeting $emoji '),
+              TextSpan(text: '$greeting $emoji '),
               if (username.isNotEmpty)
                 TextSpan(
                   text: '$username',
@@ -153,28 +152,24 @@ class DashboardScreen extends ConsumerWidget {
 
     // Calculate due-soon payments (within 7 days)
     final dueSoonCount =
-        nonPaidPayments
-            .where(
-              (p) =>
-                  p.dueDate.differenceInDaysCeil(now) >= 0 &&
-                  p.dueDate.differenceInDaysCeil(now) <= 7,
-            )
-            .length;
+        nonPaidPayments.where((p) => p.isdueDateInNext7Days).length;
 
     // Generate alerts
     final alerts = <Map<String, dynamic>>[];
     if (overUtilizedCards > 0) {
       alerts.add({
-        'text':
-            '$overUtilizedCards card${overUtilizedCards > 1 ? 's' : ''} over-utilized (>${(setting.utilizationAlertThreshold ?? 30).toStringAsFixed(0)}%)',
+        'text': context.l10n.overUtilizedCards(
+          overUtilizedCards,
+          (setting.utilizationAlertThreshold ?? 30).toStringAsFixed(0),
+        ),
         'icon': Icons.warning,
         'color': theme.colorScheme.error,
       });
     }
+
     if (dueSoonCount > 0) {
       alerts.add({
-        'text':
-            '$dueSoonCount card${dueSoonCount > 1 ? 's' : ''} due in next 7 days',
+        'text': context.l10n.dueSoonCards(dueSoonCount),
         'icon': Icons.calendar_today,
         'color': theme.colorScheme.tertiary,
       });

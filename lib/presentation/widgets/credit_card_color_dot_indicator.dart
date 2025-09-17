@@ -17,10 +17,10 @@ class _CreditCardColorDotIndicatorState
   late List<Animation<double>> _animations;
 
   final List<Color> _dotColors = [
-    Colors.blue[800]!,
-    Colors.orange[800]!,
-    Colors.red[700]!,
-    Colors.green[700]!,
+    const Color.fromRGBO(21, 101, 192, 1),
+    const Color.fromRGBO(239, 108, 0, 1),
+    const Color.fromRGBO(211, 47, 47, 1),
+    const Color.fromRGBO(56, 142, 60, 1),
   ];
 
   @override
