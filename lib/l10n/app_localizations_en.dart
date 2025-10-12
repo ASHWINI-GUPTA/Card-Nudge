@@ -745,4 +745,10 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get somethingWentWrong => 'Something went wrong!';
+
+  @override
+  String get loading => 'Loading, please wait...';
 }

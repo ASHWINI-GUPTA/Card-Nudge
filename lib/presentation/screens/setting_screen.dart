@@ -237,7 +237,7 @@ class SettingsScreen extends ConsumerWidget {
                     },
                   ),
                   ListTile(
-                    title: Text(context.l10n.reminderTime),
+                    title: Text(context.l10n.somethingWentWrong),
                     leading: Icon(
                       Icons.alarm,
                       color: theme.colorScheme.primary,

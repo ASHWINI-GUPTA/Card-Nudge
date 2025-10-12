@@ -753,4 +753,10 @@ class AppLocalizationsHi extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get somethingWentWrong => 'कुछ गलत हो गया!';
+
+  @override
+  String get loading => 'लोड हो रहा है, कृपया प्रतीक्षा करें...';
 }

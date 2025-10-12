@@ -268,5 +268,7 @@
         "description": "Number of cards due soon"
       }
     }
-  }
+  },
+  "somethingWentWrong": "Something went wrong!",
+  "loading": "Loading, please wait..."
 }

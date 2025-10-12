@@ -1,3 +1,4 @@
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../helper/emoji_helper.dart';
@@ -55,7 +56,7 @@ class LoadingIndicatorScreen extends ConsumerWidget {
               const CreditCardColorDotIndicator(),
               const SizedBox(height: 32),
               Text(
-                'Loading, please wait...',
+                context.l10n.loading,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: colorScheme.primary,

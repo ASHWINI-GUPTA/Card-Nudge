@@ -94,7 +94,7 @@ class _ErrorScreenState extends State<ErrorScreen> {
                       const SizedBox(height: 20),
                       // Headline
                       Text(
-                        'Something went wrong!',
+                        context.l10n.somethingWentWrong,
                         style: theme.textTheme.headlineSmall?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,

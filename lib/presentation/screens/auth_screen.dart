@@ -54,18 +54,14 @@ class AuthScreen extends ConsumerWidget {
                   builder:
                       (context, scale, child) =>
                           Transform.scale(scale: scale, child: child),
-                  child: CircleAvatar(
-                    radius: 48,
-                    backgroundColor: Colors.blue.shade50,
-                    child: Image.asset(
-                      'assets/icons/card_nudge.png',
-                      width: 64,
-                      height: 64,
-                      semanticLabel: 'Card Nudge Logo',
-                    ),
+                  child: Image.asset(
+                    'assets/icons/card_nudge.png',
+                    width: 128,
+                    height: 128,
+                    semanticLabel: 'Card Nudge Logo',
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 18),
                 AnimatedOpacity(
                   opacity: 1.0,
                   duration: const Duration(milliseconds: 800),

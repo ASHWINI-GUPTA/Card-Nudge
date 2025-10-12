@@ -1459,6 +1459,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, one{{count} card due in next 7 days} other{{count} cards due in next 7 days}}'**
   String dueSoonCards(int count);
+
+  /// No description provided for @somethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong!'**
+  String get somethingWentWrong;
+
+  /// No description provided for @loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading, please wait...'**
+  String get loading;
 }
 
 class _AppLocalizationsDelegate
