@@ -1,4 +1,5 @@
 import 'package:card_nudge/helper/app_localizations_extension.dart';
+import 'package:card_nudge/presentation/screens/spend_analysis_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,6 +31,17 @@ class CardsScreen extends ConsumerWidget {
           context.l10n.cardsScreenTitle,
           style: theme.textTheme.titleLarge?.copyWith(color: Colors.white),
         ),
+        actions: [
+          IconButton(
+            tooltip: 'Spend Analysis',
+            icon: const Icon(Icons.analytics_outlined),
+            onPressed:
+                () => NavigationService.navigateTo(
+                  context,
+                  const SpendAnalysisScreen(),
+                ),
+          ),
+        ],
         backgroundColor: theme.primaryColor,
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(2),

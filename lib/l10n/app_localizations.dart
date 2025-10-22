@@ -1471,6 +1471,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Loading, please wait...'**
   String get loading;
+
+  /// No description provided for @spendAnalysisTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Spend Analysis'**
+  String get spendAnalysisTitle;
+
+  /// No description provided for @spendAnalysisDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyze your spending patterns and manage your finances better.'**
+  String get spendAnalysisDescription;
+
+  /// No description provided for @yearLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get yearLabel;
+
+  /// No description provided for @filterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter'**
+  String get filterLabel;
+
+  /// No description provided for @totalSpend.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Spend'**
+  String get totalSpend;
 }
 
 class _AppLocalizationsDelegate

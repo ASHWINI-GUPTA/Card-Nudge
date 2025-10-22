@@ -270,5 +270,10 @@
     }
   },
   "somethingWentWrong": "Something went wrong!",
-  "loading": "Loading, please wait..."
+  "loading": "Loading, please wait...",
+  "spendAnalysisTitle": "Spend Analysis",
+  "spendAnalysisDescription": "Analyze your spending patterns and manage your finances better.",
+  "yearLabel": "Year",
+  "filterLabel": "Filter",
+  "totalSpend": "Total Spend"
 }

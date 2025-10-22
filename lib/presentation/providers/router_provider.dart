@@ -1,5 +1,6 @@
 import 'package:card_nudge/constants/app_routes.dart';
 import 'package:card_nudge/presentation/screens/dashboard_screen.dart';
+import '../screens/spend_analysis_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -59,6 +60,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.dashboard,
         name: AppRoutes.dashboardName,
         builder: (context, state) => const DashboardScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.spendAnalysis,
+        name: AppRoutes.spendAnalysisName,
+        builder: (context, state) => const SpendAnalysisScreen(),
       ),
       GoRoute(
         path: AppRoutes.cardDetails,

@@ -759,4 +759,20 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get loading => 'लोड हो रहा है, कृपया प्रतीक्षा करें...';
+
+  @override
+  String get spendAnalysisTitle => 'खर्च विश्लेषण';
+
+  @override
+  String get spendAnalysisDescription =>
+      'अपने खर्च के पैटर्न का विश्लेषण करें और अपनी वित्तीय स्थिति को बेहतर ढंग से प्रबंधित करें।';
+
+  @override
+  String get yearLabel => 'वर्ष';
+
+  @override
+  String get filterLabel => 'फिल्टर';
+
+  @override
+  String get totalSpend => 'कुल खर्च';
 }

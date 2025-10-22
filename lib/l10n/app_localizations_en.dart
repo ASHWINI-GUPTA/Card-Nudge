@@ -751,4 +751,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loading => 'Loading, please wait...';
+
+  @override
+  String get spendAnalysisTitle => 'Spend Analysis';
+
+  @override
+  String get spendAnalysisDescription =>
+      'Analyze your spending patterns and manage your finances better.';
+
+  @override
+  String get yearLabel => 'Year';
+
+  @override
+  String get filterLabel => 'Filter';
+
+  @override
+  String get totalSpend => 'Total Spend';
 }
