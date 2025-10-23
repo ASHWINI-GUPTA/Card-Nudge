@@ -35,6 +35,7 @@ class CardsScreen extends ConsumerWidget {
           IconButton(
             tooltip: 'Spend Analysis',
             icon: const Icon(Icons.analytics_outlined),
+            color: Colors.white,
             onPressed:
                 () => NavigationService.navigateTo(
                   context,

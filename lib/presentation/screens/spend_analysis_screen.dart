@@ -1,14 +1,17 @@
 import 'dart:math';
-import 'package:card_nudge/helper/app_localizations_extension.dart';
-import 'package:card_nudge/presentation/widgets/credit_card_color_dot_indicator.dart';
+import 'package:card_nudge/helper/calender_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../providers/spend_analysis_provider.dart';
 import '../providers/credit_card_provider.dart';
 import '../providers/bank_provider.dart';
 import '../providers/format_provider.dart';
+import '../widgets/data_sync_progress_bar.dart';
+import '../widgets/credit_card_color_dot_indicator.dart';
 
 class SpendAnalysisScreen extends ConsumerStatefulWidget {
   const SpendAnalysisScreen({super.key});
@@ -20,432 +23,85 @@ class SpendAnalysisScreen extends ConsumerStatefulWidget {
 
 class _SpendAnalysisScreenState extends ConsumerState<SpendAnalysisScreen> {
   int? _selectedYear;
+  bool _isVerticalChart = true;
   final Set<String> _selectedCardIds = <String>{};
-  bool _isBarChart = false;
-  bool _isHorizontalBar = false;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final service = ref.watch(spendAnalysisProvider);
+    final primary = Theme.of(context).colorScheme.primary;
+
+    final spendService = ref.watch(spendAnalysisProvider);
     final formatHelper = ref.watch(formatHelperProvider);
     final cardsAsync = ref.watch(creditCardProvider);
-
-    final years = service.availableYears();
-    if (_selectedYear == null && years.isNotEmpty) {
-      _selectedYear = years.first;
-    }
+    final years = spendService.availableYears();
+    _selectedYear ??= years.isNotEmpty ? years.first : null;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.spendAnalysisTitle),
+        title: Text(
+          l10n.spendAnalysisTitle,
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(color: Colors.white),
+        ),
+        backgroundColor: primary,
+        leading: const BackButton(color: Colors.white),
         actions: [
           IconButton(
+            tooltip: 'Filter Cards',
             icon: const Icon(Icons.filter_list),
+            color: Colors.white,
             onPressed: () => _showFilterSheet(context),
           ),
           IconButton(
-            icon: Icon(_isBarChart ? Icons.show_chart : Icons.bar_chart),
-            onPressed: () => setState(() => _isBarChart = !_isBarChart),
-          ),
-          if (_isBarChart)
-            IconButton(
-              icon: Icon(_isHorizontalBar ? Icons.swap_vert : Icons.swap_horiz),
-              onPressed:
-                  () => setState(() => _isHorizontalBar = !_isHorizontalBar),
+            tooltip:
+                _isVerticalChart
+                    ? 'Rotate to Horizontal'
+                    : 'Rotate to Vertical',
+            icon: Transform.rotate(
+              angle: _isVerticalChart ? pi / 2 : 0, // Rotate 90° Clockwise
+              child: const Icon(Icons.stacked_bar_chart),
             ),
+            color: Colors.white,
+            onPressed:
+                () => setState(() => _isVerticalChart = !_isVerticalChart),
+          ),
         ],
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(2),
+          child: DataSynchronizationProgressBar(),
+        ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Year selector
-            Row(
-              children: [
-                Text('${l10n.yearLabel}: '),
-                const SizedBox(width: 8),
-                DropdownButtonHideUnderline(
-                  child: DropdownButton<int>(
-                    value: _selectedYear,
-                    items:
-                        years
-                            .map(
-                              (y) =>
-                                  DropdownMenuItem(value: y, child: Text('$y')),
-                            )
-                            .toList(),
-                    onChanged: (value) {
-                      if (value != null) {
-                        setState(() => _selectedYear = value);
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // Total Summary
+            _buildYearSelector(years, l10n),
+            const SizedBox(height: 12),
             if (_selectedYear != null)
-              Consumer(
-                builder: (context, ref, child) {
-                  final cards = ref.watch(creditCardProvider).valueOrNull ?? [];
-                  final filteredCards =
-                      _selectedCardIds.isEmpty
-                          ? cards
-                          : cards
-                              .where((c) => _selectedCardIds.contains(c.id))
-                              .toList();
-                  final totals = service.getSpendByYear(_selectedYear!);
-                  final totalSpend = filteredCards.fold<double>(
-                    0.0,
-                    (sum, card) => sum + (totals[card.id] ?? 0.0),
-                  );
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                l10n.totalSpend,
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                              Text(
-                                formatHelper.formatCurrency(totalSpend),
-                                style: Theme.of(context).textTheme.headlineSmall
-                                    ?.copyWith(fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      if (filteredCards.isNotEmpty) ...[
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children:
-                              filteredCards.take(5).map((card) {
-                                final color = _getCardColor(
-                                  filteredCards.indexOf(card),
-                                );
-                                return Chip(
-                                  avatar: CircleAvatar(backgroundColor: color),
-                                  label: Text(
-                                    card.name,
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                );
-                              }).toList(),
-                        ),
-                      ],
-                    ],
-                  );
-                },
-              ),
-            const SizedBox(height: 16),
-
-            // Chart
+              _buildTotalSpendCard(context, formatHelper, spendService),
+            const SizedBox(height: 12),
+            // Card chips
+            _buildCardChips(context, spendService),
+            const SizedBox(height: 24),
             Expanded(
               child: cardsAsync.when(
-                data: (cards) {
-                  final selectedYear = _selectedYear ?? years.first;
-                  final filteredCards =
-                      _selectedCardIds.isEmpty
-                          ? cards
-                          : cards
-                              .where((c) => _selectedCardIds.contains(c.id))
-                              .toList();
-
-                  if (filteredCards.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.analytics_outlined,
-                            size: 64,
-                            color: Colors.grey,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No cards selected',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Select cards to view monthly spend analysis',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                data:
+                    (cards) => _buildChart(
+                      context,
+                      cards,
+                      spendService,
+                      formatHelper,
+                      CalenderHelper.getMonthNames(
+                        context.l10n,
+                        abbreviated: true,
                       ),
-                    );
-                  }
-
-                  // Fetch real monthly data
-                  final allMonthlyData = service.getMonthlySpend(selectedYear);
-                  final monthlyData = <String, List<double>>{};
-                  for (var card in filteredCards) {
-                    monthlyData[card.id] =
-                        allMonthlyData[card.id] ?? List.filled(12, 0.0);
-                  }
-
-                  final monthNames = [
-                    'Jan',
-                    'Feb',
-                    'Mar',
-                    'Apr',
-                    'May',
-                    'Jun',
-                    'Jul',
-                    'Aug',
-                    'Sep',
-                    'Oct',
-                    'Nov',
-                    'Dec',
-                  ];
-
-                  if (_isBarChart) {
-                    // Stacked Bar Chart
-                    final barGroups = List.generate(12, (month) {
-                      final stackItems =
-                          filteredCards.asMap().entries.map((entry) {
-                            final index = entry.key;
-                            final card = entry.value;
-                            final amount = monthlyData[card.id]![month];
-                            final color = _getCardColor(index);
-                            return BarChartRodStackItem(0, amount, color);
-                          }).toList();
-
-                      return BarChartGroupData(
-                        x: month,
-                        barRods: [
-                          BarChartRodData(
-                            toY: stackItems.fold(
-                              0.0,
-                              (sum, item) => sum + item.toY,
-                            ),
-                            rodStackItems: stackItems,
-                            width: 22,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                        ],
-                      );
-                    });
-
-                    Widget chartWidget = BarChart(
-                      BarChartData(
-                        barGroups: barGroups,
-                        titlesData: FlTitlesData(
-                          leftTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 64,
-                              getTitlesWidget: (v, meta) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: Text(
-                                    formatHelper.formatCurrencyCompact(v),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              getTitlesWidget: (value, meta) {
-                                final idx = value.toInt();
-                                if (idx < 0 || idx >= 12)
-                                  return const SizedBox.shrink();
-                                return SideTitleWidget(
-                                  meta: meta,
-                                  child: Text(
-                                    monthNames[idx],
-                                    style: const TextStyle(fontSize: 10),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                          topTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: false),
-                          ),
-                          rightTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: false),
-                          ),
-                        ),
-                        gridData: FlGridData(show: true),
-                        borderData: FlBorderData(show: false),
-                        barTouchData: BarTouchData(
-                          touchTooltipData: BarTouchTooltipData(
-                            getTooltipColor:
-                                (_) => Colors.blueGrey.withValues(alpha: 0.8),
-                            getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                              final month = group.x;
-                              String tooltip = '${monthNames[month]}\n';
-                              double cumulative = 0;
-                              for (
-                                int i = rod.rodStackItems.length - 1;
-                                i >= 0;
-                                i--
-                              ) {
-                                final stackItem = rod.rodStackItems[i];
-                                final card = filteredCards[i];
-                                final amount = stackItem.toY - stackItem.fromY;
-                                tooltip +=
-                                    '${card.name}: ${formatHelper.formatCurrency(amount)}\n';
-                              }
-                              return BarTooltipItem(
-                                tooltip,
-                                const TextStyle(color: Colors.white),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    );
-
-                    if (_isHorizontalBar) {
-                      chartWidget = RotatedBox(
-                        quarterTurns: -1,
-                        child: chartWidget,
-                      );
-                    }
-
-                    return SingleChildScrollView(
-                      scrollDirection:
-                          _isHorizontalBar ? Axis.vertical : Axis.horizontal,
-                      child: SizedBox(
-                        width:
-                            _isHorizontalBar
-                                ? null
-                                : max(
-                                  MediaQuery.of(context).size.width,
-                                  12 * 50.0,
-                                ),
-                        height:
-                            _isHorizontalBar
-                                ? max(
-                                  MediaQuery.of(context).size.height / 2,
-                                  400.0,
-                                )
-                                : null,
-                        child: chartWidget,
-                      ),
-                    );
-                  } else {
-                    // Line Chart
-                    return LineChart(
-                      LineChartData(
-                        gridData: FlGridData(
-                          show: true,
-                          drawVerticalLine: true,
-                          horizontalInterval: 1000, // Adjust based on data
-                          verticalInterval: 1,
-                        ),
-                        titlesData: FlTitlesData(
-                          rightTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false),
-                          ),
-                          topTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false),
-                          ),
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 32,
-                              interval: 1,
-                              getTitlesWidget: (value, meta) {
-                                final index = value.toInt();
-                                if (index >= 0 && index < 12) {
-                                  return SideTitleWidget(
-                                    meta: meta,
-                                    child: Text(monthNames[index]),
-                                  );
-                                }
-                                return const SizedBox.shrink();
-                              },
-                            ),
-                          ),
-                          leftTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 64,
-                              getTitlesWidget: (value, meta) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: Text(
-                                    formatHelper.formatCurrencyCompact(
-                                      value.toDouble(),
-                                    ),
-                                    style: const TextStyle(fontSize: 10),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                        borderData: FlBorderData(show: true),
-                        lineBarsData:
-                            filteredCards.asMap().entries.map((entry) {
-                              final index = entry.key;
-                              final card = entry.value;
-                              final cardData =
-                                  monthlyData[card.id] ??
-                                  List.generate(12, (i) => 0.0);
-                              final color = _getCardColor(index);
-                              final spots =
-                                  cardData.asMap().entries.map((e) {
-                                    return FlSpot(e.key.toDouble(), e.value);
-                                  }).toList();
-
-                              return LineChartBarData(
-                                spots: spots,
-                                isCurved: true,
-                                color: color,
-                                barWidth: 3,
-                                belowBarData: BarAreaData(
-                                  show: true,
-                                  color: color.withValues(alpha: 0.3),
-                                ),
-                                dotData: const FlDotData(show: false),
-                              );
-                            }).toList(),
-                        lineTouchData: LineTouchData(
-                          touchTooltipData: LineTouchTooltipData(
-                            getTooltipColor:
-                                (_) => Colors.blueGrey.withValues(alpha: 0.8),
-                            getTooltipItems: (touchedSpots) {
-                              if (touchedSpots.isEmpty) return [];
-                              final month = touchedSpots.first.x.toInt();
-                              return touchedSpots.map((spot) {
-                                final cardIndex = spot.barIndex;
-                                final card = filteredCards[cardIndex];
-                                return LineTooltipItem(
-                                  '${monthNames[month]} - ${card.name}: ${formatHelper.formatCurrency(spot.y)}',
-                                  const TextStyle(color: Colors.white),
-                                );
-                              }).toList();
-                            },
-                          ),
-                          handleBuiltInTouches: true,
-                        ),
-                      ),
-                    );
-                  }
-                },
+                    ),
                 loading:
                     () => const Center(child: CreditCardColorDotIndicator()),
-                error: (e, s) => Center(child: Text('Error - $e')),
+                error: (e, _) => Center(child: Text('Error - $e')),
               ),
             ),
           ],
@@ -454,8 +110,298 @@ class _SpendAnalysisScreenState extends ConsumerState<SpendAnalysisScreen> {
     );
   }
 
+  Widget _buildYearSelector(List<int> years, AppLocalizations l10n) {
+    if (years.isEmpty) return const SizedBox.shrink();
+    return Row(
+      children: [
+        Text(
+          '${l10n.yearLabel}:',
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(width: 12),
+        DropdownButtonHideUnderline(
+          child: DropdownButton<int>(
+            value: _selectedYear,
+            items:
+                years
+                    .map((y) => DropdownMenuItem(value: y, child: Text('$y')))
+                    .toList(),
+            onChanged: (value) => setState(() => _selectedYear = value),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCardChips(
+    BuildContext context,
+    SpendAnalysisService spendService,
+  ) {
+    final theme = Theme.of(context);
+    final cards = ref.watch(creditCardProvider).valueOrNull ?? [];
+    final filteredCards =
+        _selectedCardIds.isEmpty
+            ? cards
+            : cards.where((c) => _selectedCardIds.contains(c.id)).toList();
+
+    if (filteredCards.isEmpty) return const SizedBox.shrink();
+
+    return SizedBox(
+      height: 38,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: filteredCards.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final card = filteredCards[index];
+          final color = _getCardColor(index);
+          return Chip(
+            avatar: CircleAvatar(backgroundColor: color),
+            label: Text(card.name, style: theme.textTheme.labelMedium),
+            backgroundColor: theme.colorScheme.surfaceContainerHighest
+                .withValues(alpha: 0.4),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildTotalSpendCard(
+    BuildContext context,
+    FormatHelper formatHelper,
+    SpendAnalysisService service,
+  ) {
+    final cards = ref.watch(creditCardProvider).valueOrNull ?? [];
+    final filteredCards =
+        _selectedCardIds.isEmpty
+            ? cards
+            : cards.where((c) => _selectedCardIds.contains(c.id)).toList();
+    final totals = service.getSpendByYear(_selectedYear!);
+    final totalSpend = filteredCards.fold<double>(
+      0,
+      (sum, c) => sum + (totals[c.id] ?? 0),
+    );
+    final primary = Theme.of(context).colorScheme.primary;
+
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    context.l10n.totalSpend,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    formatHelper.formatCurrency(totalSpend),
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: primary.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.credit_card, color: primary, size: 16),
+                  const SizedBox(width: 6),
+                  Text(
+                    '${context.l10n.cardsLabel(filteredCards.length)}',
+                    style: TextStyle(
+                      color: primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChart(
+    BuildContext context,
+    List<dynamic> cards,
+    SpendAnalysisService service,
+    FormatHelper formatHelper,
+    List<String> monthNames,
+  ) {
+    final selectedYear = _selectedYear!;
+    final filteredCards =
+        _selectedCardIds.isEmpty
+            ? cards
+            : cards.where((c) => _selectedCardIds.contains(c.id)).toList();
+
+    if (filteredCards.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.analytics_outlined,
+              size: 64,
+              color: Colors.grey.shade400,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'No cards selected',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Select cards to view spend analysis',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      );
+    }
+
+    final monthlyData = service.getMonthlySpend(selectedYear);
+    final dataByCard = {
+      for (var c in filteredCards)
+        c.id: monthlyData[c.id] ?? List.filled(12, 0.0),
+    };
+    double maxStack = 0;
+    for (int m = 0; m < 12; m++) {
+      maxStack = max(
+        maxStack,
+        filteredCards.fold(0.0, (sum, c) => sum + (dataByCard[c.id]![m])),
+      );
+    }
+
+    final barGroups = List.generate(12, (month) {
+      double base = 0;
+      final stacks = <BarChartRodStackItem>[];
+      for (var entry in filteredCards.asMap().entries) {
+        final color = _getCardColor(entry.key);
+        final amount = dataByCard[entry.value.id]![month];
+        stacks.add(BarChartRodStackItem(base, base + amount, color));
+        base += amount;
+      }
+      return BarChartGroupData(
+        x: month,
+        barRods: [
+          BarChartRodData(
+            toY: base,
+            rodStackItems: stacks,
+            width: 18,
+            borderRadius: BorderRadius.circular(6),
+          ),
+        ],
+      );
+    });
+
+    final chart = BarChart(
+      BarChartData(
+        minY: 0,
+        alignment: BarChartAlignment.spaceAround,
+        groupsSpace: 12,
+        barGroups: barGroups,
+        borderData: FlBorderData(show: false),
+        gridData: FlGridData(
+          show: true,
+          drawHorizontalLine: true,
+          drawVerticalLine: false,
+        ),
+        titlesData: FlTitlesData(
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, _) {
+                final idx = value.toInt();
+                return Text(
+                  monthNames[idx],
+                  style: const TextStyle(fontSize: 12),
+                );
+              },
+            ),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              reservedSize: 42,
+              showTitles: _isVerticalChart,
+              getTitlesWidget:
+                  (v, _) => Text(
+                    formatHelper.formatCurrencyCompact(v),
+                    style: const TextStyle(fontSize: 11),
+                  ),
+            ),
+          ),
+          rightTitles: AxisTitles(
+            sideTitles: SideTitles(
+              reservedSize: 42,
+              showTitles: !_isVerticalChart,
+              getTitlesWidget:
+                  (v, _) => Text(
+                    formatHelper.formatCurrencyCompact(v),
+                    style: const TextStyle(fontSize: 11),
+                  ),
+            ),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+        ),
+        barTouchData: BarTouchData(
+          enabled: true,
+          touchTooltipData: BarTouchTooltipData(
+            getTooltipColor: (_) => Colors.blueGrey.withValues(alpha: 0.9),
+            getTooltipItem: (group, _, rod, __) {
+              final month = group.x;
+              final tooltip = StringBuffer('${monthNames[month]}\n');
+              for (int i = rod.rodStackItems.length - 1; i >= 0; i--) {
+                final card = filteredCards[i];
+                final amount =
+                    rod.rodStackItems[i].toY - rod.rodStackItems[i].fromY;
+                if (amount > 0)
+                  tooltip.writeln(
+                    '${card.name}: ${formatHelper.formatCurrency(amount)}',
+                  );
+              }
+              return BarTooltipItem(
+                tooltip.toString(),
+                const TextStyle(color: Colors.white),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 400),
+      child:
+          _isVerticalChart
+              ? chart
+              : RotatedBox(
+                quarterTurns: 1,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: chart,
+                ),
+              ),
+    );
+  }
+
   Color _getCardColor(int index) {
-    final colors = [
+    const colors = [
       Colors.blue,
       Colors.green,
       Colors.red,
@@ -471,121 +417,111 @@ class _SpendAnalysisScreenState extends ConsumerState<SpendAnalysisScreen> {
   }
 
   void _showFilterSheet(BuildContext context) {
+    final l10n = context.l10n;
     final tempCardIds = Set<String>.from(_selectedCardIds);
     final cards = ref.read(creditCardProvider).valueOrNull ?? [];
+    final primary = Theme.of(context).colorScheme.primary;
 
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      builder: (modalContext) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setSheetState) {
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-                left: 16,
-                right: 16,
-                top: 16,
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Drag handle
-                    Container(
-                      width: 40,
-                      height: 4,
-                      margin: const EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade400,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                    Text(
-                      'Select Cards',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Divider(),
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text('Cards'),
-                      trailing: TextButton(
-                        child: const Text('Clear'),
-                        onPressed: () {
-                          setSheetState(() => tempCardIds.clear());
-                        },
-                      ),
-                    ),
-                    Flexible(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: cards.length,
-                        itemBuilder: (context, index) {
-                          final card = cards[index];
-                          final isSelected = tempCardIds.contains(card.id);
-                          final color = _getCardColor(index);
-                          return CheckboxListTile(
-                            secondary: CircleAvatar(
-                              backgroundColor: color,
-                              radius: 16,
-                            ),
-                            title: Text(card.name),
-                            subtitle: Text(
-                              ref
-                                      .read(bankProvider.notifier)
-                                      .get(card.bankId ?? '')
-                                      ?.name ??
-                                  '',
-                            ),
-                            value: isSelected,
-                            onChanged: (value) {
-                              setSheetState(() {
-                                if (value == true) {
-                                  tempCardIds.add(card.id);
-                                } else {
-                                  tempCardIds.remove(card.id);
-                                }
-                              });
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                _selectedCardIds.clear();
-                                _selectedCardIds.addAll(tempCardIds);
-                              });
-                              Navigator.pop(modalContext);
-                            },
-                            child: const Text('Apply'),
-                          ),
+      builder:
+          (modalContext) => StatefulBuilder(
+            builder:
+                (context, setSheetState) => Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+                    left: 16,
+                    right: 16,
+                    top: 16,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade400,
+                          borderRadius: BorderRadius.circular(2),
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () => Navigator.pop(modalContext),
-                            child: const Text('Cancel'),
-                          ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        l10n.filterCardsLabel,
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 12),
+                      Flexible(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: cards.length,
+                          itemBuilder: (context, index) {
+                            final card = cards[index];
+                            final isSelected = tempCardIds.contains(card.id);
+                            final color = _getCardColor(index);
+                            return CheckboxListTile(
+                              secondary: CircleAvatar(
+                                backgroundColor: color,
+                                radius: 16,
+                              ),
+                              title: Text(card.name),
+                              subtitle: Text(
+                                ref
+                                    .read(bankProvider.notifier)
+                                    .get(card.bankId ?? '')
+                                    .name,
+                              ),
+                              value: isSelected,
+                              onChanged:
+                                  (value) => setSheetState(() {
+                                    value == true
+                                        ? tempCardIds.add(card.id)
+                                        : tempCardIds.remove(card.id);
+                                  }),
+                            );
+                          },
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                  ],
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: primary,
+                              ),
+                              onPressed:
+                                  () =>
+                                      setSheetState(() => tempCardIds.clear()),
+                              child: Text(l10n.clearButton),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: FilledButton(
+                              style: FilledButton.styleFrom(
+                                backgroundColor: primary,
+                                foregroundColor: Colors.white,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _selectedCardIds
+                                    ..clear()
+                                    ..addAll(tempCardIds);
+                                });
+                                Navigator.pop(modalContext);
+                              },
+                              child: Text(l10n.applyButton),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
-        );
-      },
+          ),
     );
   }
 }

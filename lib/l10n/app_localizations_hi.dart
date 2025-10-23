@@ -774,5 +774,19 @@ class AppLocalizationsHi extends AppLocalizations {
   String get filterLabel => 'फिल्टर';
 
   @override
+  String get filterCardsLabel => 'कार्ड फ़िल्टर करें';
+
+  @override
   String get totalSpend => 'कुल खर्च';
+
+  @override
+  String cardsLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count कार्ड्स',
+      one: '$count कार्ड',
+    );
+    return '$_temp0';
+  }
 }

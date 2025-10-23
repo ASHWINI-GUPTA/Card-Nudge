@@ -766,5 +766,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterLabel => 'Filter';
 
   @override
+  String get filterCardsLabel => 'Filter Cards';
+
+  @override
   String get totalSpend => 'Total Spend';
+
+  @override
+  String cardsLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cards',
+      one: '$count card',
+    );
+    return '$_temp0';
+  }
 }

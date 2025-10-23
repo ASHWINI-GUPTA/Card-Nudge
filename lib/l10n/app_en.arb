@@ -275,5 +275,16 @@
   "spendAnalysisDescription": "Analyze your spending patterns and manage your finances better.",
   "yearLabel": "Year",
   "filterLabel": "Filter",
-  "totalSpend": "Total Spend"
+  "filterCardsLabel": "Filter Cards",
+  "totalSpend": "Total Spend",
+  "cardsLabel": "{count, plural, one{{count} card} other{{count} cards}}",
+  "@cardsLabel": {
+    "description": "Label showing number of cards (singular/plural handled automatically)",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of cards"
+      }
+    }
+  }
 }

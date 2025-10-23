@@ -1496,11 +1496,23 @@ abstract class AppLocalizations {
   /// **'Filter'**
   String get filterLabel;
 
+  /// No description provided for @filterCardsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter Cards'**
+  String get filterCardsLabel;
+
   /// No description provided for @totalSpend.
   ///
   /// In en, this message translates to:
   /// **'Total Spend'**
   String get totalSpend;
+
+  /// Label showing number of cards (singular/plural handled automatically)
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} card} other{{count} cards}}'**
+  String cardsLabel(int count);
 }
 
 class _AppLocalizationsDelegate

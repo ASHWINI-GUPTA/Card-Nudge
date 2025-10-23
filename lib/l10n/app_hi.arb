@@ -275,5 +275,16 @@
   "spendAnalysisDescription": "अपने खर्च के पैटर्न का विश्लेषण करें और अपनी वित्तीय स्थिति को बेहतर ढंग से प्रबंधित करें।",
   "yearLabel": "वर्ष",
   "filterLabel": "फिल्टर",
-  "totalSpend": "कुल खर्च"
+  "filterCardsLabel": "कार्ड फ़िल्टर करें",
+  "totalSpend": "कुल खर्च",
+  "cardsLabel": "{count, plural, one{{count} कार्ड} other{{count} कार्ड्स}}",
+  "@cardsLabel": {
+    "description": "Label showing number of cards (singular/plural handled automatically, Hindi translation)",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of cards"
+      }
+    }
+  }
 }
