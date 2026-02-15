@@ -284,7 +284,8 @@ class SyncService {
         final serverSetting = serverSettings.first;
         final localSetting = settingsBox.values.first;
         final serverUpdatedAt = DateTime.parse(serverSetting['updated_at']);
-        if (serverUpdatedAt.isAfter(localSetting.updatedAt)) {
+        if (localSetting.isDefaultSetting ||
+            serverUpdatedAt.isAfter(localSetting.updatedAt)) {
           final timeArray = serverSetting['reminder_time'].toString().split(
             ':',
           );
