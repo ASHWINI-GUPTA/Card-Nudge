@@ -15,7 +15,6 @@ import '../providers/supabase_provider.dart';
 import '../providers/sync_provider.dart';
 import '../providers/user_provider.dart';
 import '../widgets/data_sync_progress_bar.dart';
-import '../widgets/credit_card_limit_utilization_slider.dart';
 import '../widgets/app_version_information_tile.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -237,7 +236,7 @@ class SettingsScreen extends ConsumerWidget {
                     },
                   ),
                   ListTile(
-                    title: Text(context.l10n.somethingWentWrong),
+                    title: Text(context.l10n.reminderTime),
                     leading: Icon(
                       Icons.alarm,
                       color: theme.colorScheme.primary,
@@ -257,34 +256,6 @@ class SettingsScreen extends ConsumerWidget {
                             .updateReminderTime(time);
                       }
                     },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 8.0,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          context.l10n.utilizationAlert,
-                          style: theme.textTheme.bodyLarge,
-                        ),
-                        CreditLimitUtilizationSlider(
-                          initialValue:
-                              settings.utilizationAlertThreshold ?? 30,
-                          onChanged: (value) {
-                            ref
-                                .read(settingsProvider.notifier)
-                                .updateUtilizationAlertThreshold(value);
-                          },
-                        ),
-                        Text(
-                          context.l10n.utilizationAlertDescription,
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                      ],
-                    ),
                   ),
                 ],
               ),
