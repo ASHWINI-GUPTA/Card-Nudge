@@ -37,6 +37,9 @@ class SyncService {
     required this.deleteQueueBox,
   });
 
+  bool get isInitialized =>
+      settingsBox.isNotEmpty && !settingsBox.values.first.isDefaultSetting;
+
   Future<bool> isOnline() async {
     final connectivityResult = await connectivity.checkConnectivity();
     return connectivityResult != ConnectivityResult.none;
@@ -380,6 +383,18 @@ class SyncService {
       await cardBox.clear();
       await paymentBox.clear();
       await deleteQueueBox.clear();
+
+      // Update settings with correct userId so isInitialized becomes true
+      if (settingsBox.isNotEmpty) {
+        final currentSettings = settingsBox.values.first;
+        if (currentSettings.isDefaultSetting) {
+          final newSettings = currentSettings.copyWith(
+            userId: userId,
+            syncPending: true,
+          );
+          await settingsBox.put(defaultSettingId, newSettings);
+        }
+      }
 
       // Fetch default banks
       final defaultBanksData = await supabase.from('default_banks').select();

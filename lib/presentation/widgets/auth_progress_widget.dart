@@ -68,19 +68,33 @@ class _AuthProgressState extends ConsumerState<AuthProgress> {
 
     try {
       final syncService = ref.read(syncServiceProvider);
-      await syncService.initialSync(user.id);
 
-      setState(() {
-        _isSyncing = false;
-      });
+      if (syncService.isInitialized) {
+        if (mounted) {
+          NavigationService.goToRoute(context, '/home');
+        }
+        // Run sync in background
+        syncService.syncData().catchError((e) {
+          debugPrint('Background sync error: $e');
+        });
+      } else {
+        await syncService.initialSync(user.id);
+        if (mounted) {
+          NavigationService.goToRoute(context, '/home');
+        }
+      }
 
       if (mounted) {
-        await NavigationService.goToRoute(context, '/home');
+        setState(() {
+          _isSyncing = false;
+        });
       }
     } catch (e) {
-      setState(() {
-        _isSyncing = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isSyncing = false;
+        });
+      }
       if (mounted) {
         await NavigationService.goToRoute(
           context,
