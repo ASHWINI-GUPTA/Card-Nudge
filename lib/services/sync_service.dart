@@ -37,8 +37,13 @@ class SyncService {
     required this.deleteQueueBox,
   });
 
+  /// Returns true only if both settings are properly configured (non-default userId)
+  /// AND bank data exists locally. Since initialSync always fetches default banks,
+  /// an empty bankBox means the sync never completed — we must go through AuthProgress.
   bool get isInitialized =>
-      settingsBox.isNotEmpty && !settingsBox.values.first.isDefaultSetting;
+      settingsBox.isNotEmpty &&
+      !settingsBox.values.first.isDefaultSetting &&
+      bankBox.isNotEmpty;
 
   Future<bool> isOnline() async {
     final connectivityResult = await connectivity.checkConnectivity();

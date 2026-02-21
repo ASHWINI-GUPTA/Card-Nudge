@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/supabase_provider.dart';
+import '../providers/sync_provider.dart';
 import '../widgets/auth_progress_widget.dart';
 import '../screens/auth_screen.dart';
 import '../screens/error_screen.dart';
@@ -23,26 +24,50 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final supabaseService = ref.read(supabaseServiceProvider);
       final isAuthenticated = supabaseService.isAuthenticated;
-      final isLoggingIn =
+
+      final isAuthRoute =
           state.matchedLocation == AppRoutes.auth ||
           state.matchedLocation == AppRoutes.loginCallback;
 
-      if (!isAuthenticated && !isLoggingIn) {
+      final isErrorRoute = state.matchedLocation == AppRoutes.error;
+
+      // Unauthenticated users can only access auth routes and error
+      if (!isAuthenticated && !isAuthRoute && !isErrorRoute) {
         return AppRoutes.auth;
       }
+
+      // Authenticated users hitting /auth should go to root (which handles initialized vs first-time)
       if (isAuthenticated && state.matchedLocation == AppRoutes.auth) {
-        return AppRoutes.home;
+        return AppRoutes.root;
       }
+
+      // Root route decision: authenticated users with existing local data go straight to /home
+      if (isAuthenticated && state.matchedLocation == AppRoutes.root) {
+        final syncService = ref.read(syncServiceProvider);
+
+        if (syncService.isInitialized) {
+          // Data already exists locally — skip AuthProgress, go to home
+          // Trigger background sync (fire-and-forget)
+          syncService.syncData().catchError((e) {
+            debugPrint('Background sync error on app resume: $e');
+          });
+
+          return AppRoutes.home;
+        }
+        // Not initialized — fall through to show AuthProgress for first-time sync
+      }
+
       return null;
     },
     routes: [
       GoRoute(
         path: AppRoutes.root,
         name: AppRoutes.rootName,
-        // AG TODO: On App reload/resume it should not go to AuthProgress instead use Loading Screen
         builder: (context, state) {
           final isAuthenticated =
               ref.watch(supabaseServiceProvider).isAuthenticated;
+          // If authenticated but not initialized, show AuthProgress for initial sync
+          // If not authenticated, show AuthScreen
           return isAuthenticated ? const AuthProgress() : const AuthScreen();
         },
       ),

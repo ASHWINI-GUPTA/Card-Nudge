@@ -159,7 +159,7 @@ class AuthScreen extends ConsumerWidget {
                             '${context.l10n.appVersion}: ${snapshot.data!.version}',
                             style: TextStyle(
                               color: Colors.grey[700],
-                              fontSize: 13,
+                              fontSize: 14,
                             ),
                           );
                         } else if (snapshot.hasError) {
@@ -167,13 +167,13 @@ class AuthScreen extends ConsumerWidget {
                             '${context.l10n.versionError}: ${snapshot.error}',
                             style: TextStyle(
                               color: Colors.red[700],
-                              fontSize: 13,
+                              fontSize: 14,
                             ),
                           );
                         }
                         return Text(
                           context.l10n.loadingVersion,
-                          style: TextStyle(color: Colors.grey, fontSize: 13),
+                          style: TextStyle(color: Colors.grey, fontSize: 14),
                         );
                       },
                     ),
@@ -185,17 +185,28 @@ class AuthScreen extends ConsumerWidget {
                         Text(
                           'Made with ',
                           style: TextStyle(
-                            color: Colors.grey[700],
-                            fontSize: 13,
+                            color: Color(0xFFFF9933),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
                           ),
                         ),
-                        const Icon(Icons.favorite, color: Colors.red, size: 16),
+                        Stack(
+                          alignment: Alignment.center,
+                          children: const [
+                            Icon(
+                              Icons.favorite,
+                              color: Colors.black26,
+                              size: 24,
+                            ),
+                            Icon(Icons.favorite, color: Colors.white, size: 20),
+                          ],
+                        ),
                         Text(
                           ' in Bharat',
                           style: TextStyle(
-                            color: Colors.deepOrange[700],
+                            color: Color(0xFF138808),
                             fontWeight: FontWeight.bold,
-                            fontSize: 13,
+                            fontSize: 14,
                           ),
                         ),
                       ],
@@ -212,10 +223,9 @@ class AuthScreen extends ConsumerWidget {
                             mode: LaunchMode.externalApplication,
                           );
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Could not open GitHub link'),
-                            ),
+                          await launchUrl(
+                            url,
+                            mode: LaunchMode.inAppBrowserView,
                           );
                         }
                       },

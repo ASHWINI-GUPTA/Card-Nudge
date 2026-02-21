@@ -128,7 +128,9 @@ class DueScreen extends ConsumerWidget {
                             () =>
                                 throw Exception(context.l10n.invalidCardError),
                       );
-                      final bank = banks.firstWhere((b) => b.id == card.bankId);
+                      final bank =
+                          banks.where((b) => b.id == card.bankId).firstOrNull;
+                      if (bank == null) return const SizedBox.shrink();
                       return DueCard(card: card, bank: bank, payment: payment);
                     }),
                   ],

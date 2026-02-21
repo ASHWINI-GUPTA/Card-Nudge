@@ -32,10 +32,16 @@ class CreditCardDetailsListTile extends ConsumerWidget {
 
     return cardAsync.when(
       data: (cards) {
-        final card = cards.firstWhere((c) => c.id == cardId);
+        final card = cards.where((c) => c.id == cardId).firstOrNull;
+        if (card == null) {
+          return const SizedBox.shrink();
+        }
         return bankAsync.when(
           data: (banks) {
-            final bank = banks.firstWhere((b) => b.id == card.bankId);
+            final bank = banks.where((b) => b.id == card.bankId).firstOrNull;
+            if (bank == null) {
+              return const Center(child: CreditCardColorDotIndicator());
+            }
 
             return Semantics(
               button: true,

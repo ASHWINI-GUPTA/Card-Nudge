@@ -8,6 +8,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../data/hive/storage/bank_storage.dart';
+import '../data/hive/storage/credit_card_storage.dart';
+import '../data/hive/storage/credit_card_summary_storage.dart';
+import '../data/hive/storage/delete_queue_entry_storage.dart';
+import '../data/hive/storage/payment_storage.dart';
+import '../data/hive/storage/setting_storage.dart';
 import '../presentation/providers/user_provider.dart';
 
 class SupabaseService {
@@ -76,12 +82,27 @@ class SupabaseService {
     }
   }
 
-  // Sign out
+  // Sign out and clear all local data
   Future<void> signOut() async {
     try {
       await removeDeviceToken();
       await _googleSignIn.signOut();
       await _client.auth.signOut();
+
+      await BankStorage.getBox().clear();
+      await CreditCardStorage.getBox().clear();
+      await CreditCardSummaryStorage.getBox().clear();
+      await PaymentStorage.getBox().clear();
+      await DeleteQueueEntryStorage.getBox().clear();
+      await SettingStorage.getBox().clear();
+
+      // Re-seed default settings so SettingsNotifier doesn't crash on empty box
+      await SettingStorage.getBox().put(
+        SettingStorage.defaultUserId,
+        SettingStorage.defaultSettings,
+      );
+
+      // Clear in-memory user state
       _ref.read(userProvider.notifier).clearUserDetails();
     } catch (e) {
       throw AuthException('Sign out failed: ${e.toString()}');

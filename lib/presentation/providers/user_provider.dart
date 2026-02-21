@@ -8,7 +8,17 @@ final userProvider = StateNotifierProvider<UserNotifier, UserModel?>((ref) {
 });
 
 class UserNotifier extends StateNotifier<UserModel?> {
-  UserNotifier() : super(null);
+  UserNotifier() : super(null) {
+    _loadFromStorage();
+  }
+
+  /// Restore user from Hive when the notifier is first created
+  void _loadFromStorage() {
+    final box = UserStorage.getBox();
+    if (box.isNotEmpty) {
+      state = box.values.first;
+    }
+  }
 
   // Save user details to Hive
   Future<void> saveUserDetails({
