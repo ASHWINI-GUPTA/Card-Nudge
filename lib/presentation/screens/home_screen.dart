@@ -1,4 +1,5 @@
 import 'package:card_nudge/presentation/screens/setting_screen.dart';
+import 'package:card_nudge/presentation/widgets/update_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
 import 'cards_screen.dart';
@@ -13,6 +14,20 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Check for app updates after the first frame is rendered.
+    // The InAppUpdateService has built-in cooldown (24h) and re-entrancy
+    // guards, so this is safe to call on every HomeScreen mount without
+    // risk of looping or spamming the Play Store API.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        UpdateBottomSheet.show(context);
+      }
+    });
+  }
 
   final List<Widget> _screens = const [
     DashboardScreen(),
