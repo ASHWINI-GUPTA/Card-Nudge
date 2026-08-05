@@ -66,6 +66,9 @@ class InAppUpdateService {
   /// Returns [UpdateCheckResult.failed] if the API call throws or times out.
   Future<UpdateCheckResult> checkForUpdate() async {
     // Only supported on Android
+    if (kIsWeb) {
+      return UpdateCheckResult.notAvailable();
+    }
     if (!Platform.isAndroid) {
       return UpdateCheckResult.notAvailable();
     }

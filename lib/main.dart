@@ -17,8 +17,11 @@ import 'data/hive/storage/user_storage.dart';
 import 'firebase_options.dart';
 import 'helper/notification_handler.dart';
 
+import 'package:flutter_web_plugins/url_strategy.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  usePathUrlStrategy();
 
   // Load .env file
   await dotenv.load(fileName: '.env');

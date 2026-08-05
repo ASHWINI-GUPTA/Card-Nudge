@@ -40,7 +40,10 @@ class CreditCardDetailsListTile extends ConsumerWidget {
           data: (banks) {
             final bank = banks.where((b) => b.id == card.bankId).firstOrNull;
             if (bank == null) {
-              return const Center(child: CreditCardColorDotIndicator());
+              return const SizedBox(
+                height: _cardHeight,
+                child: Center(child: CreditCardColorDotIndicator()),
+              );
             }
 
             return Semantics(
@@ -49,44 +52,58 @@ class CreditCardDetailsListTile extends ConsumerWidget {
               child: _buildCard(context, ref, theme, bank, card),
             );
           },
-          loading: () => const Center(child: CreditCardColorDotIndicator()),
+          loading:
+              () => const SizedBox(
+                height: _cardHeight,
+                child: Center(child: CreditCardColorDotIndicator()),
+              ),
           error:
-              (error, _) => Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '${context.l10n.bankDetailsLoadError}: $error',
-                      style: theme.textTheme.bodyLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => ref.invalidate(bankProvider),
-                      child: Text(context.l10n.retryButtonLabel),
-                    ),
-                  ],
+              (error, _) => SizedBox(
+                height: _cardHeight,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '${context.l10n.bankDetailsLoadError}: $error',
+                        style: theme.textTheme.bodyLarge,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () => ref.invalidate(bankProvider),
+                        child: Text(context.l10n.retryButtonLabel),
+                      ),
+                    ],
+                  ),
                 ),
               ),
         );
       },
-      loading: () => const Center(child: CreditCardColorDotIndicator()),
+      loading:
+          () => const SizedBox(
+            height: _cardHeight,
+            child: Center(child: CreditCardColorDotIndicator()),
+          ),
       error:
-          (error, _) => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Card Load Error: $error',
-                  style: theme.textTheme.bodyLarge,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => ref.invalidate(creditCardProvider),
-                  child: Text(context.l10n.buttonRetry),
-                ),
-              ],
+          (error, _) => SizedBox(
+            height: _cardHeight,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Card Load Error: $error',
+                    style: theme.textTheme.bodyLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => ref.invalidate(creditCardProvider),
+                    child: Text(context.l10n.buttonRetry),
+                  ),
+                ],
+              ),
             ),
           ),
     );

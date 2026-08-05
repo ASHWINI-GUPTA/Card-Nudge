@@ -7,6 +7,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../providers/supabase_provider.dart';
+import '../providers/user_provider.dart';
 import '../widgets/credit_card_color_dot_indicator.dart';
 
 class AuthScreen extends ConsumerWidget {
@@ -140,7 +141,42 @@ class AuthScreen extends ConsumerWidget {
                   ),
                   text: 'Continue with GitHub',
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 20),
+
+                // Try Demo Mode Button
+                TextButton(
+                  onPressed: () async {
+                    await ref.read(userProvider.notifier).enableDemoMode();
+                    if (context.mounted) {
+                      NavigationService.goToRoute(context, '/sync');
+                    }
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.blueGrey[600],
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.science_outlined,
+                        color: Colors.lightBlue,
+                        size: 16,
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        'Demo Mode',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
                 // Info Section
                 Column(

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:card_nudge/presentation/providers/setting_provider.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -23,8 +24,11 @@ class SupabaseService {
 
   SupabaseService(this._ref)
     : _googleSignIn = GoogleSignIn(
-        clientId: dotenv.env['GOOGLE_IOS_CLIENT_ID'],
-        serverClientId: dotenv.env['GOOGLE_WEB_CLIENT_ID'],
+        clientId:
+            kIsWeb
+                ? dotenv.env['GOOGLE_WEB_CLIENT_ID']
+                : dotenv.env['GOOGLE_IOS_CLIENT_ID'],
+        serverClientId: kIsWeb ? null : dotenv.env['GOOGLE_WEB_CLIENT_ID'],
         scopes: const ['email', 'profile'],
       );
 
@@ -42,7 +46,10 @@ class SupabaseService {
     try {
       final success = await _client.auth.signInWithOAuth(
         OAuthProvider.github,
-        redirectTo: 'https://card.fnlsg.in/login-callback',
+        redirectTo:
+            kIsWeb
+                ? '${Uri.base.origin}/login-callback'
+                : 'https://card.fnlsg.in/login-callback',
       );
       if (!success) {
         throw const AuthException('GitHub Sign-In failed');
@@ -55,6 +62,17 @@ class SupabaseService {
   // Sign in with Google
   Future<void> signInWithGoogle() async {
     try {
+      if (kIsWeb) {
+        final success = await _client.auth.signInWithOAuth(
+          OAuthProvider.google,
+          redirectTo: '${Uri.base.origin}/login-callback',
+        );
+        if (!success) {
+          throw const AuthException('Google Sign-In failed');
+        }
+        return;
+      }
+
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
         throw const AuthException('Google Sign-In cancelled');
@@ -146,13 +164,18 @@ class SupabaseService {
       // BUG: It will have the default settings.
       await _ref.read(settingsProvider.notifier).updateUserId(user.id);
 
-      await initializeNotifications();
+      try {
+        await initializeNotifications();
+      } catch (e) {
+        debugPrint('Warning: Failed to initialize notifications: $e');
+      }
     } catch (e) {
       throw AuthException('Failed to sync user details: ${e.toString()}');
     }
   }
 
   Future<bool> isIosSimulator() async {
+    if (kIsWeb) return false;
     if (!Platform.isIOS) return false;
 
     final deviceInfo = DeviceInfoPlugin();
@@ -170,12 +193,14 @@ class SupabaseService {
     // Get the FCM token
     bool isSimulator = await isIosSimulator();
     final token =
-        isSimulator
-            ? await messaging.getAPNSToken()
-            : await messaging.getToken();
+        kIsWeb
+            ? await messaging.getToken(vapidKey: dotenv.env['FCM_VAPID_KEY'])
+            : (isSimulator
+                ? await messaging.getAPNSToken()
+                : await messaging.getToken());
 
     final userId = _client.auth.currentUser?.id;
-    final platform = Platform.operatingSystem;
+    final platform = kIsWeb ? 'web' : Platform.operatingSystem;
 
     if (token != null && userId != null) {
       // Check if the token already exists for the user

@@ -14,6 +14,7 @@ import '../providers/credit_card_provider.dart';
 import '../screens/loading_screen.dart';
 import '../screens/setting_screen.dart';
 import '../screens/home_screen.dart';
+import '../providers/user_provider.dart';
 
 final notificationNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -23,7 +24,9 @@ final routerProvider = Provider<GoRouter>((ref) {
     navigatorKey: notificationNavigatorKey,
     redirect: (context, state) {
       final supabaseService = ref.read(supabaseServiceProvider);
-      final isAuthenticated = supabaseService.isAuthenticated;
+      final user = ref.read(userProvider);
+      final isAuthenticated =
+          supabaseService.isAuthenticated || user?.id == 'demo-user';
 
       final isAuthRoute =
           state.matchedLocation == AppRoutes.auth ||
@@ -65,7 +68,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: AppRoutes.rootName,
         builder: (context, state) {
           final isAuthenticated =
-              ref.watch(supabaseServiceProvider).isAuthenticated;
+              ref.watch(supabaseServiceProvider).isAuthenticated ||
+              ref.watch(userProvider)?.id == 'demo-user';
           // If authenticated but not initialized, show AuthProgress for initial sync
           // If not authenticated, show AuthScreen
           return isAuthenticated ? const AuthProgress() : const AuthScreen();
@@ -97,7 +101,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final cardId = state.pathParameters['cardId']!;
           final isAuthenticated =
-              ref.watch(supabaseServiceProvider).isAuthenticated;
+              ref.watch(supabaseServiceProvider).isAuthenticated ||
+              ref.watch(userProvider)?.id == 'demo-user';
 
           if (!isAuthenticated) {
             return const AuthScreen();
@@ -129,14 +134,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.loginCallback,
         name: AppRoutes.loginCallbackName,
-        redirect: (context, state) async {
-          final supabaseService = ref.read(supabaseServiceProvider);
-          try {
-            await supabaseService.client.auth.getSessionFromUrl(state.uri);
-            return AppRoutes.root;
-          } catch (e) {
-            return '${AppRoutes.error}?message=${Uri.encodeComponent(e.toString())}';
-          }
+        redirect: (context, state) {
+          // Supabase automatically handles the OAuth callback on app startup.
+          // Manually calling getSessionFromUrl again causes a PKCE code verifier error.
+          // Simply redirect to root to continue the flow.
+          return AppRoutes.root;
         },
       ),
       GoRoute(

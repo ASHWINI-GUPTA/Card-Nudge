@@ -6,7 +6,7 @@ class AppRoutes {
   static const String cardDetails = '/card_details/:cardId';
   static const String spendAnalysis = '/spend-analysis';
   static const String auth = '/auth';
-  static const String loginCallback = '/login_callback';
+  static const String loginCallback = '/login-callback';
   static const String sync = '/sync';
   static const String error = '/error';
 

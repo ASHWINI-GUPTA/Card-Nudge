@@ -5,6 +5,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 import '../data/enums/card_type.dart';
 import '../data/enums/currency.dart';
@@ -378,6 +379,298 @@ class SyncService {
   }
 
   Future<void> initialSync(String userId) async {
+    if (userId == 'demo-user') {
+      try {
+        await bankBox.clear();
+        await cardBox.clear();
+        await paymentBox.clear();
+        await deleteQueueBox.clear();
+
+        // Update settings with correct userId so isInitialized becomes true
+        if (settingsBox.isNotEmpty) {
+          final currentSettings = settingsBox.values.first;
+          final newSettings = currentSettings.copyWith(
+            userId: userId,
+            syncPending: false,
+          );
+          await settingsBox.put(defaultSettingId, newSettings);
+        }
+
+        // Fetch default banks if online, otherwise seed mocks
+        bool fetchedBanks = false;
+        if (await isOnline()) {
+          try {
+            final defaultBanksData =
+                await supabase.from('default_banks').select();
+            if (defaultBanksData.isNotEmpty) {
+              for (var data in defaultBanksData) {
+                final bank = BankModel(
+                  id: data['id'],
+                  userId: '',
+                  name: data['name'],
+                  code: data['code'],
+                  logoPath: data['logo_path'],
+                  supportNumber: data['support_number'],
+                  website: data['website'],
+                  isFavorite: data['is_favorite'] ?? false,
+                  colorHex: data['color_hex'],
+                  priority: data['priority'],
+                  createdAt: DateTime.parse(data['created_at']),
+                  updatedAt: DateTime.parse(data['updated_at']),
+                  syncPending: false,
+                  isDefault: true,
+                );
+                await bankBox.put(bank.id, bank);
+              }
+              fetchedBanks = true;
+            } else {
+              print('default_banks is empty (possibly due to RLS), falling back to mock banks');
+            }
+          } catch (e) {
+            print(
+              'Could not fetch public default_banks from Supabase in demo mode, falling back to local mocks: $e',
+            );
+          }
+        }
+
+        if (!fetchedBanks) {
+          final mockBanks = [
+            {
+              'id': '66fd4a8d-6dcd-482b-baea-26f1d6ab4b97',
+              'name': 'HDFC Bank',
+              'code': 'HDFC',
+              'logo_path': 'assets/bank_icons/HDFC.svg',
+              'support_number': '1800 202 6161',
+              'website': 'https://www.hdfcbank.com',
+              'color_hex': 'FF0066B2',
+              'priority': 1,
+            },
+            {
+              'id': '127e2473-92dd-4ea3-9322-37dc2199781c',
+              'name': 'ICICI Bank',
+              'code': 'ICICI',
+              'logo_path': 'assets/bank_icons/ICICI.svg',
+              'support_number': '1800 1080',
+              'website': 'https://www.icicibank.com',
+              'color_hex': 'FFFF7E00',
+              'priority': 2,
+            },
+            {
+              'id': 'fddafe1f-9315-46cf-9785-16abe47d5e52',
+              'name': 'SBI Card',
+              'code': 'SBI',
+              'logo_path': 'assets/bank_icons/SBI.svg',
+              'support_number': '1800 1234',
+              'website': 'https://www.onlinesbi.com',
+              'color_hex': 'FF1F5D36',
+              'priority': 3,
+            },
+          ];
+          for (var data in mockBanks) {
+            final bank = BankModel(
+              id: data['id'] as String,
+              userId: '',
+              name: data['name'] as String,
+              code: data['code'] as String,
+              logoPath: data['logo_path'] as String,
+              supportNumber: data['support_number'] as String,
+              website: data['website'] as String,
+              isFavorite: false,
+              colorHex: data['color_hex'] as String,
+              priority: data['priority'] as int,
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+              syncPending: false,
+              isDefault: true,
+            );
+            await bankBox.put(bank.id, bank);
+          }
+        }
+
+        // Seed Credit Cards
+        final now = DateTime.now();
+
+        // Card 1: HDFC Millennia
+        final card1BillingDate = DateTime(now.year, now.month, 10);
+        final card1DueDate = card1BillingDate.add(const Duration(days: 20));
+        final hdfcCardId = const Uuid().v4();
+        final card1 = CreditCardModel(
+          id: hdfcCardId,
+          userId: userId,
+          name: 'Millennia',
+          bankId: '66fd4a8d-6dcd-482b-baea-26f1d6ab4b97',
+          last4Digits: '4321',
+          billingDate: card1BillingDate,
+          dueDate: card1DueDate,
+          cardType: CardType.Visa,
+          creditLimit: 150000.0,
+          currentUtilization: 12500.0,
+          isFavorite: true,
+          syncPending: false,
+        );
+        await cardBox.put(card1.id, card1);
+
+        // Card 2: SBI SimplyClick
+        final card2BillingDate = DateTime(now.year, now.month, 15);
+        final card2DueDate = card2BillingDate.add(const Duration(days: 20));
+        final sbiCardId = const Uuid().v4();
+        final card2 = CreditCardModel(
+          id: sbiCardId,
+          userId: userId,
+          name: 'SimplyClick',
+          bankId: 'fddafe1f-9315-46cf-9785-16abe47d5e52',
+          last4Digits: '9876',
+          billingDate: card2BillingDate,
+          dueDate: card2DueDate,
+          cardType: CardType.MasterCard,
+          creditLimit: 100000.0,
+          currentUtilization: 8400.0,
+          isFavorite: false,
+          syncPending: false,
+        );
+        await cardBox.put(card2.id, card2);
+
+        // Card 3: ICICI Amazon Pay
+        final card3BillingDate = DateTime(now.year, now.month, 20);
+        final card3DueDate = card3BillingDate.add(const Duration(days: 20));
+        final iciciCardId = const Uuid().v4();
+        final card3 = CreditCardModel(
+          id: iciciCardId,
+          userId: userId,
+          name: 'Amazon Pay',
+          bankId: '127e2473-92dd-4ea3-9322-37dc2199781c',
+          last4Digits: '5544',
+          billingDate: card3BillingDate,
+          dueDate: card3DueDate,
+          cardType: CardType.Visa,
+          creditLimit: 250000.0,
+          currentUtilization: 0.0,
+          isFavorite: false,
+          syncPending: false,
+        );
+        await cardBox.put(card3.id, card3);
+
+        // Seed Payments
+        // Millennia Payment History (past 6 months)
+        for (int i = 5; i >= 0; i--) {
+          final billDate = DateTime(now.year, now.month - i, 10);
+          final dueDate = billDate.add(const Duration(days: 20));
+          final isCurrentMonth = (i == 0);
+          final dueAmt = isCurrentMonth ? 12500.0 : (10000.0 + (i * 2500.0));
+
+          final payment = PaymentModel(
+            id: const Uuid().v4(),
+            userId: userId,
+            cardId: card1.id,
+            dueAmount: isCurrentMonth ? dueAmt : 0.0,
+            statementAmount: dueAmt,
+            paidAmount: isCurrentMonth ? 0.0 : dueAmt,
+            minimumDueAmount: dueAmt * 0.05,
+            isPaid: !isCurrentMonth,
+            paymentDate:
+                isCurrentMonth ? null : billDate.add(const Duration(days: 15)),
+            dueDate: dueDate,
+            syncPending: false,
+          );
+          await paymentBox.put(payment.id, payment);
+        }
+
+        // SBI SimplyClick Payment History (past 6 months)
+        for (int i = 5; i >= 0; i--) {
+          final billDate = DateTime(now.year, now.month - i, 15);
+          final dueDate = billDate.add(const Duration(days: 20));
+          final isCurrentMonth = (i == 0);
+          final dueAmt = isCurrentMonth ? 8400.0 : (6000.0 + (i * 1200.0));
+
+          final payment = PaymentModel(
+            id: const Uuid().v4(),
+            userId: userId,
+            cardId: card2.id,
+            dueAmount: isCurrentMonth ? dueAmt : 0.0,
+            statementAmount: dueAmt,
+            paidAmount: isCurrentMonth ? 0.0 : dueAmt,
+            minimumDueAmount: dueAmt * 0.05,
+            isPaid: !isCurrentMonth,
+            paymentDate:
+                isCurrentMonth ? null : billDate.add(const Duration(days: 15)),
+            dueDate: dueDate,
+            syncPending: false,
+          );
+          await paymentBox.put(payment.id, payment);
+        }
+
+        // ICICI Amazon Pay Payment History (past 6 months)
+        for (int i = 5; i >= 0; i--) {
+          final billDate = DateTime(now.year, now.month - i, 20);
+          final dueDate = billDate.add(const Duration(days: 20));
+          final dueAmt = 15000.0 + (i * 3000.0);
+
+          final payment = PaymentModel(
+            id: const Uuid().v4(),
+            userId: userId,
+            cardId: card3.id,
+            dueAmount: 0.0,
+            statementAmount: dueAmt,
+            paidAmount: dueAmt,
+            minimumDueAmount: dueAmt * 0.05,
+            isPaid: true,
+            paymentDate: billDate.add(const Duration(days: 12)),
+            dueDate: dueDate,
+            syncPending: false,
+          );
+          await paymentBox.put(payment.id, payment);
+        }
+
+        // Seed Credit Card Summaries
+        /*
+        await cardSummaryBox.clear();
+        await cardSummaryBox.put('summary-hdfc', CreditCardSummaryModel(
+          id: 'summary-hdfc',
+          cardId: card1.id,
+          markdownSummary: '### HDFC Millennia Card Summary\n'
+              '- **Cashback**: 5% on Amazon, Flipkart, Myntra, Swiggy, Zomato.\n'
+              '- **Other Spends**: 1% cashback on all other online/offline spends.\n'
+              '- **Lounge Access**: 4 complimentary domestic lounge visits per calendar year.\n'
+              '- **Fee Waiver**: Annual fee waived on spending ₹1,00,000 in a year.',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+          status: 1,
+          userLiked: false,
+        ));
+        await cardSummaryBox.put('summary-sbi', CreditCardSummaryModel(
+          id: 'summary-sbi',
+          cardId: card2.id,
+          markdownSummary: '### SBI SimplyClick Card Summary\n'
+              '- **Rewards**: 10X Reward Points on online partners (Apollo, Cleartrip, EazyDiner, Lenskart, Netmeds).\n'
+              '- **Other Online Spends**: 5X Reward Points on all other online spends.\n'
+              '- **Welcome Gift**: Amazon Gift Voucher worth ₹500.\n'
+              '- **Milestone Benefit**: Cleartrip e-voucher worth ₹2,000 on annual online spends of ₹1,00,000.',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+          status: 1,
+          userLiked: false,
+        ));
+        await cardSummaryBox.put('summary-icici', CreditCardSummaryModel(
+          id: 'summary-icici',
+          cardId: card3.id,
+          markdownSummary: '### ICICI Amazon Pay Card Summary\n'
+              '- **Amazon Spends**: 5% reward points for Amazon Prime members (3% for non-prime).\n'
+              '- **Partner Spends**: 2% reward points on flights, bill payments, and recharge via Amazon.\n'
+              '- **Other Spends**: 1% reward points on all other online/offline payments.\n'
+              '- **Pricing**: Lifetime free card with no joining or annual fees.',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+          status: 1,
+          userLiked: false,
+        ));
+        */
+      } catch (e) {
+        print('Initial demo sync error: $e');
+        rethrow;
+      }
+      return;
+    }
+
     if (!await isOnline()) {
       print('Offline: Skipping initial sync');
       return;

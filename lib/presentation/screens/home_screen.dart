@@ -1,27 +1,28 @@
 import 'package:card_nudge/presentation/screens/setting_screen.dart';
 import 'package:card_nudge/presentation/widgets/update_bottom_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dashboard_screen.dart';
 import 'cards_screen.dart';
 import 'due_screen.dart';
+import '../providers/user_provider.dart';
+import '../providers/router_provider.dart';
+import '../../services/navigation_service.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
     // Check for app updates after the first frame is rendered.
-    // The InAppUpdateService has built-in cooldown (24h) and re-entrancy
-    // guards, so this is safe to call on every HomeScreen mount without
-    // risk of looping or spamming the Play Store API.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         UpdateBottomSheet.show(context);
@@ -59,18 +60,69 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   ];
 
+  void _showDemoDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Row(
+              children: [
+                Icon(Icons.science_outlined, color: Colors.lightBlue),
+                SizedBox(width: 8),
+                Text('Demo Mode Active'),
+              ],
+            ),
+            content: const Text(
+              'You are currently running in Demo Mode. Your card dues and details are stored locally.\n\n'
+              'To sync your cards across devices, please sign in with an account.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Continue Demo'),
+              ),
+              FilledButton(
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await ref.read(userProvider.notifier).clearUserDetails();
+                  final navContext = notificationNavigatorKey.currentContext;
+                  if (navContext != null) {
+                    NavigationService.goToRoute(navContext, '/auth');
+                  }
+                },
+                child: const Text('Exit & Sign In'),
+              ),
+            ],
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final user = ref.watch(userProvider);
+    final isDemo = user?.id == 'demo-user';
 
     return Scaffold(
       body: IndexedStack(index: _selectedIndex, children: _screens),
       bottomNavigationBar: NavigationBar(
         backgroundColor: theme.primaryColor.withValues(alpha: 0.1),
         selectedIndex: _selectedIndex,
-        destinations: _destinations,
+        destinations: [
+          ..._destinations,
+          if (isDemo)
+            const NavigationDestination(
+              icon: Icon(Icons.science_outlined, color: Colors.lightBlue),
+              selectedIcon: Icon(Icons.science, color: Colors.lightBlue),
+              label: 'Demo Mode',
+            ),
+        ],
         onDestinationSelected: (index) {
-          setState(() => _selectedIndex = index);
+          if (isDemo && index == _destinations.length) {
+            _showDemoDialog(context);
+          } else {
+            setState(() => _selectedIndex = index);
+          }
         },
       ),
     );

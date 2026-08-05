@@ -39,34 +39,48 @@ class _AuthProgressState extends ConsumerState<AuthProgress> {
       _isSyncing = false;
     });
 
-    await supabaseService.syncUserDetails();
+    var user = ref.read(userProvider);
+    final isDemo = user?.id == 'demo-user';
 
-    var user = ref.watch(userProvider);
-    if (user != null) {
+    if (isDemo) {
       setState(() {
         _isUserLoading = false;
         _isSyncing = true;
       });
-    } else {
-      // Wait for user to be loaded
-      await Future.delayed(const Duration(milliseconds: 500));
-      user = ref.watch(userProvider);
-      if (user == null) {
-        setState(() {
-          _isUserLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to load user details')),
-        );
-        await NavigationService.goToRoute(
-          context,
-          '/error?message=Failed to load user details',
-        );
-        return;
-      }
     }
 
     try {
+      if (!isDemo) {
+        await supabaseService.syncUserDetails();
+        user = ref.read(userProvider);
+      }
+
+      if (user != null) {
+        setState(() {
+          _isUserLoading = false;
+          _isSyncing = true;
+        });
+      } else {
+        // Wait for user to be loaded
+        await Future.delayed(const Duration(milliseconds: 500));
+        user = ref.watch(userProvider);
+        if (user == null) {
+          setState(() {
+            _isUserLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to load user details')),
+          );
+          if (mounted) {
+            NavigationService.goToRoute(
+              context,
+              '/error?message=Failed to load user details',
+            );
+          }
+          return;
+        }
+      }
+
       final syncService = ref.read(syncServiceProvider);
 
       if (syncService.isInitialized) {

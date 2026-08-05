@@ -60,6 +60,18 @@ class UserNotifier extends StateNotifier<UserModel?> {
     }
   }
 
+  // Enable demo mode with guest user
+  Future<void> enableDemoMode() async {
+    final demoUser = UserModel(
+      id: 'demo-user',
+      firstName: 'Maanvik',
+      lastName: 'G',
+      email: 'maanvik@demo.mode',
+    );
+    await UserStorage.getBox().put('demo-user', demoUser);
+    state = demoUser;
+  }
+
   // Clear user data
   Future<void> clearUserDetails() async {
     await UserStorage.getBox().clear();
