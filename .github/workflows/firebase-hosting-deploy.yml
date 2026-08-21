@@ -26,12 +26,18 @@ jobs:
 
       - name: Create .env
         run: |
-          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > .env
-          echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> .env
-          echo "GOOGLE_WEB_CLIENT_ID=${{ secrets.GOOGLE_WEB_CLIENT_ID }}" >> .env
-          echo "GOOGLE_IOS_CLIENT_ID=${{ secrets.GOOGLE_IOS_CLIENT_ID }}" >> .env
-          echo "GOOGLE_ANDROID_CLIENT_ID=${{ secrets.GOOGLE_ANDROID_CLIENT_ID }}" >> .env
-          echo "FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }}" >> .env
+          printf '%s\n' \
+            "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" \
+            "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" \
+            "GOOGLE_WEB_CLIENT_ID=${{ secrets.GOOGLE_WEB_CLIENT_ID }}" \
+            "GOOGLE_IOS_CLIENT_ID=${{ secrets.GOOGLE_IOS_CLIENT_ID }}" \
+            "GOOGLE_ANDROID_CLIENT_ID=${{ secrets.GOOGLE_ANDROID_CLIENT_ID }}" \
+            "FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }}" > .env
+
+      - name: Verify .env
+        run: |
+          test -f .env
+          echo ".env created successfully"
 
       - run: dart run build_runner build --delete-conflicting-outputs
 
