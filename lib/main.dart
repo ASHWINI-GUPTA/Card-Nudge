@@ -19,23 +19,33 @@ import 'helper/notification_handler.dart';
 
 import 'package:flutter_web_plugins/url_strategy.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   usePathUrlStrategy();
 
-  // Load .env file
   try {
     await dotenv.load(fileName: '.env');
-    print('ENV LOADED SUCCESSFULLY');
+    print('1️⃣ ENV LOADED SUCCESSFULLY');
   } catch (e, stack) {
-    print('ENV LOAD FAILED: $e');
+    print('❌ ENV LOAD FAILED: $e');
     print(stack);
+    rethrow;
   }
-  // Initialize Firebase
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // Initialize Supabase
+
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print('2️⃣ FIREBASE INITIALIZED');
+  } catch (e, stack) {
+    print('❌ FIREBASE FAILED: $e');
+    print(stack);
+    rethrow;
+  }
+
   final supabaseUrl = dotenv.env['SUPABASE_URL'];
   final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'];
+
   if (supabaseUrl == null ||
       supabaseUrl.isEmpty ||
       supabaseAnonKey == null ||
@@ -43,33 +53,63 @@ void main() async {
     throw Exception('Supabase URL and Anon Key must not be null or empty.');
   }
 
-  await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
+  try {
+    await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
+    print('3️⃣ SUPABASE INITIALIZED');
+  } catch (e, stack) {
+    print('❌ SUPABASE FAILED: $e');
+    print(stack);
+    rethrow;
+  }
 
-  // Initialize Notification Tap Handler
-  await NotificationTapHandler.init();
+  try {
+    await NotificationTapHandler.init();
+    print('4️⃣ NOTIFICATION HANDLER INITIALIZED');
+  } catch (e, stack) {
+    print('❌ NOTIFICATION HANDLER FAILED: $e');
+    print(stack);
+    rethrow;
+  }
 
-  // Listen for notification taps (when app is in background/terminated)
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    final payload =
-        message.data['payload'] ??
-        message.data['route'] ??
-        message.data['path'] ??
-        '';
-    if (payload is String && payload.isNotEmpty) {
-      NotificationTapHandler.handleNotificationTap(payload);
-    }
-  });
+  try {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      final payload =
+          message.data['payload'] ??
+          message.data['route'] ??
+          message.data['path'] ??
+          '';
 
-  // Hive
-  await Hive.initFlutter();
+      if (payload is String && payload.isNotEmpty) {
+        NotificationTapHandler.handleNotificationTap(payload);
+      }
+    });
 
-  await BankStorage.initHive();
-  await CreditCardStorage.initHive();
-  await CreditCardSummaryStorage.initHive();
-  await PaymentStorage.initHive();
-  await UserStorage.initHive();
-  await SettingStorage.initHive();
-  await DeleteQueueEntryStorage.initHive();
+    print('5️⃣ FCM LISTENER INITIALIZED');
+  } catch (e, stack) {
+    print('❌ FCM LISTENER FAILED: $e');
+    print(stack);
+    rethrow;
+  }
+
+  try {
+    await Hive.initFlutter();
+
+    await BankStorage.initHive();
+    await CreditCardStorage.initHive();
+    await CreditCardSummaryStorage.initHive();
+    await PaymentStorage.initHive();
+    await UserStorage.initHive();
+    await SettingStorage.initHive();
+    await DeleteQueueEntryStorage.initHive();
+
+    print('6️⃣ HIVE INITIALIZED');
+  } catch (e, stack) {
+    print('❌ HIVE FAILED: $e');
+    print(stack);
+    rethrow;
+  }
+
+  print('7️⃣ STARTING APP');
 
   runApp(const ProviderScope(child: CreditCardApp()));
 }

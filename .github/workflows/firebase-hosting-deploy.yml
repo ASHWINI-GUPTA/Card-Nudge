@@ -34,25 +34,11 @@ jobs:
             "GOOGLE_ANDROID_CLIENT_ID=${{ secrets.GOOGLE_ANDROID_CLIENT_ID }}" \
             "FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }}" > .env
 
-      - name: Verify .env
-        run: |
-          test -f .env
-          echo ".env created successfully"
-
       - run: dart run build_runner build --delete-conflicting-outputs
 
       - run: flutter gen-l10n
 
       - run: flutter build web --release
-
-      - name: Check bundled assets
-        run: |
-          echo "Checking for .env in build/web..."
-          find build/web -name ".env" -print
-
-      - name: Check Flutter asset manifest
-        run: |
-          grep -R "\.env" build/web/assets 2>/dev/null || true
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
