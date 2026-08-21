@@ -45,6 +45,15 @@ jobs:
 
       - run: flutter build web --release
 
+      - name: Check bundled assets
+        run: |
+          echo "Checking for .env in build/web..."
+          find build/web -name ".env" -print
+
+      - name: Check Flutter asset manifest
+        run: |
+          grep -R "\.env" build/web/assets 2>/dev/null || true
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}

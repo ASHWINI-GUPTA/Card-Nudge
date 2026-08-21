@@ -24,7 +24,13 @@ void main() async {
   usePathUrlStrategy();
 
   // Load .env file
-  await dotenv.load(fileName: '.env');
+  try {
+    await dotenv.load(fileName: '.env');
+    print('ENV LOADED SUCCESSFULLY');
+  } catch (e, stack) {
+    print('ENV LOAD FAILED: $e');
+    print(stack);
+  }
   // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // Initialize Supabase
