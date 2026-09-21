@@ -342,9 +342,9 @@ class SettingsScreen extends ConsumerWidget {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                     title: Text('Website'),
-                    subtitle: const Text('https://card.fnlsg.in'),
+                    subtitle: const Text('https://nudge.fnlsg.in'),
                     onTap: () {
-                      launchUrl(Uri.parse('https://card.fnlsg.in'));
+                      launchUrl(Uri.parse('https://nudge.fnlsg.in'));
                     },
                   ),
                   ListTile(
@@ -367,7 +367,7 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                     title: Text(context.l10n.termsConditions),
                     onTap: () {
-                      launchUrl(Uri.parse('https://card.fnlsg.in/terms'));
+                      launchUrl(Uri.parse('https://nudge.fnlsg.in/terms'));
                     },
                   ),
                   ListTile(
@@ -377,7 +377,7 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                     title: Text(context.l10n.privacyPolicy),
                     onTap: () {
-                      launchUrl(Uri.parse('https://card.fnlsg.in/privacy'));
+                      launchUrl(Uri.parse('https://nudge.fnlsg.in/privacy'));
                     },
                   ),
                   ListTile(
