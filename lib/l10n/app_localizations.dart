@@ -170,6 +170,30 @@ abstract class AppLocalizations {
   /// **'Archive'**
   String get buttonArchive;
 
+  /// No description provided for @buttonUnarchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Unarchive'**
+  String get buttonUnarchive;
+
+  /// No description provided for @archivedCardsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived Cards'**
+  String get archivedCardsTitle;
+
+  /// No description provided for @archivedCardsEmptyStateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Archived Cards'**
+  String get archivedCardsEmptyStateTitle;
+
+  /// No description provided for @archivedCardsEmptyStateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You have not archived any cards yet.'**
+  String get archivedCardsEmptyStateSubtitle;
+
   /// No description provided for @buttonRetry.
   ///
   /// In en, this message translates to:
@@ -769,6 +793,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Card archived successfully!'**
   String get cardArchivedSuccess;
+
+  /// No description provided for @cardUnarchivedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Card unarchived successfully!'**
+  String get cardUnarchivedSuccess;
 
   /// No description provided for @deletePaymentMessage.
   ///

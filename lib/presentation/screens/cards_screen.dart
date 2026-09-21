@@ -12,6 +12,7 @@ import '../widgets/empty_credit_card_list_widget.dart';
 import '../widgets/data_sync_progress_bar.dart';
 import 'card_card_form_screen.dart';
 import 'card_details_screen.dart';
+import 'archived_cards_screen.dart';
 
 class CardsScreen extends ConsumerWidget {
   const CardsScreen({super.key});
@@ -32,6 +33,16 @@ class CardsScreen extends ConsumerWidget {
           style: theme.textTheme.titleLarge?.copyWith(color: Colors.white),
         ),
         actions: [
+          IconButton(
+            tooltip: context.l10n.archivedCardsTitle,
+            icon: const Icon(Icons.archive_outlined),
+            color: Colors.white,
+            onPressed:
+                () => NavigationService.navigateTo(
+                  context,
+                  const ArchivedCardsScreen(),
+                ),
+          ),
           IconButton(
             tooltip: 'Spend Analysis',
             icon: const Icon(Icons.analytics_outlined),

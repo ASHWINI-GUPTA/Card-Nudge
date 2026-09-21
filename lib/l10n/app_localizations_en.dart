@@ -46,6 +46,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get buttonArchive => 'Archive';
 
   @override
+  String get buttonUnarchive => 'Unarchive';
+
+  @override
+  String get archivedCardsTitle => 'Archived Cards';
+
+  @override
+  String get archivedCardsEmptyStateTitle => 'No Archived Cards';
+
+  @override
+  String get archivedCardsEmptyStateSubtitle =>
+      'You have not archived any cards yet.';
+
+  @override
   String get buttonRetry => 'Retry';
 
   @override
@@ -361,6 +374,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cardArchivedSuccess => 'Card archived successfully!';
+
+  @override
+  String get cardUnarchivedSuccess => 'Card unarchived successfully!';
 
   @override
   String get deletePaymentMessage =>

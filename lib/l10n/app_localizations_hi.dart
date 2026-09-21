@@ -46,6 +46,19 @@ class AppLocalizationsHi extends AppLocalizations {
   String get buttonArchive => 'आर्काइव करें';
 
   @override
+  String get buttonUnarchive => 'अनआर्काइव करें';
+
+  @override
+  String get archivedCardsTitle => 'आर्काइव किए गए कार्ड';
+
+  @override
+  String get archivedCardsEmptyStateTitle => 'कोई आर्काइव किया गया कार्ड नहीं';
+
+  @override
+  String get archivedCardsEmptyStateSubtitle =>
+      'आपने अभी तक कोई कार्ड आर्काइव नहीं किया है।';
+
+  @override
   String get buttonRetry => 'पुनः प्रयास करें';
 
   @override
@@ -366,6 +379,9 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get cardArchivedSuccess => 'कार्ड सफलतापूर्वक आर्काइव किया गया!';
+
+  @override
+  String get cardUnarchivedSuccess => 'कार्ड सफलतापूर्वक अनआर्काइव किया गया!';
 
   @override
   String get deletePaymentMessage =>

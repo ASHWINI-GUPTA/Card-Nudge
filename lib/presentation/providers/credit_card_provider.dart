@@ -176,6 +176,26 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
     }
   }
 
+  markUnarchive(String cardId) async {
+    state = const AsyncValue.loading();
+    try {
+      if (!_box.containsKey(cardId)) {
+        throw const FormatException(AppStrings.cardNotFoundError);
+      }
+      final card = _box.get(cardId)!;
+      var unarchivedCard = card.copyWith(isArchived: false, syncPending: true);
+
+      _box.put(card.id, unarchivedCard);
+      _onBoxChange();
+      ref.read(syncStatusProvider.notifier).state = SyncStatus.syncing;
+      _triggerSync();
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
+      rethrow;
+    }
+  }
+
   reset() {
     state = const AsyncValue.loading();
     _box.listenable().removeListener(_onBoxChange);
