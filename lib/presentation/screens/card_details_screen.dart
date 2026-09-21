@@ -66,12 +66,12 @@ class CardDetailsScreen extends ConsumerWidget {
                     ),
                   ),
                   PopupMenuItem(
-                    value: 'archive',
+                    value: card.isArchived ? 'unarchive' : 'archive',
                     child: Row(
                       children: [
-                        Icon(Icons.archive, color: theme.colorScheme.secondary),
+                        Icon(card.isArchived ? Icons.unarchive : Icons.archive, color: theme.colorScheme.secondary),
                         const SizedBox(width: 12),
-                        Text(context.l10n.archiveCard),
+                        Text(card.isArchived ? context.l10n.buttonUnarchive : context.l10n.archiveCard),
                       ],
                     ),
                   ),
@@ -332,6 +332,13 @@ class CardDetailsScreen extends ConsumerWidget {
         await ref.read(creditCardProvider.notifier).markArchive(card.id);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(context.l10n.cardArchivedSuccess)),
+        );
+        NavigationService.pop(context);
+        break;
+      case 'unarchive':
+        await ref.read(creditCardProvider.notifier).markUnarchive(card.id);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.cardUnarchivedSuccess)),
         );
         NavigationService.pop(context);
         break;
