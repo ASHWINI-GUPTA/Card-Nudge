@@ -110,7 +110,7 @@ class DueScreen extends ConsumerWidget {
         return banksAsync.when(
           data: (banks) {
             return ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              padding: const EdgeInsets.all(16.0),
               itemCount: groupedCards.length,
               itemBuilder: (context, index) {
                 final entry = groupedCards.entries.elementAt(index);

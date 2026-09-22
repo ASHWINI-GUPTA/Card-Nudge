@@ -42,8 +42,9 @@ extension DateExtension on DateTime {
 
   // Ceiling difference in days between two dates
   int differenceInDaysCeil(DateTime other) {
-    final difference = this.difference(other).inDays;
-    return difference >= 0 ? difference : difference - 1;
+    final utcThis = DateTime.utc(year, month, day);
+    final utcOther = DateTime.utc(other.year, other.month, other.day);
+    return utcThis.difference(utcOther).inDays;
   }
 
   // Format date using intl package

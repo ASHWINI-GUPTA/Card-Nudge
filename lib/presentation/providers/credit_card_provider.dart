@@ -41,7 +41,7 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
   @override
   Future<List<CreditCardModel>> build() async {
     _box.listenable().addListener(_onBoxChange);
-    return _box.values.where((card) => !card.isArchived).toList()..sort((a, b) {
+    return _box.values.toList()..sort((a, b) {
       final dueDateComparison = a.dueDate.differenceInDaysCeil(b.dueDate);
       if (dueDateComparison != 0) {
         return dueDateComparison;
