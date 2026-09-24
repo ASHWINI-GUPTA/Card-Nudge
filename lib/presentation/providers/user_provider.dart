@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/hive/models/user_model.dart';
+import '../../data/hive/storage/bank_storage.dart';
 import '../../data/hive/storage/user_storage.dart';
 
 final userProvider = StateNotifierProvider<UserNotifier, UserModel?>((ref) {
@@ -69,6 +70,10 @@ class UserNotifier extends StateNotifier<UserModel?> {
       email: 'maanvik@demo.mode',
     );
     await UserStorage.getBox().put('demo-user', demoUser);
+    
+    // Clear bank storage to ensure isInitialized returns false, forcing a fresh initialSync.
+    await BankStorage.getBox().clear();
+    
     state = demoUser;
   }
 

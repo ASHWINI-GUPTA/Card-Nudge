@@ -48,7 +48,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (isAuthenticated && state.matchedLocation == AppRoutes.root) {
         final syncService = ref.read(syncServiceProvider);
 
-        if (syncService.isInitialized) {
+        if (syncService.isInitialized(user?.id)) {
           // Data already exists locally — skip AuthProgress, go to home
           // Trigger background sync (fire-and-forget)
           syncService.syncData().catchError((e) {

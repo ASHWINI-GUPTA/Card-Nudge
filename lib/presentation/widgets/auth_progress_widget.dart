@@ -83,7 +83,7 @@ class _AuthProgressState extends ConsumerState<AuthProgress> {
 
       final syncService = ref.read(syncServiceProvider);
 
-      if (syncService.isInitialized) {
+      if (syncService.isInitialized(user.id)) {
         if (mounted) {
           NavigationService.goToRoute(context, '/home');
         }
