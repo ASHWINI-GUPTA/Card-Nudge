@@ -101,6 +101,22 @@ Build-CardNudgeApp -Format appbundle -Profile release
 
 ---
 
+## 🧪 Testing
+
+This project uses `mocktail` for dependency mocking and standard `flutter_test` for unit and widget testing. Tests are isolated using Riverpod provider overrides.
+
+To run all tests in the project, run:
+```bash
+flutter test
+```
+
+To run a specific directory (e.g., all screen widget tests):
+```bash
+flutter test test/presentation/screens
+```
+
+---
+
 ## 📝 Project Structure
 
 ```
