@@ -38,7 +38,9 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
   @override
   Future<List<PaymentModel>> build() async {
     // Listen to box changes for real-time updates
-    _box.listenable().addListener(_onBoxChange);
+    final listenable = _box.listenable();
+    listenable.addListener(_onBoxChange);
+    ref.onDispose(() => listenable.removeListener(_onBoxChange));
     return _box.values.toList();
   }
 

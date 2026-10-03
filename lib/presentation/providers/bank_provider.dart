@@ -34,7 +34,9 @@ class BankNotifier extends AsyncNotifier<List<BankModel>> {
   @override
   Future<List<BankModel>> build() async {
     try {
-      _box.listenable().addListener(_onBoxChange);
+      final listenable = _box.listenable();
+      listenable.addListener(_onBoxChange);
+      ref.onDispose(() => listenable.removeListener(_onBoxChange));
       final banks =
           _box.values.toList()..sort((a, b) {
             if (a.name == 'Other') return 1;

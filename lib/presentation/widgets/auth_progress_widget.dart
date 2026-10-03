@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:card_nudge/helper/app_localizations_extension.dart';
 import '../../services/navigation_service.dart';
 import '../providers/supabase_provider.dart';
 import '../providers/sync_provider.dart';
@@ -68,9 +69,9 @@ class _AuthProgressState extends ConsumerState<AuthProgress> {
           setState(() {
             _isUserLoading = false;
           });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Failed to load user details')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(context.l10n.loadUserError)));
           if (mounted) {
             NavigationService.goToRoute(
               context,

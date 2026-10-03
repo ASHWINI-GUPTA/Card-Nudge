@@ -29,7 +29,7 @@ class AuthScreen extends ConsumerWidget {
         },
         error: (error, stack) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Authentication error: $error')),
+            SnackBar(content: Text(context.l10n.authError(error.toString()))),
           );
         },
         loading: () {
@@ -106,7 +106,7 @@ class AuthScreen extends ConsumerWidget {
                       await supabaseProvider.signInWithGoogle();
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Google Sign-In failed: $e')),
+                        SnackBar(content: Text(context.l10n.googleSignInFailed(e.toString()))),
                       );
                     }
                   },
@@ -129,7 +129,7 @@ class AuthScreen extends ConsumerWidget {
                       await supabaseProvider.signInWithGitHub();
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('GitHub Sign-In failed: $e')),
+                        SnackBar(content: Text(context.l10n.githubSignInFailed(e.toString()))),
                       );
                     }
                   },
@@ -158,18 +158,18 @@ class AuthScreen extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.science_outlined,
                         color: Colors.lightBlue,
                         size: 16,
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Text(
-                        'Demo Mode',
-                        style: TextStyle(
+                        context.l10n.demoMode,
+                        style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),

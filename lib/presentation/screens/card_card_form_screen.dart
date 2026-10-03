@@ -216,9 +216,9 @@ class _CreditCardFormScreenState extends ConsumerState<CreditCardFormScreen> {
                     const SizedBox(height: 12),
                     TextField(
                       controller: searchController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.search),
-                        hintText: 'Search...',
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.search),
+                        hintText: context.l10n.search,
                       ),
                       onChanged: (query) {
                         setSheetState(() {
@@ -237,9 +237,9 @@ class _CreditCardFormScreenState extends ConsumerState<CreditCardFormScreen> {
                     Expanded(
                       child:
                           filtered.isEmpty
-                              ? const Padding(
-                                padding: EdgeInsets.all(24),
-                                child: Text('No results found.'),
+                              ? Padding(
+                                padding: const EdgeInsets.all(24),
+                                child: Text(context.l10n.noResultsFound),
                               )
                               : ListView.builder(
                                 itemCount: filtered.length,
@@ -511,14 +511,14 @@ class _CreditCardFormScreenState extends ConsumerState<CreditCardFormScreen> {
                 controller: _gracePeriodController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: 'Due Grace Period (days)',
-                  helperText: 'How many days after billing the payment is due',
+                  labelText: context.l10n.dueGracePeriod,
+                  helperText: context.l10n.dueGracePeriodHelper,
                 ),
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 validator: (v) {
                   final val = int.tryParse(v?.trim() ?? '');
                   if (val == null || val < 0 || val > 60) {
-                    return 'Enter valid days (0-60)';
+                    return context.l10n.dueGracePeriodError;
                   }
                   return null;
                 },

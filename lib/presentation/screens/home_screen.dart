@@ -8,6 +8,7 @@ import 'due_screen.dart';
 import '../providers/user_provider.dart';
 import '../providers/router_provider.dart';
 import '../../services/navigation_service.dart';
+import '../../helper/app_localizations_extension.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -37,49 +38,48 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     SettingsScreen(),
   ];
 
-  final List<NavigationDestination> _destinations = const [
-    NavigationDestination(
-      icon: Icon(Icons.dashboard_outlined),
-      selectedIcon: Icon(Icons.dashboard),
-      label: 'Dashboard',
-    ),
-    NavigationDestination(
-      icon: Icon(Icons.credit_card_outlined),
-      selectedIcon: Icon(Icons.credit_card),
-      label: 'Cards',
-    ),
-    NavigationDestination(
-      icon: Icon(Icons.event_note_outlined),
-      selectedIcon: Icon(Icons.event_note),
-      label: 'Dues',
-    ),
-    NavigationDestination(
-      icon: Icon(Icons.settings_outlined),
-      selectedIcon: Icon(Icons.settings),
-      label: 'Settings',
-    ),
-  ];
+  List<NavigationDestination> _getDestinations(BuildContext context) {
+    return [
+      NavigationDestination(
+        icon: const Icon(Icons.dashboard_outlined),
+        selectedIcon: const Icon(Icons.dashboard),
+        label: context.l10n.dashboard,
+      ),
+      NavigationDestination(
+        icon: const Icon(Icons.credit_card_outlined),
+        selectedIcon: const Icon(Icons.credit_card),
+        label: context.l10n.cards,
+      ),
+      NavigationDestination(
+        icon: const Icon(Icons.event_note_outlined),
+        selectedIcon: const Icon(Icons.event_note),
+        label: context.l10n.dues,
+      ),
+      NavigationDestination(
+        icon: const Icon(Icons.settings_outlined),
+        selectedIcon: const Icon(Icons.settings),
+        label: context.l10n.settings,
+      ),
+    ];
+  }
 
   void _showDemoDialog(BuildContext context) {
     showDialog(
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Row(
+            title: Row(
               children: [
-                Icon(Icons.science_outlined, color: Colors.lightBlue),
-                SizedBox(width: 8),
-                Text('Demo Mode Active'),
+                const Icon(Icons.science_outlined, color: Colors.lightBlue),
+                const SizedBox(width: 8),
+                Text(context.l10n.demoModeActive),
               ],
             ),
-            content: const Text(
-              'You are currently running in Demo Mode. Your card dues and details are stored locally.\n\n'
-              'To sync your cards across devices, please sign in with an account.',
-            ),
+            content: Text(context.l10n.demoModeDescription),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Continue Demo'),
+                child: Text(context.l10n.continueDemo),
               ),
               FilledButton(
                 onPressed: () async {
@@ -90,7 +90,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     NavigationService.goToRoute(navContext, '/auth');
                   }
                 },
-                child: const Text('Exit & Sign In'),
+                child: Text(context.l10n.exitAndSignIn),
               ),
             ],
           ),
@@ -103,22 +103,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final user = ref.watch(userProvider);
     final isDemo = user?.id == 'demo-user';
 
+    final destinations = _getDestinations(context);
+
     return Scaffold(
       body: IndexedStack(index: _selectedIndex, children: _screens),
       bottomNavigationBar: NavigationBar(
         backgroundColor: theme.primaryColor.withValues(alpha: 0.1),
         selectedIndex: _selectedIndex,
         destinations: [
-          ..._destinations,
+          ...destinations,
           if (isDemo)
-            const NavigationDestination(
-              icon: Icon(Icons.science_outlined, color: Colors.lightBlue),
-              selectedIcon: Icon(Icons.science, color: Colors.lightBlue),
-              label: 'Demo Mode',
+            NavigationDestination(
+              icon: const Icon(Icons.science_outlined, color: Colors.lightBlue),
+              selectedIcon: const Icon(Icons.science, color: Colors.lightBlue),
+              label: context.l10n.demoMode,
             ),
         ],
         onDestinationSelected: (index) {
-          if (isDemo && index == _destinations.length) {
+          if (isDemo && index == destinations.length) {
             _showDemoDialog(context);
           } else {
             setState(() => _selectedIndex = index);

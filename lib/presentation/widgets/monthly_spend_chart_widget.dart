@@ -10,21 +10,25 @@ class MonthlySpendingChartWidget extends ConsumerWidget {
   data; // [{'month': 'Jan', 'amount': 5000}, ...]
   const MonthlySpendingChartWidget({super.key, this.data = const []});
 
-  // Get the last 4 months (e.g., Jun, May, Apr, Mar for June 2025)
-  List<String> _getLastFourMonths(DateTime now) {
-    final months = <String>[];
+  // Get the last 4 months as DateTime (1st of the month)
+  List<DateTime> _getLastFourMonths(DateTime now) {
+    final months = <DateTime>[];
     for (int i = 3; i >= 0; i--) {
       final monthDate = DateTime(now.year, now.month - i, 1);
-      months.add(DateFormat.MMM().format(monthDate));
+      months.add(monthDate);
     }
     return months;
   }
 
   // Get spend amounts for the last 4 months, default to 0 if missing
-  List<double> _getSpendValues(List<String> months) {
+  List<double> _getSpendValues(List<DateTime> months) {
     return months.map((month) {
       final entry = data.firstWhere(
-        (d) => d['month'] == month,
+        (d) {
+          final entryDate = d['date'] as DateTime?;
+          if (entryDate == null) return false;
+          return entryDate.year == month.year && entryDate.month == month.month;
+        },
         orElse: () => {'amount': 0.0},
       );
       return (entry['amount'] as num?)?.toDouble() ?? 0.0;
@@ -99,7 +103,7 @@ class MonthlySpendingChartWidget extends ConsumerWidget {
                           final index = value.toInt();
                           if (index >= 0 && index < monthsToShow.length) {
                             return Text(
-                              monthsToShow[index],
+                              DateFormat.MMM().format(monthsToShow[index]),
                               style: TextStyle(
                                 fontSize: 14,
                                 color:

@@ -5,21 +5,23 @@ import '../../enums/card_type.dart';
 
 part 'credit_card_model.g.dart';
 
+/// Represents a user's credit card, including billing cycle, limits, and type.
+/// Stored locally via Hive and synchronized with the remote Supabase database.
 @HiveType(typeId: 2)
 class CreditCardModel extends HiveObject {
-  @HiveField(0)
+  @HiveField(0, defaultValue: '')
   String id;
 
-  @HiveField(1)
+  @HiveField(1, defaultValue: '')
   String userId;
 
-  @HiveField(2)
+  @HiveField(2, defaultValue: '')
   String name;
 
-  @HiveField(3)
+  @HiveField(3, defaultValue: null)
   String? bankId;
 
-  @HiveField(4)
+  @HiveField(4, defaultValue: '')
   String last4Digits;
 
   @HiveField(5)
@@ -28,13 +30,13 @@ class CreditCardModel extends HiveObject {
   @HiveField(6)
   DateTime dueDate;
 
-  @HiveField(7)
+  @HiveField(7, defaultValue: CardType.Visa)
   CardType cardType;
 
-  @HiveField(8)
+  @HiveField(8, defaultValue: 0.0)
   double creditLimit;
 
-  @HiveField(9)
+  @HiveField(9, defaultValue: 0.0)
   double currentUtilization;
 
   @HiveField(10)

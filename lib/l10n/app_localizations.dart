@@ -98,607 +98,607 @@ abstract class AppLocalizations {
     Locale('hi'),
   ];
 
-  /// No description provided for @appTitle.
+  /// Title text for the app section
   ///
   /// In en, this message translates to:
   /// **'Card Nudge 🔔'**
   String get appTitle;
 
-  /// No description provided for @welcomeTitle.
+  /// Title text for the welcome section
   ///
   /// In en, this message translates to:
   /// **'Welcome to Card Nudge 🔔'**
   String get welcomeTitle;
 
-  /// No description provided for @welcomeSubtitle.
+  /// Subtitle text for the welcome section
   ///
   /// In en, this message translates to:
   /// **'Your Credit Card Companion!'**
   String get welcomeSubtitle;
 
-  /// No description provided for @welcomeDescription.
+  /// Description text for welcome
   ///
   /// In en, this message translates to:
   /// **'Track your credit cards, payment dues, and never miss a payment again.'**
   String get welcomeDescription;
 
-  /// No description provided for @buttonOk.
+  /// Label for the 'Ok' button
   ///
   /// In en, this message translates to:
   /// **'OK'**
   String get buttonOk;
 
-  /// No description provided for @buttonCancel.
+  /// Label for the 'Cancel' button
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
   String get buttonCancel;
 
-  /// No description provided for @buttonClose.
+  /// Label for the 'Close' button
   ///
   /// In en, this message translates to:
   /// **'Close'**
   String get buttonClose;
 
-  /// No description provided for @buttonSave.
+  /// Label for the 'Save' button
   ///
   /// In en, this message translates to:
   /// **'Save'**
   String get buttonSave;
 
-  /// No description provided for @buttonAdd.
+  /// Label for the 'Add' button
   ///
   /// In en, this message translates to:
   /// **'Add'**
   String get buttonAdd;
 
-  /// No description provided for @buttonDelete.
+  /// Label for the 'Delete' button
   ///
   /// In en, this message translates to:
   /// **'Delete'**
   String get buttonDelete;
 
-  /// No description provided for @buttonEdit.
+  /// Label for the 'Edit' button
   ///
   /// In en, this message translates to:
   /// **'Edit'**
   String get buttonEdit;
 
-  /// No description provided for @buttonArchive.
+  /// Label for the 'Archive' button
   ///
   /// In en, this message translates to:
   /// **'Archive'**
   String get buttonArchive;
 
-  /// No description provided for @buttonUnarchive.
+  /// Label for the 'Unarchive' button
   ///
   /// In en, this message translates to:
   /// **'Unarchive'**
   String get buttonUnarchive;
 
-  /// No description provided for @archivedCardsTitle.
+  /// Title text for the archived cards section
   ///
   /// In en, this message translates to:
   /// **'Archived Cards'**
   String get archivedCardsTitle;
 
-  /// No description provided for @archivedCardsEmptyStateTitle.
+  /// Title text for the archived cards empty state section
   ///
   /// In en, this message translates to:
   /// **'No Archived Cards'**
   String get archivedCardsEmptyStateTitle;
 
-  /// No description provided for @archivedCardsEmptyStateSubtitle.
+  /// Subtitle text for the archived cards empty state section
   ///
   /// In en, this message translates to:
   /// **'You have not archived any cards yet.'**
   String get archivedCardsEmptyStateSubtitle;
 
-  /// No description provided for @buttonRetry.
+  /// Label for the 'Retry' button
   ///
   /// In en, this message translates to:
   /// **'Retry'**
   String get buttonRetry;
 
-  /// No description provided for @buttonUndo.
+  /// Label for the 'Undo' button
   ///
   /// In en, this message translates to:
   /// **'Undo'**
   String get buttonUndo;
 
-  /// No description provided for @buttonHome.
+  /// Label for the 'Home' button
   ///
   /// In en, this message translates to:
   /// **'Home'**
   String get buttonHome;
 
-  /// No description provided for @buttonAddCard.
+  /// Label for the 'Add Card' button
   ///
   /// In en, this message translates to:
   /// **'Add Card'**
   String get buttonAddCard;
 
-  /// No description provided for @buttonUpdateCard.
+  /// Label for the 'Update Card' button
   ///
   /// In en, this message translates to:
   /// **'Update Card'**
   String get buttonUpdateCard;
 
-  /// No description provided for @buttonAddPayment.
+  /// Label for the 'Add Payment' button
   ///
   /// In en, this message translates to:
   /// **'Create Payment Due'**
   String get buttonAddPayment;
 
-  /// No description provided for @retryButtonLabel.
+  /// Label for the retry button input field or element
   ///
   /// In en, this message translates to:
   /// **'Retry'**
   String get retryButtonLabel;
 
-  /// No description provided for @validationRequired.
+  /// Text representing validation required
   ///
   /// In en, this message translates to:
   /// **'This field is required.'**
   String get validationRequired;
 
-  /// No description provided for @errorGeneric.
+  /// Text representing error generic
   ///
   /// In en, this message translates to:
   /// **'An unexpected error occurred. Please try again or return to the home screen. If the problem persists, contact support.'**
   String get errorGeneric;
 
-  /// No description provided for @utilization.
+  /// Text representing utilization
   ///
   /// In en, this message translates to:
   /// **'Utilization'**
   String get utilization;
 
-  /// No description provided for @overUtilization.
+  /// Text representing over utilization
   ///
   /// In en, this message translates to:
   /// **'Overutilized Cards'**
   String get overUtilization;
 
-  /// No description provided for @totalCreditLimit.
+  /// Text representing total credit limit
   ///
   /// In en, this message translates to:
   /// **'Total Credit Limit'**
   String get totalCreditLimit;
 
-  /// No description provided for @quickInsights.
+  /// Text representing quick insights
   ///
   /// In en, this message translates to:
   /// **'Quick Insights'**
   String get quickInsights;
 
-  /// No description provided for @monthlyOverview.
+  /// Text representing monthly overview
   ///
   /// In en, this message translates to:
   /// **'Payment Overview by Month'**
   String get monthlyOverview;
 
-  /// No description provided for @cardsScreenTitle.
+  /// Title text for the cards screen section
   ///
   /// In en, this message translates to:
   /// **'Your Cards'**
   String get cardsScreenTitle;
 
-  /// No description provided for @cardsScreenSubtitle.
+  /// Subtitle text for the cards screen section
   ///
   /// In en, this message translates to:
   /// **'Manage your credit cards and payments'**
   String get cardsScreenSubtitle;
 
-  /// No description provided for @cardsScreenDescription.
+  /// Description text for cards screen
   ///
   /// In en, this message translates to:
   /// **'Keep track of your credit cards, payment dues, and upcoming payments.'**
   String get cardsScreenDescription;
 
-  /// No description provided for @cardsScreenEmptyStateTitle.
+  /// Title text for the cards screen empty state section
   ///
   /// In en, this message translates to:
   /// **'No Cards Added'**
   String get cardsScreenEmptyStateTitle;
 
-  /// No description provided for @cardsScreenEmptyStateSubtitle.
+  /// Subtitle text for the cards screen empty state section
   ///
   /// In en, this message translates to:
   /// **'Add your credit cards to start tracking payments and dues.'**
   String get cardsScreenEmptyStateSubtitle;
 
-  /// No description provided for @cardsScreenErrorTitle.
+  /// Title text for the cards screen error section
   ///
   /// In en, this message translates to:
   /// **'Error Loading Cards'**
   String get cardsScreenErrorTitle;
 
-  /// No description provided for @cardsScreenErrorSubtitle.
+  /// Subtitle text for the cards screen error section
   ///
   /// In en, this message translates to:
   /// **'There was an error loading your cards. Please try again later.'**
   String get cardsScreenErrorSubtitle;
 
-  /// No description provided for @cardDetailsScreenTitle.
+  /// Title text for the card details screen section
   ///
   /// In en, this message translates to:
   /// **'Card Details'**
   String get cardDetailsScreenTitle;
 
-  /// No description provided for @cardDetailsScreenSubtitle.
+  /// Subtitle text for the card details screen section
   ///
   /// In en, this message translates to:
   /// **'View and manage your card details'**
   String get cardDetailsScreenSubtitle;
 
-  /// No description provided for @cardDetailsScreenDescription.
+  /// Description text for card details screen
   ///
   /// In en, this message translates to:
   /// **'View your card details, upcoming payments, and payment history.'**
   String get cardDetailsScreenDescription;
 
-  /// No description provided for @addCardScreenTitle.
+  /// Title text for the add card screen section
   ///
   /// In en, this message translates to:
   /// **'Add Card'**
   String get addCardScreenTitle;
 
-  /// No description provided for @updateCardScreenTitle.
+  /// Title text for the update card screen section
   ///
   /// In en, this message translates to:
   /// **'Update Card'**
   String get updateCardScreenTitle;
 
-  /// No description provided for @addCardScreenSubtitle.
+  /// Subtitle text for the add card screen section
   ///
   /// In en, this message translates to:
   /// **'Add a new credit card'**
   String get addCardScreenSubtitle;
 
-  /// No description provided for @updateCardScreenSubtitle.
+  /// Subtitle text for the update card screen section
   ///
   /// In en, this message translates to:
   /// **'Update your credit card details'**
   String get updateCardScreenSubtitle;
 
-  /// No description provided for @addCardScreenDescription.
+  /// Description text for add card screen
   ///
   /// In en, this message translates to:
   /// **'Enter your card details to start tracking payments and dues.'**
   String get addCardScreenDescription;
 
-  /// No description provided for @updateCardScreenDescription.
+  /// Description text for update card screen
   ///
   /// In en, this message translates to:
   /// **'Update your card details to keep your payment information current.'**
   String get updateCardScreenDescription;
 
-  /// No description provided for @cardNameLabel.
+  /// Label for the card name input field or element
   ///
   /// In en, this message translates to:
   /// **'Card Name *'**
   String get cardNameLabel;
 
-  /// No description provided for @cardNameHint.
+  /// Text representing card name hint
   ///
   /// In en, this message translates to:
   /// **'Enter card name'**
   String get cardNameHint;
 
-  /// No description provided for @cardNameError.
+  /// Error message indicating card name issue
   ///
   /// In en, this message translates to:
   /// **'Card name is required.'**
   String get cardNameError;
 
-  /// No description provided for @bankLabel.
+  /// Label for the bank input field or element
   ///
   /// In en, this message translates to:
   /// **'Bank *'**
   String get bankLabel;
 
-  /// No description provided for @bankHint.
+  /// Text representing bank hint
   ///
   /// In en, this message translates to:
   /// **'Select your bank'**
   String get bankHint;
 
-  /// No description provided for @addPaymentDue.
+  /// Text representing add payment due
   ///
   /// In en, this message translates to:
   /// **'Add Payment Due'**
   String get addPaymentDue;
 
-  /// No description provided for @editPaymentDue.
+  /// Text representing edit payment due
   ///
   /// In en, this message translates to:
   /// **'Edit Payment Due'**
   String get editPaymentDue;
 
-  /// No description provided for @dueAmountLabel.
+  /// Label for the due amount input field or element
   ///
   /// In en, this message translates to:
   /// **'Due Amount *'**
   String get dueAmountLabel;
 
-  /// No description provided for @minimumDueLabel.
+  /// Label for the minimum due input field or element
   ///
   /// In en, this message translates to:
   /// **'Minimum Due (Optional)'**
   String get minimumDueLabel;
 
-  /// No description provided for @paymentDateLabel.
+  /// Label for the payment date input field or element
   ///
   /// In en, this message translates to:
   /// **'Payment Due Date *'**
   String get paymentDateLabel;
 
-  /// No description provided for @selectDate.
+  /// Text representing select date
   ///
   /// In en, this message translates to:
   /// **'Select Date'**
   String get selectDate;
 
-  /// No description provided for @selectDateError.
+  /// Error message indicating select date issue
   ///
   /// In en, this message translates to:
   /// **'Please select a due date.'**
   String get selectDateError;
 
-  /// No description provided for @invalidAmountError.
+  /// Error message indicating invalid amount issue
   ///
   /// In en, this message translates to:
   /// **'Enter a valid amount.'**
   String get invalidAmountError;
 
-  /// No description provided for @minimumDueExceedsError.
+  /// Error message indicating minimum due exceeds issue
   ///
   /// In en, this message translates to:
   /// **'Minimum due cannot exceed total due.'**
   String get minimumDueExceedsError;
 
-  /// No description provided for @paymentAddedSuccess.
+  /// Success message shown after payment added
   ///
   /// In en, this message translates to:
   /// **'Payment due added successfully!'**
   String get paymentAddedSuccess;
 
-  /// No description provided for @paymentUpdatedSuccess.
+  /// Success message shown after payment updated
   ///
   /// In en, this message translates to:
   /// **'Payment due updated successfully!'**
   String get paymentUpdatedSuccess;
 
-  /// No description provided for @noDuePaymentAddedSuccess.
+  /// Success message shown after no due payment added
   ///
   /// In en, this message translates to:
   /// **'No payment due added. You can add it later.'**
   String get noDuePaymentAddedSuccess;
 
-  /// No description provided for @paymentAddError.
+  /// Error message indicating payment add issue
   ///
   /// In en, this message translates to:
   /// **'Failed to add payment due.'**
   String get paymentAddError;
 
-  /// No description provided for @addDueButton.
+  /// Text representing add due button
   ///
   /// In en, this message translates to:
   /// **'Payment'**
   String get addDueButton;
 
-  /// No description provided for @noPaymentDue.
+  /// Text representing no payment due
   ///
   /// In en, this message translates to:
   /// **'No Payment Required'**
   String get noPaymentDue;
 
-  /// No description provided for @cardLabel.
+  /// Label for the card input field or element
   ///
   /// In en, this message translates to:
   /// **'Card Name'**
   String get cardLabel;
 
-  /// No description provided for @networkLabel.
+  /// Label for the network input field or element
   ///
   /// In en, this message translates to:
   /// **'Card Network'**
   String get networkLabel;
 
-  /// No description provided for @last4DigitsLabel.
+  /// Label for the last4digits input field or element
   ///
   /// In en, this message translates to:
   /// **'Last 4 Digits'**
   String get last4DigitsLabel;
 
-  /// No description provided for @billingDateLabel.
+  /// Label for the billing date input field or element
   ///
   /// In en, this message translates to:
   /// **'Billing Date'**
   String get billingDateLabel;
 
-  /// No description provided for @dueDateLabel.
+  /// Label for the due date input field or element
   ///
   /// In en, this message translates to:
   /// **'Due Date'**
   String get dueDateLabel;
 
-  /// No description provided for @creditLimitLabel.
+  /// Label for the credit limit input field or element
   ///
   /// In en, this message translates to:
   /// **'Credit Limit'**
   String get creditLimitLabel;
 
-  /// No description provided for @last4DigitsError.
+  /// Error message indicating last4digits issue
   ///
   /// In en, this message translates to:
   /// **'Enter exactly 4 digits.'**
   String get last4DigitsError;
 
-  /// No description provided for @invalidCreditLimitError.
+  /// Error message indicating invalid credit limit issue
   ///
   /// In en, this message translates to:
   /// **'Enter a valid positive amount.'**
   String get invalidCreditLimitError;
 
-  /// No description provided for @selectDatesError.
+  /// Error message indicating select dates issue
   ///
   /// In en, this message translates to:
   /// **'Please select billing and due dates.'**
   String get selectDatesError;
 
-  /// No description provided for @cardAddedSuccess.
+  /// Success message shown after card added
   ///
   /// In en, this message translates to:
   /// **'Card added successfully!'**
   String get cardAddedSuccess;
 
-  /// No description provided for @cardUpdatedSuccess.
+  /// Success message shown after card updated
   ///
   /// In en, this message translates to:
   /// **'Card updated successfully!'**
   String get cardUpdatedSuccess;
 
-  /// No description provided for @cardSaveError.
+  /// Error message indicating card save issue
   ///
   /// In en, this message translates to:
   /// **'Failed to save card.'**
   String get cardSaveError;
 
-  /// No description provided for @dueDateBeforeBillingError.
+  /// Error message indicating due date before billing issue
   ///
   /// In en, this message translates to:
   /// **'Due date must be after billing date'**
   String get dueDateBeforeBillingError;
 
-  /// No description provided for @saveButton.
+  /// Text representing save button
   ///
   /// In en, this message translates to:
   /// **'Save'**
   String get saveButton;
 
-  /// No description provided for @logPayment.
+  /// Text representing log payment
   ///
   /// In en, this message translates to:
   /// **'Log Payment'**
   String get logPayment;
 
-  /// No description provided for @totalDue.
+  /// Text representing total due
   ///
   /// In en, this message translates to:
   /// **'Total Due'**
   String get totalDue;
 
-  /// No description provided for @minimumDue.
+  /// Text representing minimum due
   ///
   /// In en, this message translates to:
   /// **'Minimum Due'**
   String get minimumDue;
 
-  /// No description provided for @customAmount.
+  /// Text representing custom amount
   ///
   /// In en, this message translates to:
   /// **'Custom Amount'**
   String get customAmount;
 
-  /// No description provided for @customAmountLabel.
+  /// Label for the custom amount input field or element
   ///
   /// In en, this message translates to:
   /// **'Custom Amount'**
   String get customAmountLabel;
 
-  /// No description provided for @enterCustomAmount.
+  /// Text representing enter custom amount
   ///
   /// In en, this message translates to:
   /// **'Enter amount'**
   String get enterCustomAmount;
 
-  /// No description provided for @customAmountRequiredError.
+  /// Error message indicating custom amount required issue
   ///
   /// In en, this message translates to:
   /// **'Custom amount is required.'**
   String get customAmountRequiredError;
 
-  /// No description provided for @invalidCustomAmountError.
+  /// Error message indicating invalid custom amount issue
   ///
   /// In en, this message translates to:
   /// **'Enter a valid positive amount.'**
   String get invalidCustomAmountError;
 
-  /// No description provided for @amountExceedsDueError.
+  /// Error message indicating amount exceeds due issue
   ///
   /// In en, this message translates to:
   /// **'Amount cannot exceed total due.'**
   String get amountExceedsDueError;
 
-  /// No description provided for @paymentLoggedSuccess.
+  /// Success message shown after payment logged
   ///
   /// In en, this message translates to:
   /// **'Payment logged successfully!'**
   String get paymentLoggedSuccess;
 
-  /// No description provided for @paymentLogError.
+  /// Error message indicating payment log issue
   ///
   /// In en, this message translates to:
   /// **'Failed to log payment.'**
   String get paymentLogError;
 
-  /// No description provided for @logPaymentButton.
+  /// Text representing log payment button
   ///
   /// In en, this message translates to:
   /// **'Log Payment'**
   String get logPaymentButton;
 
-  /// No description provided for @navigationError.
+  /// Error message indicating navigation issue
   ///
   /// In en, this message translates to:
   /// **'Navigation error occurred.'**
   String get navigationError;
 
-  /// No description provided for @paymentNotFoundError.
+  /// Error message indicating payment not found issue
   ///
   /// In en, this message translates to:
   /// **'Payment not found.'**
   String get paymentNotFoundError;
 
-  /// No description provided for @invalidBankError.
+  /// Error message indicating invalid bank issue
   ///
   /// In en, this message translates to:
   /// **'Invalid bank selected.'**
   String get invalidBankError;
 
-  /// No description provided for @cardDetailsTitle.
+  /// Title text for the card details section
   ///
   /// In en, this message translates to:
   /// **'Card Details'**
   String get cardDetailsTitle;
 
-  /// No description provided for @editCard.
+  /// Text representing edit card
   ///
   /// In en, this message translates to:
   /// **'Update'**
   String get editCard;
 
-  /// No description provided for @deleteCard.
+  /// Text representing delete card
   ///
   /// In en, this message translates to:
   /// **'Delete'**
   String get deleteCard;
 
-  /// No description provided for @archiveCard.
+  /// Text representing archive card
   ///
   /// In en, this message translates to:
   /// **'Archive'**
   String get archiveCard;
 
-  /// No description provided for @upcomingPayment.
+  /// Text representing upcoming payment
   ///
   /// In en, this message translates to:
   /// **'Upcoming Payment'**
   String get upcomingPayment;
 
-  /// No description provided for @noUpcomingDueMessage.
+  /// Message indicating no upcoming due
   ///
   /// In en, this message translates to:
   /// **'Add a payment to see it here.'**
@@ -710,601 +710,601 @@ abstract class AppLocalizations {
   /// **'Your next billing date is in {daysUntilBilling,plural, one{1 day} other{{daysUntilBilling} days}}.'**
   String nextBillingDateMessage(num daysUntilBilling);
 
-  /// No description provided for @paymentHistory.
+  /// Text representing payment history
   ///
   /// In en, this message translates to:
   /// **'Payment History'**
   String get paymentHistory;
 
-  /// No description provided for @noPastPayments.
+  /// Text representing no past payments
   ///
   /// In en, this message translates to:
   /// **'No past payments available.'**
   String get noPastPayments;
 
-  /// No description provided for @paymentHistoryItem.
+  /// Text representing payment history item
   ///
   /// In en, this message translates to:
   /// **'Payment'**
   String get paymentHistoryItem;
 
-  /// No description provided for @upcomingPaymentCard.
+  /// Text representing upcoming payment card
   ///
   /// In en, this message translates to:
   /// **'Upcoming Payment'**
   String get upcomingPaymentCard;
 
-  /// No description provided for @cardNotFoundError.
+  /// Error message indicating card not found issue
   ///
   /// In en, this message translates to:
   /// **'Card not found.'**
   String get cardNotFoundError;
 
-  /// No description provided for @paymentLoadError.
+  /// Error message indicating payment load issue
   ///
   /// In en, this message translates to:
   /// **'Couldn\'t load payments.'**
   String get paymentLoadError;
 
-  /// No description provided for @deleteCardConfirmation.
+  /// Text representing delete card confirmation
   ///
   /// In en, this message translates to:
   /// **'Confirm Delete Card'**
   String get deleteCardConfirmation;
 
-  /// No description provided for @deleteCardMessage.
+  /// Message indicating delete card
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to delete this card? This action cannot be undone.'**
   String get deleteCardMessage;
 
-  /// No description provided for @cancelButton.
+  /// Text representing cancel button
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancelButton;
 
-  /// No description provided for @deleteButton.
+  /// Text representing delete button
   ///
   /// In en, this message translates to:
   /// **'Delete'**
   String get deleteButton;
 
-  /// No description provided for @cardDeletedSuccess.
+  /// Success message shown after card deleted
   ///
   /// In en, this message translates to:
   /// **'Card deleted successfully!'**
   String get cardDeletedSuccess;
 
-  /// No description provided for @cardDeleteError.
+  /// Error message indicating card delete issue
   ///
   /// In en, this message translates to:
   /// **'Failed to delete card.'**
   String get cardDeleteError;
 
-  /// No description provided for @archiveNotImplemented.
+  /// Text representing archive not implemented
   ///
   /// In en, this message translates to:
   /// **'Archive feature not yet available.'**
   String get archiveNotImplemented;
 
-  /// No description provided for @cardArchivedSuccess.
+  /// Success message shown after card archived
   ///
   /// In en, this message translates to:
   /// **'Card archived successfully!'**
   String get cardArchivedSuccess;
 
-  /// No description provided for @cardUnarchivedSuccess.
+  /// Success message shown after card unarchived
   ///
   /// In en, this message translates to:
   /// **'Card unarchived successfully!'**
   String get cardUnarchivedSuccess;
 
-  /// No description provided for @deletePaymentMessage.
+  /// Message indicating delete payment
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to delete this payment? This action cannot be undone.'**
   String get deletePaymentMessage;
 
-  /// No description provided for @deletePaymentConfirmation.
+  /// Text representing delete payment confirmation
   ///
   /// In en, this message translates to:
   /// **'Confirm Delete Payment'**
   String get deletePaymentConfirmation;
 
-  /// No description provided for @bankDetailsLoadError.
+  /// Error message indicating bank details load issue
   ///
   /// In en, this message translates to:
   /// **'Couldn\'t load bank details.'**
   String get bankDetailsLoadError;
 
-  /// No description provided for @favoriteCard.
+  /// Text representing favorite card
   ///
   /// In en, this message translates to:
   /// **'Mark as Favorite'**
   String get favoriteCard;
 
-  /// No description provided for @unfavoriteCard.
+  /// Text representing unfavorite card
   ///
   /// In en, this message translates to:
   /// **'Remove from Favorites'**
   String get unfavoriteCard;
 
-  /// No description provided for @cardArchiveError.
+  /// Error message indicating card archive issue
   ///
   /// In en, this message translates to:
   /// **'Failed to archive card.'**
   String get cardArchiveError;
 
-  /// No description provided for @cardAddedToFavorites.
+  /// Text representing card added to favorites
   ///
   /// In en, this message translates to:
   /// **'Card added to favorites!'**
   String get cardAddedToFavorites;
 
-  /// No description provided for @cardRemovedFromFavorites.
+  /// Text representing card removed from favorites
   ///
   /// In en, this message translates to:
   /// **'Card removed from favorites.'**
   String get cardRemovedFromFavorites;
 
-  /// No description provided for @cardFavoriteError.
+  /// Error message indicating card favorite issue
   ///
   /// In en, this message translates to:
   /// **'Failed to update favorite status.'**
   String get cardFavoriteError;
 
-  /// No description provided for @bankLogo.
+  /// Text representing bank logo
   ///
   /// In en, this message translates to:
   /// **'Bank Logo'**
   String get bankLogo;
 
-  /// No description provided for @dueToday.
+  /// Text representing due today
   ///
   /// In en, this message translates to:
   /// **'Due Today'**
   String get dueToday;
 
-  /// No description provided for @undoButton.
+  /// Text representing undo button
   ///
   /// In en, this message translates to:
   /// **'Undo'**
   String get undoButton;
 
-  /// No description provided for @currentDue.
+  /// Text representing current due
   ///
   /// In en, this message translates to:
   /// **'Current Due'**
   String get currentDue;
 
-  /// No description provided for @upcomingPaymentsTitle.
+  /// Title text for the upcoming payments section
   ///
   /// In en, this message translates to:
   /// **'Upcoming Payments'**
   String get upcomingPaymentsTitle;
 
-  /// No description provided for @noPaymentsMessage.
+  /// Message indicating no payments
   ///
   /// In en, this message translates to:
   /// **'No Upcoming or Overdue Payments available.'**
   String get noPaymentsMessage;
 
-  /// No description provided for @addCardButton.
+  /// Text representing add card button
   ///
   /// In en, this message translates to:
   /// **'Add Card'**
   String get addCardButton;
 
-  /// No description provided for @addPaymentButton.
+  /// Text representing add payment button
   ///
   /// In en, this message translates to:
   /// **'Create Payment Due'**
   String get addPaymentButton;
 
-  /// No description provided for @invalidCardError.
+  /// Error message indicating invalid card issue
   ///
   /// In en, this message translates to:
   /// **'Invalid card selected.'**
   String get invalidCardError;
 
-  /// No description provided for @applyButton.
+  /// Text representing apply button
   ///
   /// In en, this message translates to:
   /// **'Apply'**
   String get applyButton;
 
-  /// No description provided for @resetButton.
+  /// Text representing reset button
   ///
   /// In en, this message translates to:
   /// **'Reset'**
   String get resetButton;
 
-  /// No description provided for @clearButton.
+  /// Text representing clear button
   ///
   /// In en, this message translates to:
   /// **'Clear'**
   String get clearButton;
 
-  /// No description provided for @editDueDateOnCard.
+  /// Text representing edit due date on card
   ///
   /// In en, this message translates to:
   /// **'Due date can be edited from the card details.'**
   String get editDueDateOnCard;
 
-  /// No description provided for @dueAlreadyExist.
+  /// Text representing due already exist
   ///
   /// In en, this message translates to:
   /// **'A payment due already exists for this card.'**
   String get dueAlreadyExist;
 
-  /// No description provided for @spendOverview.
+  /// Text representing spend overview
   ///
   /// In en, this message translates to:
   /// **'Spend Overview'**
   String get spendOverview;
 
-  /// No description provided for @monthOnTime.
+  /// Text representing month on time
   ///
   /// In en, this message translates to:
   /// **'On Time'**
   String get monthOnTime;
 
-  /// No description provided for @monthDelayed.
+  /// Text representing month delayed
   ///
   /// In en, this message translates to:
   /// **'Delayed'**
   String get monthDelayed;
 
-  /// No description provided for @monthNotPaid.
+  /// Text representing month not paid
   ///
   /// In en, this message translates to:
   /// **'Not Paid'**
   String get monthNotPaid;
 
-  /// No description provided for @monthNoData.
+  /// Text representing month no data
   ///
   /// In en, this message translates to:
   /// **'No Data'**
   String get monthNoData;
 
-  /// No description provided for @monthFuture.
+  /// Text representing month future
   ///
   /// In en, this message translates to:
   /// **'Future'**
   String get monthFuture;
 
-  /// No description provided for @dueScreenNoFilterMessage.
+  /// Message indicating due screen no filter
   ///
   /// In en, this message translates to:
   /// **'No payments match your filters.'**
   String get dueScreenNoFilterMessage;
 
-  /// No description provided for @settingsScreenTitle.
+  /// Title text for the settings screen section
   ///
   /// In en, this message translates to:
   /// **'Settings'**
   String get settingsScreenTitle;
 
-  /// No description provided for @editProfile.
+  /// Text representing edit profile
   ///
   /// In en, this message translates to:
   /// **'Edit Profile'**
   String get editProfile;
 
-  /// No description provided for @language.
+  /// Text representing language
   ///
   /// In en, this message translates to:
   /// **'Language'**
   String get language;
 
-  /// No description provided for @english.
+  /// Text representing english
   ///
   /// In en, this message translates to:
   /// **'English'**
   String get english;
 
-  /// No description provided for @hindi.
+  /// Text representing hindi
   ///
   /// In en, this message translates to:
   /// **'Hindi'**
   String get hindi;
 
-  /// No description provided for @currency.
+  /// Text representing currency
   ///
   /// In en, this message translates to:
   /// **'Currency'**
   String get currency;
 
-  /// No description provided for @theme.
+  /// Text representing theme
   ///
   /// In en, this message translates to:
   /// **'Theme'**
   String get theme;
 
-  /// No description provided for @light.
+  /// Text representing light
   ///
   /// In en, this message translates to:
   /// **'Light'**
   String get light;
 
-  /// No description provided for @dark.
+  /// Text representing dark
   ///
   /// In en, this message translates to:
   /// **'Dark'**
   String get dark;
 
-  /// No description provided for @system.
+  /// Text representing system
   ///
   /// In en, this message translates to:
   /// **'System'**
   String get system;
 
-  /// No description provided for @banks.
+  /// Text representing banks
   ///
   /// In en, this message translates to:
   /// **'Banks'**
   String get banks;
 
-  /// No description provided for @addBank.
+  /// Text representing add bank
   ///
   /// In en, this message translates to:
   /// **'Add Bank'**
   String get addBank;
 
-  /// No description provided for @editBank.
+  /// Text representing edit bank
   ///
   /// In en, this message translates to:
   /// **'Edit Bank'**
   String get editBank;
 
-  /// No description provided for @deleteBank.
+  /// Text representing delete bank
   ///
   /// In en, this message translates to:
   /// **'Delete Bank'**
   String get deleteBank;
 
-  /// No description provided for @deleteBankConfirm.
+  /// Text representing delete bank confirm
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to delete this bank?'**
   String get deleteBankConfirm;
 
-  /// No description provided for @paymentReminders.
+  /// Text representing payment reminders
   ///
   /// In en, this message translates to:
   /// **'Payment Reminders'**
   String get paymentReminders;
 
-  /// No description provided for @reminderTime.
+  /// Text representing reminder time
   ///
   /// In en, this message translates to:
   /// **'Reminder Time'**
   String get reminderTime;
 
-  /// No description provided for @exportData.
+  /// Text representing export data
   ///
   /// In en, this message translates to:
   /// **'Export Data'**
   String get exportData;
 
-  /// No description provided for @exportDataSuccess.
+  /// Success message shown after export data
   ///
   /// In en, this message translates to:
   /// **'Data exported successfully!'**
   String get exportDataSuccess;
 
-  /// No description provided for @clearData.
+  /// Text representing clear data
   ///
   /// In en, this message translates to:
   /// **'Clear Local Data'**
   String get clearData;
 
-  /// No description provided for @clearDataConfirm.
+  /// Text representing clear data confirm
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to clear all data? This action cannot be undone.'**
   String get clearDataConfirm;
 
-  /// No description provided for @clearDataSuccess.
+  /// Success message shown after clear data
   ///
   /// In en, this message translates to:
   /// **'All data cleared successfully!'**
   String get clearDataSuccess;
 
-  /// No description provided for @appVersion.
+  /// Text representing app version
   ///
   /// In en, this message translates to:
   /// **'App Version'**
   String get appVersion;
 
-  /// No description provided for @termsConditions.
+  /// Text representing terms conditions
   ///
   /// In en, this message translates to:
   /// **'Terms & Conditions'**
   String get termsConditions;
 
-  /// No description provided for @privacyPolicy.
+  /// Text representing privacy policy
   ///
   /// In en, this message translates to:
   /// **'Privacy Policy'**
   String get privacyPolicy;
 
-  /// No description provided for @contactSupport.
+  /// Text representing contact support
   ///
   /// In en, this message translates to:
   /// **'Contact Support'**
   String get contactSupport;
 
-  /// No description provided for @save.
+  /// Text representing save
   ///
   /// In en, this message translates to:
   /// **'Save'**
   String get save;
 
-  /// No description provided for @cancel.
+  /// Text representing cancel
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancel;
 
-  /// No description provided for @add.
+  /// Text representing add
   ///
   /// In en, this message translates to:
   /// **'Add'**
   String get add;
 
-  /// No description provided for @delete.
+  /// Text representing delete
   ///
   /// In en, this message translates to:
   /// **'Delete'**
   String get delete;
 
-  /// No description provided for @versionError.
+  /// Error message indicating version issue
   ///
   /// In en, this message translates to:
   /// **'Error loading version'**
   String get versionError;
 
-  /// No description provided for @loadingVersion.
+  /// Text representing loading version
   ///
   /// In en, this message translates to:
   /// **'Loading version...'**
   String get loadingVersion;
 
-  /// No description provided for @syncData.
+  /// Text representing sync data
   ///
   /// In en, this message translates to:
   /// **'Sync Data'**
   String get syncData;
 
-  /// No description provided for @syncDataSubtitle.
+  /// Subtitle text for the sync data section
   ///
   /// In en, this message translates to:
   /// **'Sync Data with the cloud to keep your information safe.'**
   String get syncDataSubtitle;
 
-  /// No description provided for @syncDataSuccess.
+  /// Success message shown after sync data
   ///
   /// In en, this message translates to:
   /// **'Data synced successfully!'**
   String get syncDataSuccess;
 
-  /// No description provided for @syncDataError.
+  /// Error message indicating sync data issue
   ///
   /// In en, this message translates to:
   /// **'Failed to sync data. Please try again.'**
   String get syncDataError;
 
-  /// No description provided for @syncDataInProgress.
+  /// Text representing sync data in progress
   ///
   /// In en, this message translates to:
   /// **'Syncing data...'**
   String get syncDataInProgress;
 
-  /// No description provided for @syncPreference.
+  /// Text representing sync preference
   ///
   /// In en, this message translates to:
   /// **'Sync'**
   String get syncPreference;
 
-  /// No description provided for @syncPreferenceSubtitle.
+  /// Subtitle text for the sync preference section
   ///
   /// In en, this message translates to:
   /// **'Enable to sync your settings and data across devices.'**
   String get syncPreferenceSubtitle;
 
-  /// No description provided for @utilizationAlertDescription.
+  /// Description text for utilization alert
   ///
   /// In en, this message translates to:
   /// **'Get notified when your credit card utilization exceeds this percentage.'**
   String get utilizationAlertDescription;
 
-  /// No description provided for @utilizationAlert.
+  /// Text representing utilization alert
   ///
   /// In en, this message translates to:
   /// **'Utilization Threshold'**
   String get utilizationAlert;
 
-  /// No description provided for @bankName.
+  /// Text representing bank name
   ///
   /// In en, this message translates to:
   /// **'Bank Name'**
   String get bankName;
 
-  /// No description provided for @bankCode.
+  /// Text representing bank code
   ///
   /// In en, this message translates to:
   /// **'Bank Code'**
   String get bankCode;
 
-  /// No description provided for @supportNumber.
+  /// Text representing support number
   ///
   /// In en, this message translates to:
   /// **'Support Number'**
   String get supportNumber;
 
-  /// No description provided for @website.
+  /// Text representing website
   ///
   /// In en, this message translates to:
   /// **'Website'**
   String get website;
 
-  /// No description provided for @bankColor.
+  /// Text representing bank color
   ///
   /// In en, this message translates to:
   /// **'Bank Color'**
   String get bankColor;
 
-  /// No description provided for @selectColorLabel.
+  /// Label for the select color input field or element
   ///
   /// In en, this message translates to:
   /// **'Select Color'**
   String get selectColorLabel;
 
-  /// No description provided for @logout.
+  /// Text representing logout
   ///
   /// In en, this message translates to:
   /// **'Logout'**
   String get logout;
 
-  /// No description provided for @overdue.
+  /// Text representing overdue
   ///
   /// In en, this message translates to:
   /// **'Overdue'**
   String get overdue;
 
-  /// No description provided for @today.
+  /// Text representing today
   ///
   /// In en, this message translates to:
   /// **'Today'**
   String get today;
 
-  /// No description provided for @paid.
+  /// Text representing paid
   ///
   /// In en, this message translates to:
   /// **'Paid'**
   String get paid;
 
-  /// No description provided for @partiallyPaid.
+  /// Text representing partially paid
   ///
   /// In en, this message translates to:
   /// **'Partially Paid'**
   String get partiallyPaid;
 
-  /// No description provided for @noPaymentDueStatus.
+  /// Text representing no payment due status
   ///
   /// In en, this message translates to:
   /// **'No Payment Due'**
   String get noPaymentDueStatus;
 
-  /// No description provided for @upcomingDue.
+  /// Text representing upcoming due
   ///
   /// In en, this message translates to:
   /// **'Upcoming Due'**
   String get upcomingDue;
 
-  /// No description provided for @dueTomorrow.
+  /// Text representing due tomorrow
   ///
   /// In en, this message translates to:
   /// **'Due tomorrow'**
@@ -1322,157 +1322,157 @@ abstract class AppLocalizations {
   /// **'Due in {days,plural, one{1 day} other{{days} days}}.'**
   String dueInDays(num days);
 
-  /// No description provided for @paidOn.
+  /// Text representing paid on
   ///
   /// In en, this message translates to:
   /// **'Paid on'**
   String get paidOn;
 
-  /// No description provided for @dueOn.
+  /// Text representing due on
   ///
   /// In en, this message translates to:
   /// **'Due on'**
   String get dueOn;
 
-  /// No description provided for @statementAmount.
+  /// Text representing statement amount
   ///
   /// In en, this message translates to:
   /// **'Statement Amount'**
   String get statementAmount;
 
-  /// No description provided for @partiallyPaidAmount.
+  /// Text representing partially paid amount
   ///
   /// In en, this message translates to:
   /// **'Partially Paid: '**
   String get partiallyPaidAmount;
 
-  /// No description provided for @autoDebitEnabledLabel.
+  /// Label for the auto debit enabled input field or element
   ///
   /// In en, this message translates to:
   /// **'Auto Debit Enabled'**
   String get autoDebitEnabledLabel;
 
-  /// No description provided for @autoDebitEnabledTooltip.
+  /// Text representing auto debit enabled tooltip
   ///
   /// In en, this message translates to:
   /// **'Automatic payment is enabled for this card'**
   String get autoDebitEnabledTooltip;
 
-  /// No description provided for @aiGeneratedSummary.
+  /// Text representing ai generated summary
   ///
   /// In en, this message translates to:
   /// **'AI Generated Summary'**
   String get aiGeneratedSummary;
 
-  /// No description provided for @cardBenefits.
+  /// Text representing card benefits
   ///
   /// In en, this message translates to:
   /// **'Card Benefits'**
   String get cardBenefits;
 
-  /// No description provided for @noBenefitsSummaryAvailable.
+  /// Text representing no benefits summary available
   ///
   /// In en, this message translates to:
   /// **'No benefits information available.'**
   String get noBenefitsSummaryAvailable;
 
-  /// No description provided for @paymentDeletedSuccess.
+  /// Success message shown after payment deleted
   ///
   /// In en, this message translates to:
   /// **'Payment deleted successfully!'**
   String get paymentDeletedSuccess;
 
-  /// No description provided for @january.
+  /// Name of the month January
   ///
   /// In en, this message translates to:
   /// **'🎉 Jan'**
   String get january;
 
-  /// No description provided for @february.
+  /// Name of the month February
   ///
   /// In en, this message translates to:
   /// **'❤️ Feb'**
   String get february;
 
-  /// No description provided for @march.
+  /// Name of the month March
   ///
   /// In en, this message translates to:
   /// **'🌍 March'**
   String get march;
 
-  /// No description provided for @april.
+  /// Name of the month April
   ///
   /// In en, this message translates to:
   /// **'🌱 April'**
   String get april;
 
-  /// No description provided for @may.
+  /// Name of the month May
   ///
   /// In en, this message translates to:
   /// **'👩 May'**
   String get may;
 
-  /// No description provided for @june.
+  /// Name of the month June
   ///
   /// In en, this message translates to:
   /// **'🌈 June'**
   String get june;
 
-  /// No description provided for @july.
+  /// Name of the month July
   ///
   /// In en, this message translates to:
   /// **'🇺🇳 July'**
   String get july;
 
-  /// No description provided for @august.
+  /// Name of the month August
   ///
   /// In en, this message translates to:
   /// **'☀️ Aug'**
   String get august;
 
-  /// No description provided for @september.
+  /// Name of the month September
   ///
   /// In en, this message translates to:
   /// **'📚 Sept'**
   String get september;
 
-  /// No description provided for @october.
+  /// Name of the month October
   ///
   /// In en, this message translates to:
   /// **'🎃 Oct'**
   String get october;
 
-  /// No description provided for @november.
+  /// Name of the month November
   ///
   /// In en, this message translates to:
   /// **'✊ Nov'**
   String get november;
 
-  /// No description provided for @december.
+  /// Name of the month December
   ///
   /// In en, this message translates to:
   /// **'🎄 Dec'**
   String get december;
 
-  /// No description provided for @morningGreeting.
+  /// Greeting message for morning
   ///
   /// In en, this message translates to:
   /// **'Good Morning'**
   String get morningGreeting;
 
-  /// No description provided for @afternoonGreeting.
+  /// Greeting message for afternoon
   ///
   /// In en, this message translates to:
   /// **'Good Afternoon'**
   String get afternoonGreeting;
 
-  /// No description provided for @eveningGreeting.
+  /// Greeting message for evening
   ///
   /// In en, this message translates to:
   /// **'Good Evening'**
   String get eveningGreeting;
 
-  /// No description provided for @nightGreeting.
+  /// Greeting message for night
   ///
   /// In en, this message translates to:
   /// **'Good Night'**
@@ -1490,49 +1490,49 @@ abstract class AppLocalizations {
   /// **'{count, plural, one{{count} card due in next 7 days} other{{count} cards due in next 7 days}}'**
   String dueSoonCards(int count);
 
-  /// No description provided for @somethingWentWrong.
+  /// Text representing something went wrong
   ///
   /// In en, this message translates to:
   /// **'Something went wrong!'**
   String get somethingWentWrong;
 
-  /// No description provided for @loading.
+  /// Text representing loading
   ///
   /// In en, this message translates to:
   /// **'Loading, please wait...'**
   String get loading;
 
-  /// No description provided for @spendAnalysisTitle.
+  /// Title text for the spend analysis section
   ///
   /// In en, this message translates to:
   /// **'Spend Analysis'**
   String get spendAnalysisTitle;
 
-  /// No description provided for @spendAnalysisDescription.
+  /// Description text for spend analysis
   ///
   /// In en, this message translates to:
   /// **'Analyze your spending patterns and manage your finances better.'**
   String get spendAnalysisDescription;
 
-  /// No description provided for @yearLabel.
+  /// Label for the year input field or element
   ///
   /// In en, this message translates to:
   /// **'Year'**
   String get yearLabel;
 
-  /// No description provided for @filterLabel.
+  /// Label for the filter input field or element
   ///
   /// In en, this message translates to:
   /// **'Filter'**
   String get filterLabel;
 
-  /// No description provided for @filterCardsLabel.
+  /// Label for the filter cards input field or element
   ///
   /// In en, this message translates to:
   /// **'Filter Cards'**
   String get filterCardsLabel;
 
-  /// No description provided for @totalSpend.
+  /// Text representing total spend
   ///
   /// In en, this message translates to:
   /// **'Total Spend'**
@@ -1543,6 +1543,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, one{{count} card} other{{count} cards}}'**
   String cardsLabel(int count);
+
+  /// Text representing alerts
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get alerts;
+
+  /// Text representing search
+  ///
+  /// In en, this message translates to:
+  /// **'Search...'**
+  String get search;
+
+  /// Text representing no results found
+  ///
+  /// In en, this message translates to:
+  /// **'No results found.'**
+  String get noResultsFound;
+
+  /// Text representing due grace period
+  ///
+  /// In en, this message translates to:
+  /// **'Due Grace Period (days)'**
+  String get dueGracePeriod;
+
+  /// Text representing due grace period helper
+  ///
+  /// In en, this message translates to:
+  /// **'How many days after billing the payment is due'**
+  String get dueGracePeriodHelper;
+
+  /// Error message indicating due grace period issue
+  ///
+  /// In en, this message translates to:
+  /// **'Enter valid days (0-60)'**
+  String get dueGracePeriodError;
+
+  /// Menu item for Dashboard
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get dashboard;
+
+  /// Menu item for Cards
+  ///
+  /// In en, this message translates to:
+  /// **'Cards'**
+  String get cards;
+
+  /// Menu item for Dues
+  ///
+  /// In en, this message translates to:
+  /// **'Dues'**
+  String get dues;
+
+  /// Menu item for Settings
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// Menu item for Demo Mode
+  ///
+  /// In en, this message translates to:
+  /// **'Demo Mode'**
+  String get demoMode;
+
+  /// Text representing demo mode active
+  ///
+  /// In en, this message translates to:
+  /// **'Demo Mode Active'**
+  String get demoModeActive;
+
+  /// Text representing demo mode description
+  ///
+  /// In en, this message translates to:
+  /// **'You are currently running in Demo Mode. Your card dues and details are stored locally.\n\nTo sync your cards across devices, please sign in with an account.'**
+  String get demoModeDescription;
+
+  /// Text representing continue demo
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Demo'**
+  String get continueDemo;
+
+  /// Text representing exit and sign in
+  ///
+  /// In en, this message translates to:
+  /// **'Exit & Sign In'**
+  String get exitAndSignIn;
+
+  /// Text representing developer email
+  ///
+  /// In en, this message translates to:
+  /// **'Developer Email'**
+  String get developerEmail;
+
+  /// Text representing suggest feature
+  ///
+  /// In en, this message translates to:
+  /// **'Suggest a Feature'**
+  String get suggestFeature;
+
+  /// Text representing suggest feature subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Share your ideas with us'**
+  String get suggestFeatureSubtitle;
+
+  /// Error message for load user details
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load user details'**
+  String get loadUserError;
+
+  /// Ascending
+  ///
+  /// In en, this message translates to:
+  /// **'ASC'**
+  String get asc;
+
+  /// Descending
+  ///
+  /// In en, this message translates to:
+  /// **'DESC'**
+  String get desc;
+
+  /// Any filter option
+  ///
+  /// In en, this message translates to:
+  /// **'Any'**
+  String get any;
+
+  /// Authentication error message
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication error: {error}'**
+  String authError(String error);
+
+  /// Google Sign-In failed
+  ///
+  /// In en, this message translates to:
+  /// **'Google Sign-In failed: {error}'**
+  String googleSignInFailed(String error);
+
+  /// GitHub Sign-In failed
+  ///
+  /// In en, this message translates to:
+  /// **'GitHub Sign-In failed: {error}'**
+  String githubSignInFailed(String error);
+
+  /// Error deleting payment
+  ///
+  /// In en, this message translates to:
+  /// **'Error deleting payment: {error}'**
+  String deletePaymentError(String error);
+
+  /// Error updating due date
+  ///
+  /// In en, this message translates to:
+  /// **'Error updating due date: {error}'**
+  String updateDueDateError(String error);
+
+  /// Label for selecting a card
+  ///
+  /// In en, this message translates to:
+  /// **'Select Card'**
+  String get selectCard;
+
+  /// Validation error when card is not selected
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a card'**
+  String get pleaseSelectCard;
 }
 
 class _AppLocalizationsDelegate

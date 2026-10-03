@@ -46,11 +46,13 @@ class DashboardMonthWidget extends StatelessWidget {
       context.l10n.december,
     ];
 
-    // Group payments by month
+    // Group payments by month for the current year
     final monthPayments = <int, List<PaymentModel>>{};
     for (var payment in data) {
-      final month = payment.dueDate.month;
-      monthPayments.putIfAbsent(month, () => []).add(payment);
+      if (payment.dueDate.year == now.year) {
+        final month = payment.dueDate.month;
+        monthPayments.putIfAbsent(month, () => []).add(payment);
+      }
     }
 
     // Determine status and colors for each month

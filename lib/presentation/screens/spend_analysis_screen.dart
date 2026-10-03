@@ -49,7 +49,7 @@ class _SpendAnalysisScreenState extends ConsumerState<SpendAnalysisScreen> {
         leading: const BackButton(color: Colors.white),
         actions: [
           IconButton(
-            tooltip: 'Filter Cards',
+            tooltip: context.l10n.filterCardsLabel,
             icon: const Icon(Icons.filter_list),
             color: Colors.white,
             onPressed: () => _showFilterSheet(context),
@@ -242,6 +242,25 @@ class _SpendAnalysisScreenState extends ConsumerState<SpendAnalysisScreen> {
     FormatHelper formatHelper,
     List<String> monthNames,
   ) {
+    if (_selectedYear == null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.bar_chart_rounded,
+              size: 64,
+              color: Colors.grey.shade400,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'No payment data available',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ],
+        ),
+      );
+    }
     final selectedYear = _selectedYear!;
     final filteredCards =
         _selectedCardIds.isEmpty

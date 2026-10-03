@@ -73,7 +73,7 @@ class _TransactionFilterBottomSheetState
               subtitle: Row(
                 children: [
                   ChoiceChip(
-                    label: const Text('ASC'),
+                    label: Text(context.l10n.asc),
                     selected: _sort == SortOrder.asc,
                     onSelected: (selected) {
                       if (selected) {
@@ -92,7 +92,7 @@ class _TransactionFilterBottomSheetState
                   ),
                   const SizedBox(width: 8),
                   ChoiceChip(
-                    label: const Text('DESC'),
+                    label: Text(context.l10n.desc),
                     selected: _sort == SortOrder.desc,
                     onSelected: (selected) {
                       if (selected) {
@@ -125,7 +125,7 @@ class _TransactionFilterBottomSheetState
                 runSpacing: 8,
                 children: [
                   ChoiceChip(
-                    label: const Text('Any'),
+                    label: Text(context.l10n.any),
                     selected: _range == AmountRange.all,
                     onSelected: (selected) {
                       if (selected) {

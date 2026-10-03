@@ -341,7 +341,7 @@ class SettingsScreen extends ConsumerWidget {
                       Icons.language,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    title: Text('Website'),
+                    title: Text(context.l10n.website),
                     subtitle: const Text('https://nudge.fnlsg.in'),
                     onTap: () {
                       launchUrl(Uri.parse('https://nudge.fnlsg.in'));
@@ -352,7 +352,7 @@ class SettingsScreen extends ConsumerWidget {
                       Icons.email_outlined,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    title: Text('Developer Email'),
+                    title: Text(context.l10n.developerEmail),
                     subtitle: const Text('ashwini@fnlsg.in'),
                     onTap: () {
                       launchUrl(
@@ -385,8 +385,8 @@ class SettingsScreen extends ConsumerWidget {
                       Icons.lightbulb_outline,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    title: const Text('Suggest a Feature'),
-                    subtitle: const Text('Share your ideas with us'),
+                    title: Text(context.l10n.suggestFeature),
+                    subtitle: Text(context.l10n.suggestFeatureSubtitle),
                     onTap: () async {
                       final Uri emailLaunchUri = Uri(
                         scheme: 'mailto',

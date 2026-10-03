@@ -7,25 +7,25 @@ part 'settings_model.g.dart';
 
 @HiveType(typeId: 4)
 class SettingsModel {
-  @HiveField(1)
+  @HiveField(1, defaultValue: '')
   String userId;
 
-  @HiveField(2)
+  @HiveField(2, defaultValue: Language.English)
   Language language;
 
-  @HiveField(3)
+  @HiveField(3, defaultValue: Currency.INR)
   Currency currency;
 
-  @HiveField(4)
+  @HiveField(4, defaultValue: ThemeMode.system)
   ThemeMode themeMode;
 
-  @HiveField(5)
+  @HiveField(5, defaultValue: true)
   bool notificationsEnabled;
 
   @HiveField(6)
   TimeOfDay reminderTime;
 
-  @HiveField(7)
+  @HiveField(7, defaultValue: true)
   bool syncSettings;
 
   @HiveField(8)
@@ -34,10 +34,10 @@ class SettingsModel {
   @HiveField(9)
   DateTime updatedAt;
 
-  @HiveField(10)
+  @HiveField(10, defaultValue: false)
   bool syncPending;
 
-  @HiveField(11)
+  @HiveField(11, defaultValue: 30)
   int? utilizationAlertThreshold;
 
   SettingsModel({

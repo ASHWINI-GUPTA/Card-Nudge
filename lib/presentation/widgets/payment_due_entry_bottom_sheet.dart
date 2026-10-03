@@ -10,14 +10,10 @@ import '../providers/payment_provider.dart';
 import 'credit_card_color_dot_indicator.dart';
 
 class PaymentDueEntryBottomSheet extends ConsumerStatefulWidget {
-  final CreditCardModel card;
+  final CreditCardModel? card;
   final PaymentModel? payment;
 
-  const PaymentDueEntryBottomSheet({
-    super.key,
-    required this.card,
-    this.payment,
-  });
+  const PaymentDueEntryBottomSheet({super.key, this.card, this.payment});
 
   @override
   ConsumerState<PaymentDueEntryBottomSheet> createState() =>
@@ -31,10 +27,12 @@ class _PaymentDueEntryBottomSheet
   final _minimumDueController = TextEditingController();
   bool _isNoPaymentDue = false;
   bool _isSubmitting = false;
+  CreditCardModel? _selectedCard;
 
   @override
   void initState() {
     super.initState();
+    _selectedCard = widget.card;
     // Prefill controllers if editing
     if (widget.payment != null) {
       _dueAmountController.text = widget.payment!.dueAmount.toString();
@@ -53,6 +51,7 @@ class _PaymentDueEntryBottomSheet
   }
 
   Future<PaymentModel?> _submit() async {
+    if (_selectedCard == null) return null;
     if (!_formKey.currentState!.validate()) return null;
 
     setState(() => _isSubmitting = true);
@@ -65,12 +64,12 @@ class _PaymentDueEntryBottomSheet
               : double.parse(_minimumDueController.text.trim());
 
       // UPDATED: Use card's synced dueDate for payment
-      final paymentDueDate = widget.card.getNextDueDate;
+      final paymentDueDate = _selectedCard!.getNextDueDate;
 
       var payment = PaymentModel(
         id: widget.payment?.id,
-        userId: widget.card.userId,
-        cardId: widget.card.id,
+        userId: _selectedCard!.userId,
+        cardId: _selectedCard!.id,
         dueAmount: dueAmount,
         minimumDueAmount: minimumDueAmount,
         dueDate: paymentDueDate,
@@ -86,11 +85,11 @@ class _PaymentDueEntryBottomSheet
       // NEW: Sync card dates if this is the first unpaid payment (but don't advance yet; wait for pay)
       final payments = ref.read(paymentBoxProvider);
       final unpaidExists = payments.values.any(
-        (p) => p.cardId == widget.card.id && !p.isPaid && p.id != payment.id,
+        (p) => p.cardId == _selectedCard!.id && !p.isPaid && p.id != payment.id,
       );
       if (!unpaidExists) {
         // Ensure card.dueDate matches payment dueDate
-        final updatedCard = widget.card.copyWith(dueDate: paymentDueDate);
+        final updatedCard = _selectedCard!.copyWith(dueDate: paymentDueDate);
         await ref.read(creditCardProvider.notifier).save(updatedCard);
       }
 
@@ -117,12 +116,13 @@ class _PaymentDueEntryBottomSheet
   }
 
   Future<void> _handleNoPaymentDue() async {
+    if (_selectedCard == null) return;
     setState(() => _isSubmitting = true);
 
     try {
       final payments = ref.read(paymentBoxProvider);
       final unpaidExists = payments.values.any(
-        (p) => p.cardId == widget.card.id && !p.isPaid,
+        (p) => p.cardId == _selectedCard!.id && !p.isPaid,
       );
       if (unpaidExists) {
         if (mounted) {
@@ -136,11 +136,11 @@ class _PaymentDueEntryBottomSheet
 
       // UPDATED: Create no-due payment with synced dates
       final payment = PaymentModel(
-        userId: widget.card.userId,
-        cardId: widget.card.id,
+        userId: _selectedCard!.userId,
+        cardId: _selectedCard!.id,
         dueAmount: 0.0,
         minimumDueAmount: 0.0,
-        dueDate: widget.card.getNextDueDate, // Synced
+        dueDate: _selectedCard!.getNextDueDate, // Synced
         statementAmount: 0.0,
         isPaid: true,
         paymentDate: DateTime.now().toUtc(),
@@ -151,7 +151,7 @@ class _PaymentDueEntryBottomSheet
       await ref.read(paymentProvider.notifier).save(payment);
 
       // UPDATED: Use centralized advance
-      final updatedCard = widget.card.advanceToNextCycle();
+      final updatedCard = _selectedCard!.advanceToNextCycle();
       await ref.read(creditCardProvider.notifier).save(updatedCard);
 
       if (!mounted) return;
@@ -163,9 +163,11 @@ class _PaymentDueEntryBottomSheet
       NavigationService.pop(context);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error updating due date: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(context.l10n.updateDueDateError(e.toString())),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -174,6 +176,10 @@ class _PaymentDueEntryBottomSheet
 
   @override
   Widget build(BuildContext context) {
+    final cardsAsync = ref.watch(creditCardProvider);
+    final activeCards =
+        cardsAsync.valueOrNull?.where((c) => !c.isArchived).toList() ?? [];
+
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom + 16,
@@ -214,6 +220,32 @@ class _PaymentDueEntryBottomSheet
               key: _formKey,
               child: Column(
                 children: [
+                  // Card Selection Dropdown
+                  DropdownButtonFormField<CreditCardModel>(
+                    initialValue: _selectedCard,
+                    decoration: InputDecoration(
+                      labelText: context.l10n.selectCard,
+                    ),
+                    items:
+                        activeCards.map((c) {
+                          return DropdownMenuItem(
+                            value: c,
+                            child: Text('${c.name} (••${c.last4Digits})'),
+                          );
+                        }).toList(),
+                    onChanged:
+                        widget.card != null
+                            ? null // Disable changing if a card was explicitly passed
+                            : (val) {
+                              setState(() {
+                                _selectedCard = val;
+                              });
+                            },
+                    validator:
+                        (val) =>
+                            val == null ? context.l10n.pleaseSelectCard : null,
+                  ),
+                  const SizedBox(height: 12),
                   // Total Due
                   TextFormField(
                     controller: _dueAmountController,
@@ -273,7 +305,11 @@ class _PaymentDueEntryBottomSheet
                     contentPadding: EdgeInsets.zero,
                     title: Text(context.l10n.dueDateLabel),
                     subtitle: Text(
-                      DateFormat.yMMMd().format(widget.card.getNextDueDate),
+                      _selectedCard != null
+                          ? DateFormat.yMMMd().format(
+                            _selectedCard!.getNextDueDate,
+                          )
+                          : '-',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     trailing: const Icon(Icons.calendar_today),

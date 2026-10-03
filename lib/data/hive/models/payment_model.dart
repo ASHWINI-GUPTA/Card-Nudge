@@ -4,24 +4,26 @@ import 'package:uuid/uuid.dart';
 
 part 'payment_model.g.dart';
 
+/// Represents a payment due for a specific credit card in a billing cycle.
+/// Stored locally via Hive and synchronized with the remote Supabase database.
 @HiveType(typeId: 3)
 class PaymentModel extends HiveObject {
-  @HiveField(0)
+  @HiveField(0, defaultValue: '')
   String id;
 
-  @HiveField(1)
+  @HiveField(1, defaultValue: '')
   String userId;
 
-  @HiveField(2)
+  @HiveField(2, defaultValue: '')
   String cardId;
 
-  @HiveField(3)
+  @HiveField(3, defaultValue: 0.0)
   double dueAmount;
 
-  @HiveField(4)
+  @HiveField(4, defaultValue: null)
   DateTime? paymentDate;
 
-  @HiveField(5)
+  @HiveField(5, defaultValue: false)
   bool isPaid;
 
   @HiveField(6)
@@ -30,19 +32,19 @@ class PaymentModel extends HiveObject {
   @HiveField(7)
   DateTime updatedAt;
 
-  @HiveField(8)
+  @HiveField(8, defaultValue: null)
   double? minimumDueAmount;
 
-  @HiveField(9)
+  @HiveField(9, defaultValue: 0.0)
   double paidAmount;
 
   @HiveField(10)
   DateTime dueDate;
 
-  @HiveField(11)
+  @HiveField(11, defaultValue: 0.0)
   double statementAmount;
 
-  @HiveField(12)
+  @HiveField(12, defaultValue: true)
   bool syncPending;
 
   PaymentModel({

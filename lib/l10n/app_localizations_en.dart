@@ -797,4 +797,103 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get alerts => 'Alerts';
+
+  @override
+  String get search => 'Search...';
+
+  @override
+  String get noResultsFound => 'No results found.';
+
+  @override
+  String get dueGracePeriod => 'Due Grace Period (days)';
+
+  @override
+  String get dueGracePeriodHelper =>
+      'How many days after billing the payment is due';
+
+  @override
+  String get dueGracePeriodError => 'Enter valid days (0-60)';
+
+  @override
+  String get dashboard => 'Dashboard';
+
+  @override
+  String get cards => 'Cards';
+
+  @override
+  String get dues => 'Dues';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get demoMode => 'Demo Mode';
+
+  @override
+  String get demoModeActive => 'Demo Mode Active';
+
+  @override
+  String get demoModeDescription =>
+      'You are currently running in Demo Mode. Your card dues and details are stored locally.\n\nTo sync your cards across devices, please sign in with an account.';
+
+  @override
+  String get continueDemo => 'Continue Demo';
+
+  @override
+  String get exitAndSignIn => 'Exit & Sign In';
+
+  @override
+  String get developerEmail => 'Developer Email';
+
+  @override
+  String get suggestFeature => 'Suggest a Feature';
+
+  @override
+  String get suggestFeatureSubtitle => 'Share your ideas with us';
+
+  @override
+  String get loadUserError => 'Failed to load user details';
+
+  @override
+  String get asc => 'ASC';
+
+  @override
+  String get desc => 'DESC';
+
+  @override
+  String get any => 'Any';
+
+  @override
+  String authError(String error) {
+    return 'Authentication error: $error';
+  }
+
+  @override
+  String googleSignInFailed(String error) {
+    return 'Google Sign-In failed: $error';
+  }
+
+  @override
+  String githubSignInFailed(String error) {
+    return 'GitHub Sign-In failed: $error';
+  }
+
+  @override
+  String deletePaymentError(String error) {
+    return 'Error deleting payment: $error';
+  }
+
+  @override
+  String updateDueDateError(String error) {
+    return 'Error updating due date: $error';
+  }
+
+  @override
+  String get selectCard => 'Select Card';
+
+  @override
+  String get pleaseSelectCard => 'Please select a card';
 }

@@ -17,20 +17,20 @@ class BankModelAdapter extends TypeAdapter<BankModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return BankModel(
-      id: fields[0] as String?,
-      userId: fields[1] as String,
-      name: fields[2] as String,
+      id: fields[0] == null ? '' : fields[0] as String?,
+      userId: fields[1] == null ? '' : fields[1] as String,
+      name: fields[2] == null ? '' : fields[2] as String,
       code: fields[3] as String?,
       logoPath: fields[4] as String?,
       supportNumber: fields[5] as String?,
       website: fields[6] as String?,
-      isFavorite: fields[7] as bool,
+      isFavorite: fields[7] == null ? false : fields[7] as bool,
       colorHex: fields[8] as String?,
       priority: fields[9] as int?,
       createdAt: fields[10] as DateTime?,
       updatedAt: fields[11] as DateTime?,
-      syncPending: fields[12] as bool,
-      isDefault: fields[13] as bool,
+      syncPending: fields[12] == null ? true : fields[12] as bool,
+      isDefault: fields[13] == null ? false : fields[13] as bool,
     );
   }
 

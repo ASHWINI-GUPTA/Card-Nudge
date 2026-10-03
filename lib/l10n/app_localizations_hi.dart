@@ -9,162 +9,162 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
-  String get appTitle => 'कार्ड नज 🔔';
+  String get appTitle => 'Card Nudge 🔔';
 
   @override
-  String get welcomeTitle => 'कार्ड नज में आपका स्वागत है 🔔';
+  String get welcomeTitle => 'Card Nudge में आपका स्वागत है 🔔';
 
   @override
   String get welcomeSubtitle => 'आपका क्रेडिट कार्ड साथी!';
 
   @override
   String get welcomeDescription =>
-      'अपने क्रेडिट कार्ड, भुगतान की तारीख और बकाया राशि को ट्रैक करें। अब कभी भुगतान मिस न करें।';
+      'अपने क्रेडिट कार्ड और पेमेंट ड्यूज़ ट्रैक करें, और कभी कोई पेमेंट मिस न करें।';
 
   @override
-  String get buttonOk => 'ठीक है';
+  String get buttonOk => 'OK';
 
   @override
-  String get buttonCancel => 'रद्द करें';
+  String get buttonCancel => 'कैंसिल';
 
   @override
   String get buttonClose => 'बंद करें';
 
   @override
-  String get buttonSave => 'सहेजें';
+  String get buttonSave => 'सेव';
 
   @override
-  String get buttonAdd => 'जोड़ें';
+  String get buttonAdd => 'ऐड करें';
 
   @override
-  String get buttonDelete => 'हटाएं';
+  String get buttonDelete => 'डिलीट';
 
   @override
-  String get buttonEdit => 'संपादित करें';
+  String get buttonEdit => 'एडिट';
 
   @override
-  String get buttonArchive => 'आर्काइव करें';
+  String get buttonArchive => 'आर्काइव';
 
   @override
-  String get buttonUnarchive => 'अनआर्काइव करें';
+  String get buttonUnarchive => 'अन-आर्काइव';
 
   @override
-  String get archivedCardsTitle => 'आर्काइव किए गए कार्ड';
+  String get archivedCardsTitle => 'आर्काइव किए गए कार्ड्स';
 
   @override
-  String get archivedCardsEmptyStateTitle => 'कोई आर्काइव किया गया कार्ड नहीं';
+  String get archivedCardsEmptyStateTitle => 'कोई आर्काइव्ड कार्ड नहीं';
 
   @override
   String get archivedCardsEmptyStateSubtitle =>
       'आपने अभी तक कोई कार्ड आर्काइव नहीं किया है।';
 
   @override
-  String get buttonRetry => 'पुनः प्रयास करें';
+  String get buttonRetry => 'री-ट्राय';
 
   @override
-  String get buttonUndo => 'पूर्ववत करें';
+  String get buttonUndo => 'अनडू';
 
   @override
   String get buttonHome => 'होम';
 
   @override
-  String get buttonAddCard => 'कार्ड जोड़ें';
+  String get buttonAddCard => 'कार्ड ऐड करें';
 
   @override
   String get buttonUpdateCard => 'कार्ड अपडेट करें';
 
   @override
-  String get buttonAddPayment => 'भुगतान बकाया बनाएं';
+  String get buttonAddPayment => 'पेमेंट ड्यू बनाएं';
 
   @override
-  String get retryButtonLabel => 'पुनः प्रयास करें';
+  String get retryButtonLabel => 'री-ट्राय';
 
   @override
-  String get validationRequired => 'यह फ़ील्ड ज़रूरी है।';
+  String get validationRequired => 'यह फील्ड ज़रूरी है।';
 
   @override
   String get errorGeneric =>
-      'एक अनपेक्षित त्रुटि हुई। कृपया फिर से कोशिश करें या होम स्क्रीन पर जाएं। अगर समस्या बनी रहती है, तो सहायता से संपर्क करें।';
+      'कुछ गड़बड़ हो गई। कृपया फिर से कोशिश करें। अगर समस्या बनी रहती है, तो सपोर्ट से संपर्क करें।';
 
   @override
-  String get utilization => 'उपयोग';
+  String get utilization => 'इस्तेमाल (Utilization)';
 
   @override
-  String get overUtilization => 'अधिक उपयोग किए गए कार्ड';
+  String get overUtilization => 'ओवर-यूटिलाइज़्ड कार्ड्स';
 
   @override
-  String get totalCreditLimit => 'कुल क्रेडिट सीमा';
+  String get totalCreditLimit => 'कुल क्रेडिट लिमिट';
 
   @override
-  String get quickInsights => 'तेज़ जानकारी';
+  String get quickInsights => 'क्विक इनसाइट्स';
 
   @override
-  String get monthlyOverview => 'मासिक भुगतान अवलोकन';
+  String get monthlyOverview => 'महीने के हिसाब से पेमेंट्स';
 
   @override
-  String get cardsScreenTitle => 'आपके कार्ड';
+  String get cardsScreenTitle => 'आपके कार्ड्स';
 
   @override
   String get cardsScreenSubtitle =>
-      'अपने क्रेडिट कार्ड और भुगतान प्रबंधित करें';
+      'अपने क्रेडिट कार्ड्स और पेमेंट्स मैनेज करें';
 
   @override
   String get cardsScreenDescription =>
-      'अपने क्रेडिट कार्ड, बकाया भुगतान और आगामी भुगतानों पर नज़र रखें।';
+      'अपने क्रेडिट कार्ड्स, ड्यू पेमेंट्स और आने वाले पेमेंट्स पर नज़र रखें।';
 
   @override
-  String get cardsScreenEmptyStateTitle => 'कोई कार्ड नहीं जोड़ा गया';
+  String get cardsScreenEmptyStateTitle => 'कोई कार्ड ऐड नहीं किया गया';
 
   @override
   String get cardsScreenEmptyStateSubtitle =>
-      'अपने क्रेडिट कार्ड जोड़ें ताकि भुगतान और बकाया ट्रैक करना शुरू हो सके।';
+      'पेमेंट्स ट्रैक करने के लिए अपने क्रेडिट कार्ड्स ऐड करें।';
 
   @override
-  String get cardsScreenErrorTitle => 'कार्ड लोड करने में त्रुटि';
+  String get cardsScreenErrorTitle => 'कार्ड्स लोड करने में एरर';
 
   @override
   String get cardsScreenErrorSubtitle =>
-      'आपके कार्ड लोड करने में त्रुटि हुई। कृपया बाद में फिर से कोशिश करें।';
+      'कार्ड्स लोड नहीं हो पाए। कृपया बाद में कोशिश करें।';
 
   @override
-  String get cardDetailsScreenTitle => 'कार्ड विवरण';
+  String get cardDetailsScreenTitle => 'कार्ड डिटेल्स';
 
   @override
   String get cardDetailsScreenSubtitle =>
-      'अपने कार्ड विवरण देखें और प्रबंधित करें';
+      'कार्ड की डिटेल्स देखें और मैनेज करें';
 
   @override
   String get cardDetailsScreenDescription =>
-      'अपने कार्ड विवरण, आगामी भुगतान और भुगतान इतिहास देखें।';
+      'कार्ड डिटेल्स, आने वाले पेमेंट्स और पेमेंट हिस्ट्री देखें।';
 
   @override
-  String get addCardScreenTitle => 'कार्ड जोड़ें';
+  String get addCardScreenTitle => 'कार्ड ऐड करें';
 
   @override
   String get updateCardScreenTitle => 'कार्ड अपडेट करें';
 
   @override
-  String get addCardScreenSubtitle => 'नया क्रेडिट कार्ड जोड़ें';
+  String get addCardScreenSubtitle => 'नया क्रेडिट कार्ड ऐड करें';
 
   @override
-  String get updateCardScreenSubtitle => 'अपने क्रेडिट कार्ड विवरण अपडेट करें';
+  String get updateCardScreenSubtitle => 'क्रेडिट कार्ड डिटेल्स अपडेट करें';
 
   @override
   String get addCardScreenDescription =>
-      'भुगतान और बकाया ट्रैक करने के लिए अपने कार्ड विवरण दर्ज करें।';
+      'पेमेंट्स ट्रैक करने के लिए कार्ड डिटेल्स डालें।';
 
   @override
   String get updateCardScreenDescription =>
-      'अपने भुगतान जानकारी को अपडेट रखने के लिए कार्ड विवरण अपडेट करें।';
+      'पेमेंट इन्फो को सही रखने के लिए कार्ड डिटेल्स अपडेट करें।';
 
   @override
   String get cardNameLabel => 'कार्ड का नाम *';
 
   @override
-  String get cardNameHint => 'कार्ड का नाम दर्ज करें';
+  String get cardNameHint => 'कार्ड का नाम डालें';
 
   @override
-  String get cardNameError => 'कार्ड का नाम ज़रूरी है।';
+  String get cardNameError => 'कार्ड का नाम ज़रूरी है।';
 
   @override
   String get bankLabel => 'बैंक *';
@@ -173,52 +173,51 @@ class AppLocalizationsHi extends AppLocalizations {
   String get bankHint => 'अपना बैंक चुनें';
 
   @override
-  String get addPaymentDue => 'भुगतान बकाया जोड़ें';
+  String get addPaymentDue => 'पेमेंट ड्यू ऐड करें';
 
   @override
-  String get editPaymentDue => 'भुगतान बकाया संपादित करें';
+  String get editPaymentDue => 'पेमेंट ड्यू एडिट करें';
 
   @override
-  String get dueAmountLabel => 'बकाया राशि *';
+  String get dueAmountLabel => 'ड्यू अमाउंट *';
 
   @override
-  String get minimumDueLabel => 'न्यूनतम बकाया (वैकल्पिक)';
+  String get minimumDueLabel => 'मिनिमम ड्यू (ऑप्शनल)';
 
   @override
-  String get paymentDateLabel => 'भुगतान की तारीख *';
+  String get paymentDateLabel => 'पेमेंट ड्यू डेट *';
 
   @override
-  String get selectDate => 'तारीख चुनें';
+  String get selectDate => 'डेट चुनें';
 
   @override
-  String get selectDateError => 'कृपया बकाया तारीख चुनें।';
+  String get selectDateError => 'कृपया ड्यू डेट चुनें।';
 
   @override
-  String get invalidAmountError => 'सही राशि दर्ज करें।';
+  String get invalidAmountError => 'सही अमाउंट डालें।';
 
   @override
   String get minimumDueExceedsError =>
-      'न्यूनतम बकाया कुल बकाया से अधिक नहीं हो सकता।';
+      'मिनिमम ड्यू, टोटल ड्यू से ज़्यादा नहीं हो सकता।';
 
   @override
-  String get paymentAddedSuccess => 'भुगतान बकाया सफलतापूर्वक जोड़ा गया!';
+  String get paymentAddedSuccess => 'पेमेंट ड्यू सक्सेसफुली ऐड हो गया!';
 
   @override
-  String get paymentUpdatedSuccess =>
-      'भुगतान बकाया सफलतापूर्वक अपडेट किया गया!';
+  String get paymentUpdatedSuccess => 'पेमेंट ड्यू सक्सेसफुली अपडेट हो गया!';
 
   @override
   String get noDuePaymentAddedSuccess =>
-      'कोई भुगतान बकाया नहीं जोड़ा गया। आप बाद में जोड़ सकते हैं।';
+      'कोई पेमेंट ड्यू ऐड नहीं हुआ। आप बाद में ऐड कर सकते हैं।';
 
   @override
-  String get paymentAddError => 'भुगतान बकाया जोड़ने में विफल।';
+  String get paymentAddError => 'पेमेंट ड्यू ऐड नहीं हो पाया।';
 
   @override
-  String get addDueButton => 'भुगतान';
+  String get addDueButton => 'पेमेंट';
 
   @override
-  String get noPaymentDue => 'कोई भुगतान आवश्यक नहीं';
+  String get noPaymentDue => 'कोई पेमेंट ड्यू नहीं';
 
   @override
   String get cardLabel => 'कार्ड का नाम';
@@ -227,104 +226,105 @@ class AppLocalizationsHi extends AppLocalizations {
   String get networkLabel => 'कार्ड नेटवर्क';
 
   @override
-  String get last4DigitsLabel => 'अंतिम 4 अंक';
+  String get last4DigitsLabel => 'आखिरी 4 अंक';
 
   @override
-  String get billingDateLabel => 'बिलिंग तारीख';
+  String get billingDateLabel => 'बिलिंग डेट';
 
   @override
-  String get dueDateLabel => 'बकाया तारीख';
+  String get dueDateLabel => 'ड्यू डेट';
 
   @override
-  String get creditLimitLabel => 'क्रेडिट सीमा';
+  String get creditLimitLabel => 'क्रेडिट लिमिट';
 
   @override
-  String get last4DigitsError => 'ठीक 4 अंक दर्ज करें।';
+  String get last4DigitsError => 'सिर्फ 4 अंक डालें।';
 
   @override
-  String get invalidCreditLimitError => 'सही सकारात्मक राशि दर्ज करें।';
+  String get invalidCreditLimitError => 'सही अमाउंट डालें।';
 
   @override
-  String get selectDatesError => 'कृपया बिलिंग और बकाया तारीख चुनें।';
+  String get selectDatesError => 'कृपया बिलिंग और ड्यू डेट्स चुनें।';
 
   @override
-  String get cardAddedSuccess => 'कार्ड सफलतापूर्वक जोड़ा गया!';
+  String get cardAddedSuccess => 'कार्ड सक्सेसफुली ऐड हो गया!';
 
   @override
-  String get cardUpdatedSuccess => 'कार्ड सफलतापूर्वक अपडेट किया गया!';
+  String get cardUpdatedSuccess => 'कार्ड सक्सेसफुली अपडेट हो गया!';
 
   @override
-  String get cardSaveError => 'कार्ड सहेजने में विफल।';
+  String get cardSaveError => 'कार्ड सेव नहीं हो पाया।';
 
   @override
   String get dueDateBeforeBillingError =>
-      'बकाया तारीख बिलिंग तारीख के बाद होनी चाहिए';
+      'ड्यू डेट, बिलिंग डेट के बाद होनी चाहिए।';
 
   @override
-  String get saveButton => 'सहेजें';
+  String get saveButton => 'सेव';
 
   @override
-  String get logPayment => 'भुगतान दर्ज करें';
+  String get logPayment => 'पेमेंट दर्ज करें';
 
   @override
-  String get totalDue => 'कुल बकाया';
+  String get totalDue => 'टोटल ड्यू';
 
   @override
-  String get minimumDue => 'न्यूनतम बकाया';
+  String get minimumDue => 'मिनिमम ड्यू';
 
   @override
-  String get customAmount => 'कस्टम राशि';
+  String get customAmount => 'कस्टम अमाउंट';
 
   @override
-  String get customAmountLabel => 'कस्टम राशि';
+  String get customAmountLabel => 'कस्टम अमाउंट';
 
   @override
-  String get enterCustomAmount => 'राशि दर्ज करें';
+  String get enterCustomAmount => 'अमाउंट डालें';
 
   @override
-  String get customAmountRequiredError => 'राशि ज़रूरी है।';
+  String get customAmountRequiredError => 'कस्टम अमाउंट ज़रूरी है।';
 
   @override
-  String get invalidCustomAmountError => 'सही सकारात्मक राशि दर्ज करें।';
+  String get invalidCustomAmountError => 'सही अमाउंट डालें।';
 
   @override
-  String get amountExceedsDueError => 'राशि कुल बकाया से अधिक नहीं हो सकती।';
+  String get amountExceedsDueError =>
+      'अमाउंट टोटल ड्यू से ज़्यादा नहीं हो सकता।';
 
   @override
-  String get paymentLoggedSuccess => 'भुगतान सफलतापूर्वक दर्ज किया गया!';
+  String get paymentLoggedSuccess => 'पेमेंट सक्सेसफुली दर्ज हो गया!';
 
   @override
-  String get paymentLogError => 'भुगतान दर्ज करने में विफल।';
+  String get paymentLogError => 'पेमेंट दर्ज नहीं हो पाया।';
 
   @override
-  String get logPaymentButton => 'भुगतान दर्ज करें';
+  String get logPaymentButton => 'पेमेंट दर्ज करें';
 
   @override
-  String get navigationError => 'नेविगेशन त्रुटि हुई।';
+  String get navigationError => 'नेविगेशन में कोई दिक्कत हुई।';
 
   @override
-  String get paymentNotFoundError => 'भुगतान नहीं मिला।';
+  String get paymentNotFoundError => 'पेमेंट नहीं मिला।';
 
   @override
-  String get invalidBankError => 'अमान्य बैंक चुना गया।';
+  String get invalidBankError => 'गलत बैंक चुना गया है।';
 
   @override
-  String get cardDetailsTitle => 'कार्ड विवरण';
+  String get cardDetailsTitle => 'कार्ड डिटेल्स';
 
   @override
-  String get editCard => 'अपडेट करें';
+  String get editCard => 'अपडेट';
 
   @override
-  String get deleteCard => 'हटाएं';
+  String get deleteCard => 'डिलीट';
 
   @override
-  String get archiveCard => 'आर्काइव करें';
+  String get archiveCard => 'आर्काइव';
 
   @override
-  String get upcomingPayment => 'आगामी भुगतान';
+  String get upcomingPayment => 'आने वाला पेमेंट';
 
   @override
-  String get noUpcomingDueMessage => 'यहां देखने के लिए भुगतान जोड़ें।';
+  String get noUpcomingDueMessage => 'यहां देखने के लिए एक पेमेंट ऐड करें।';
 
   @override
   String nextBillingDateMessage(num daysUntilBilling) {
@@ -334,175 +334,175 @@ class AppLocalizationsHi extends AppLocalizations {
       other: '$daysUntilBilling दिनों',
       one: '1 दिन',
     );
-    return 'आपकी अगली बिलिंग तारीख $_temp0 में है।';
+    return 'आपकी अगली बिलिंग डेट $_temp0 में है।';
   }
 
   @override
-  String get paymentHistory => 'भुगतान इतिहास';
+  String get paymentHistory => 'पेमेंट हिस्ट्री';
 
   @override
-  String get noPastPayments => 'कोई पुराना भुगतान उपलब्ध नहीं।';
+  String get noPastPayments => 'कोई पुरानी पेमेंट्स नहीं मिलीं।';
 
   @override
-  String get paymentHistoryItem => 'भुगतान';
+  String get paymentHistoryItem => 'पेमेंट';
 
   @override
-  String get upcomingPaymentCard => 'आगामी भुगतान';
+  String get upcomingPaymentCard => 'आने वाला पेमेंट';
 
   @override
   String get cardNotFoundError => 'कार्ड नहीं मिला।';
 
   @override
-  String get paymentLoadError => 'भुगतान लोड नहीं हो सके।';
+  String get paymentLoadError => 'पेमेंट्स लोड नहीं हो पाए।';
 
   @override
-  String get deleteCardConfirmation => 'कार्ड हटाने की पुष्टि करें';
+  String get deleteCardConfirmation => 'कार्ड डिलीट कन्फर्म करें';
 
   @override
   String get deleteCardMessage =>
-      'क्या आप वाकई इस कार्ड को हटाना चाहते हैं? यह कार्रवाई वापस नहीं की जा सकती।';
+      'क्या आप सच में ये कार्ड डिलीट करना चाहते हैं? ये वापस नहीं लाया जा सकेगा।';
 
   @override
-  String get cancelButton => 'रद्द करें';
+  String get cancelButton => 'कैंसिल';
 
   @override
-  String get deleteButton => 'हटाएं';
+  String get deleteButton => 'डिलीट';
 
   @override
-  String get cardDeletedSuccess => 'कार्ड सफलतापूर्वक हटाया गया!';
+  String get cardDeletedSuccess => 'कार्ड सक्सेसफुली डिलीट हो गया!';
 
   @override
-  String get cardDeleteError => 'कार्ड हटाने में विफल।';
+  String get cardDeleteError => 'कार्ड डिलीट नहीं हो पाया।';
 
   @override
-  String get archiveNotImplemented => 'आर्काइव सुविधा अभी उपलब्ध नहीं है।';
+  String get archiveNotImplemented => 'आर्काइव फीचर अभी चालू नहीं है।';
 
   @override
-  String get cardArchivedSuccess => 'कार्ड सफलतापूर्वक आर्काइव किया गया!';
+  String get cardArchivedSuccess => 'कार्ड सक्सेसफुली आर्काइव हो गया!';
 
   @override
-  String get cardUnarchivedSuccess => 'कार्ड सफलतापूर्वक अनआर्काइव किया गया!';
+  String get cardUnarchivedSuccess => 'कार्ड सक्सेसफुली अन-आर्काइव हो गया!';
 
   @override
   String get deletePaymentMessage =>
-      'क्या आप वाकई इस भुगतान को हटाना चाहते हैं? यह कार्रवाई वापस नहीं की जा सकती।';
+      'क्या आप सच में ये पेमेंट डिलीट करना चाहते हैं? ये वापस नहीं लाया जा सकेगा।';
 
   @override
-  String get deletePaymentConfirmation => 'भुगतान हटाने की पुष्टि करें';
+  String get deletePaymentConfirmation => 'पेमेंट डिलीट कन्फर्म करें';
 
   @override
-  String get bankDetailsLoadError => 'बैंक विवरण लोड नहीं हो सके।';
+  String get bankDetailsLoadError => 'बैंक डिटेल्स लोड नहीं हो पाईं।';
 
   @override
-  String get favoriteCard => 'पसंदीदा के रूप में चिह्नित करें';
+  String get favoriteCard => 'फेवरेट बनाएं';
 
   @override
-  String get unfavoriteCard => 'पसंदीदा से हटाएं';
+  String get unfavoriteCard => 'फेवरेट से हटाएं';
 
   @override
-  String get cardArchiveError => 'कार्ड आर्काइव करने में विफल।';
+  String get cardArchiveError => 'कार्ड आर्काइव नहीं हो पाया।';
 
   @override
-  String get cardAddedToFavorites => 'कार्ड पसंदीदा में जोड़ा गया!';
+  String get cardAddedToFavorites => 'कार्ड फेवरेट्स में ऐड हो गया!';
 
   @override
-  String get cardRemovedFromFavorites => 'कार्ड पसंदीदा से हटाया गया।';
+  String get cardRemovedFromFavorites => 'कार्ड फेवरेट्स से हटा दिया गया।';
 
   @override
-  String get cardFavoriteError => 'पसंदीदा स्थिति अपडेट करने में विफल।';
+  String get cardFavoriteError => 'फेवरेट स्टेटस अपडेट नहीं हो पाया।';
 
   @override
   String get bankLogo => 'बैंक लोगो';
 
   @override
-  String get dueToday => 'आज बकाया';
+  String get dueToday => 'आज ड्यू है';
 
   @override
-  String get undoButton => 'पूर्ववत करें';
+  String get undoButton => 'अनडू';
 
   @override
-  String get currentDue => 'वर्तमान बकाया';
+  String get currentDue => 'करंट ड्यू';
 
   @override
-  String get upcomingPaymentsTitle => 'आगामी भुगतान';
+  String get upcomingPaymentsTitle => 'आने वाले पेमेंट्स';
 
   @override
-  String get noPaymentsMessage => 'कोई आगामी या अतिदेय भुगतान उपलब्ध नहीं।';
+  String get noPaymentsMessage => 'कोई आने वाला या ओवरड्यू पेमेंट नहीं है।';
 
   @override
-  String get addCardButton => 'कार्ड जोड़ें';
+  String get addCardButton => 'कार्ड ऐड करें';
 
   @override
-  String get addPaymentButton => 'भुगतान बकाया बनाएं';
+  String get addPaymentButton => 'पेमेंट ड्यू बनाएं';
 
   @override
-  String get invalidCardError => 'अमान्य कार्ड चुना गया।';
+  String get invalidCardError => 'गलत कार्ड चुना गया है।';
 
   @override
-  String get applyButton => 'लागू करें';
+  String get applyButton => 'अप्लाई करें';
 
   @override
-  String get resetButton => 'रीसेट करें';
+  String get resetButton => 'रीसेट';
 
   @override
-  String get clearButton => 'साफ करें';
+  String get clearButton => 'क्लियर';
 
   @override
   String get editDueDateOnCard =>
-      'बकाया तारीख को कार्ड विवरण से संपादित किया जा सकता है।';
+      'ड्यू डेट को कार्ड डिटेल्स से एडिट किया जा सकता है।';
 
   @override
   String get dueAlreadyExist =>
-      'इस कार्ड के लिए पहले से ही एक बकाया भुगतान मौजूद है।';
+      'इस कार्ड के लिए पहले से ही एक पेमेंट ड्यू मौजूद है।';
 
   @override
-  String get spendOverview => 'खर्च अवलोकन';
+  String get spendOverview => 'खर्च का ओवरव्यू';
 
   @override
-  String get monthOnTime => 'समय पर';
+  String get monthOnTime => 'टाइम पर';
 
   @override
-  String get monthDelayed => 'विलंबित';
+  String get monthDelayed => 'लेट';
 
   @override
-  String get monthNotPaid => 'भुगतान नहीं किया';
+  String get monthNotPaid => 'पे नहीं किया';
 
   @override
   String get monthNoData => 'कोई डेटा नहीं';
 
   @override
-  String get monthFuture => 'भविष्य';
+  String get monthFuture => 'फ्यूचर';
 
   @override
   String get dueScreenNoFilterMessage =>
-      'आपके फ़िल्टर से कोई भुगतान मेल नहीं खाता।';
+      'आपके फिल्टर से कोई पेमेंट मैच नहीं हुआ।';
 
   @override
   String get settingsScreenTitle => 'सेटिंग्स';
 
   @override
-  String get editProfile => 'प्रोफ़ाइल संपादित करें';
+  String get editProfile => 'प्रोफाइल एडिट करें';
 
   @override
-  String get language => 'भाषा';
+  String get language => 'भाषा (Language)';
 
   @override
-  String get english => 'अंग्रेजी';
+  String get english => 'English';
 
   @override
   String get hindi => 'हिंदी';
 
   @override
-  String get currency => 'मुद्रा';
+  String get currency => 'करेंसी';
 
   @override
   String get theme => 'थीम';
 
   @override
-  String get light => 'हल्का';
+  String get light => 'लाइट';
 
   @override
-  String get dark => 'गहरा';
+  String get dark => 'डार्क';
 
   @override
   String get system => 'सिस्टम';
@@ -511,99 +511,100 @@ class AppLocalizationsHi extends AppLocalizations {
   String get banks => 'बैंक';
 
   @override
-  String get addBank => 'बैंक जोड़ें';
+  String get addBank => 'बैंक ऐड करें';
 
   @override
-  String get editBank => 'बैंक संपादित करें';
+  String get editBank => 'बैंक एडिट करें';
 
   @override
-  String get deleteBank => 'बैंक हटाएं';
+  String get deleteBank => 'बैंक डिलीट करें';
 
   @override
-  String get deleteBankConfirm => 'क्या आप वाकई इस बैंक को हटाना चाहते हैं?';
+  String get deleteBankConfirm =>
+      'क्या आप सच में इस बैंक को डिलीट करना चाहते हैं?';
 
   @override
-  String get paymentReminders => 'भुगतान रिमाइंडर';
+  String get paymentReminders => 'पेमेंट रिमाइंडर्स';
 
   @override
-  String get reminderTime => 'रिमाइंडर समय';
+  String get reminderTime => 'रिमाइंडर टाइम';
 
   @override
-  String get exportData => 'डेटा निर्यात करें';
+  String get exportData => 'डेटा एक्सपोर्ट करें';
 
   @override
-  String get exportDataSuccess => 'डेटा सफलतापूर्वक निर्यात किया गया!';
+  String get exportDataSuccess => 'डेटा सक्सेसफुली एक्सपोर्ट हो गया!';
 
   @override
-  String get clearData => 'स्थानीय डेटा साफ करें';
+  String get clearData => 'लोकल डेटा क्लियर करें';
 
   @override
   String get clearDataConfirm =>
-      'क्या आप वाकई सारा डेटा साफ करना चाहते हैं? यह कार्रवाई वापस नहीं की जा सकती।';
+      'क्या आप सच में सारा डेटा क्लियर करना चाहते हैं? ये वापस नहीं लाया जा सकेगा।';
 
   @override
-  String get clearDataSuccess => 'सारा डेटा सफलतापूर्वक साफ किया गया!';
+  String get clearDataSuccess => 'सारा डेटा सक्सेसफुली क्लियर हो गया!';
 
   @override
-  String get appVersion => 'ऐप संस्करण';
+  String get appVersion => 'ऐप वर्ज़न';
 
   @override
-  String get termsConditions => 'नियम और शर्तें';
+  String get termsConditions => 'नियम और शर्तें (T&C)';
 
   @override
-  String get privacyPolicy => 'गोपनीयता नीति';
+  String get privacyPolicy => 'प्राइवेसी पॉलिसी';
 
   @override
-  String get contactSupport => 'सहायता से संपर्क करें';
+  String get contactSupport => 'सपोर्ट से संपर्क करें';
 
   @override
-  String get save => 'सहेजें';
+  String get save => 'सेव';
 
   @override
-  String get cancel => 'रद्द करें';
+  String get cancel => 'कैंसिल';
 
   @override
-  String get add => 'जोड़ें';
+  String get add => 'ऐड';
 
   @override
-  String get delete => 'हटाएं';
+  String get delete => 'डिलीट';
 
   @override
-  String get versionError => 'संस्करण लोड करने में त्रुटि';
+  String get versionError => 'वर्ज़न लोड करने में एरर';
 
   @override
-  String get loadingVersion => 'संस्करण लोड हो रहा है...';
+  String get loadingVersion => 'वर्ज़न लोड हो रहा है...';
 
   @override
   String get syncData => 'डेटा सिंक करें';
 
   @override
   String get syncDataSubtitle =>
-      'अपनी जानकारी को सुरक्षित रखने के लिए डेटा को क्लाउड के साथ सिंक करें।';
+      'अपनी इन्फो को सुरक्षित रखने के लिए डेटा को क्लाउड के साथ सिंक करें।';
 
   @override
-  String get syncDataSuccess => 'डेटा सफलतापूर्वक सिंक किया गया!';
+  String get syncDataSuccess => 'डेटा सक्सेसफुली सिंक हो गया!';
 
   @override
   String get syncDataError =>
-      'डेटा सिंक करने में विफल। कृपया फिर से कोशिश करें।';
+      'डेटा सिंक नहीं हो पाया। कृपया फिर से कोशिश करें।';
 
   @override
   String get syncDataInProgress => 'डेटा सिंक हो रहा है...';
 
   @override
-  String get syncPreference => 'सिंक';
+  String get syncPreference => 'सिंक (Sync)';
 
   @override
   String get syncPreferenceSubtitle =>
-      'अपनी सेटिंग्स और डेटा को डिवाइसों में सिंक करने के लिए सक्षम करें।';
+      'अपनी सेटिंग्स और डेटा को बाकी डिवाइसों में सिंक करने के लिए ऑन करें।';
 
   @override
   String get utilizationAlertDescription =>
-      'जब आपके क्रेडिट कार्ड का उपयोग इस प्रतिशत से अधिक हो, तो सूचना प्राप्त करें।';
+      'जब आपके क्रेडिट कार्ड का इस्तेमाल इस परसेंट से ज्यादा हो, तो नोटिफिकेशन पाएं।';
 
   @override
-  String get utilizationAlert => 'उपयोग सीमा';
+  String get utilizationAlert => 'यूटिलाइज़ेशन लिमिट';
 
   @override
   String get bankName => 'बैंक का नाम';
@@ -612,13 +613,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get bankCode => 'बैंक कोड';
 
   @override
-  String get supportNumber => 'सहायता नंबर';
+  String get supportNumber => 'सपोर्ट नंबर';
 
   @override
   String get website => 'वेबसाइट';
 
   @override
-  String get bankColor => 'बैंक रंग';
+  String get bankColor => 'बैंक का रंग';
 
   @override
   String get selectColorLabel => 'रंग चुनें';
@@ -627,25 +628,25 @@ class AppLocalizationsHi extends AppLocalizations {
   String get logout => 'लॉगआउट';
 
   @override
-  String get overdue => 'अतिदेय';
+  String get overdue => 'ओवरड्यू';
 
   @override
   String get today => 'आज';
 
   @override
-  String get paid => 'भुगतान किया';
+  String get paid => 'पेड (Paid)';
 
   @override
-  String get partiallyPaid => 'आंशिक रूप से भुगतान किया';
+  String get partiallyPaid => 'पार्शियली पेड (Partially Paid)';
 
   @override
-  String get noPaymentDueStatus => 'कोई भुगतान बकाया नहीं';
+  String get noPaymentDueStatus => 'कोई पेमेंट ड्यू नहीं';
 
   @override
-  String get upcomingDue => 'आगामी बकाया';
+  String get upcomingDue => 'आने वाला ड्यू';
 
   @override
-  String get dueTomorrow => 'कल बकाया';
+  String get dueTomorrow => 'कल ड्यू है';
 
   @override
   String overdueByDays(num days) {
@@ -655,7 +656,7 @@ class AppLocalizationsHi extends AppLocalizations {
       other: '$days दिनों',
       one: '1 दिन',
     );
-    return '$_temp0 से अतिदेय।';
+    return '$_temp0 से ओवरड्यू।';
   }
 
   @override
@@ -666,95 +667,96 @@ class AppLocalizationsHi extends AppLocalizations {
       other: '$days दिनों',
       one: '1 दिन',
     );
-    return '$_temp0 में बकाया।';
+    return '$_temp0 में ड्यू है।';
   }
 
   @override
-  String get paidOn => 'भुगतान किया गया';
+  String get paidOn => 'पेमेंट डेट';
 
   @override
-  String get dueOn => 'बकाया है';
+  String get dueOn => 'ड्यू डेट';
 
   @override
-  String get statementAmount => 'विवरण राशि';
+  String get statementAmount => 'स्टेटमेंट अमाउंट';
 
   @override
-  String get partiallyPaidAmount => 'आंशिक रूप से भुगतान: ';
+  String get partiallyPaidAmount => 'पार्शियली पेड: ';
 
   @override
-  String get autoDebitEnabledLabel => 'ऑटो डेबिट चालू किया गया है';
+  String get autoDebitEnabledLabel => 'ऑटो डेबिट ऑन है';
 
   @override
   String get autoDebitEnabledTooltip =>
-      'इस कार्ड के लिए स्वचालित भुगतान सक्रिय है';
+      'इस कार्ड के लिए ऑटोमैटिक पेमेंट चालू है';
 
   @override
-  String get aiGeneratedSummary => 'एआई जनरेटेड सारांश';
+  String get aiGeneratedSummary => 'AI जेनरेटेड समरी';
 
   @override
-  String get cardBenefits => 'कार्ड लाभ';
+  String get cardBenefits => 'कार्ड के फायदे';
 
   @override
-  String get noBenefitsSummaryAvailable => 'कोई लाभ जानकारी उपलब्ध नहीं है';
+  String get noBenefitsSummaryAvailable =>
+      'फायदों की कोई जानकारी उपलब्ध नहीं है।';
 
   @override
-  String get paymentDeletedSuccess => 'भुगतान सफलतापूर्वक हटाया गया!';
+  String get paymentDeletedSuccess => 'पेमेंट सक्सेसफुली डिलीट हो गया!';
 
   @override
-  String get january => '🪁 जनवरी';
+  String get january => '🎉 जनवरी';
 
   @override
-  String get february => '📚 फ़रवरी';
+  String get february => '❤️ फ़रवरी';
 
   @override
-  String get march => '🎨 मार्च';
+  String get march => '🌍 मार्च';
 
   @override
-  String get april => '🌾 अप्रैल';
+  String get april => '🌱 अप्रैल';
 
   @override
-  String get may => '🙏 मई';
+  String get may => '👩 मई';
 
   @override
-  String get june => '🧘 जून';
+  String get june => '🌈 जून';
 
   @override
-  String get july => '🌧️ जुलाई';
+  String get july => '🇺🇳 जुलाई';
 
   @override
-  String get august => '🇮🇳 अगस्त';
+  String get august => '☀️ अगस्त';
 
   @override
-  String get september => '🕉️ सितम्बर';
+  String get september => '📚 सितम्बर';
 
   @override
-  String get october => '🏹 अक्टूबर';
+  String get october => '🎃 अक्टूबर';
 
   @override
-  String get november => '🪔 नवम्बर';
+  String get november => '✊ नवम्बर';
 
   @override
-  String get december => '🎄 दिसेम्बर';
+  String get december => '🎄 दिसंबर';
 
   @override
-  String get morningGreeting => 'सुप्रभात';
+  String get morningGreeting => 'गुड मॉर्निंग';
 
   @override
-  String get afternoonGreeting => 'नमस्ते';
+  String get afternoonGreeting => 'गुड आफ्टरनून';
 
   @override
-  String get eveningGreeting => 'शुभ संध्या';
+  String get eveningGreeting => 'गुड इवनिंग';
 
   @override
-  String get nightGreeting => 'शुभ रात्रि';
+  String get nightGreeting => 'गुड नाईट';
 
   @override
   String overUtilizedCards(int count, String threshold) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count कार्ड अधिक उपयोग किए गए (> $threshold%)',
-      one: '$count कार्ड अधिक उपयोग किया गया (> $threshold%)',
+      other: '$count कार्ड्स ओवर-यूटिलाइज़्ड (> $threshold%)',
+      one: '$count कार्ड ओवर-यूटिलाइज़्ड (> $threshold%)',
     );
     return '$_temp0';
   }
@@ -764,33 +766,33 @@ class AppLocalizationsHi extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count कार्ड अगले 7 दिनों में देय',
-      one: '$count कार्ड अगले 7 दिनों में देय',
+      other: '$count कार्ड्स अगले 7 दिनों में ड्यू',
+      one: '$count कार्ड अगले 7 दिनों में ड्यू',
     );
     return '$_temp0';
   }
 
   @override
-  String get somethingWentWrong => 'कुछ गलत हो गया!';
+  String get somethingWentWrong => 'कुछ गड़बड़ हो गई!';
 
   @override
-  String get loading => 'लोड हो रहा है, कृपया प्रतीक्षा करें...';
+  String get loading => 'लोड हो रहा है, कृपया वेट करें...';
 
   @override
-  String get spendAnalysisTitle => 'खर्च विश्लेषण';
+  String get spendAnalysisTitle => 'खर्च का एनालिसिस (Spend Analysis)';
 
   @override
   String get spendAnalysisDescription =>
-      'अपने खर्च के पैटर्न का विश्लेषण करें और अपनी वित्तीय स्थिति को बेहतर ढंग से प्रबंधित करें।';
+      'अपने खर्च के पैटर्न को समझें और अपने फाइनेंस को बेहतर तरीके से मैनेज करें।';
 
   @override
-  String get yearLabel => 'वर्ष';
+  String get yearLabel => 'साल';
 
   @override
   String get filterLabel => 'फिल्टर';
 
   @override
-  String get filterCardsLabel => 'कार्ड फ़िल्टर करें';
+  String get filterCardsLabel => 'कार्ड्स फिल्टर करें';
 
   @override
   String get totalSpend => 'कुल खर्च';
@@ -805,4 +807,103 @@ class AppLocalizationsHi extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get alerts => 'अलर्ट्स';
+
+  @override
+  String get search => 'सर्च करें...';
+
+  @override
+  String get noResultsFound => 'कुछ नहीं मिला।';
+
+  @override
+  String get dueGracePeriod => 'ड्यू ग्रेस पीरियड (दिन)';
+
+  @override
+  String get dueGracePeriodHelper =>
+      'बिलिंग के कितने दिन बाद पेमेंट ड्यू होता है';
+
+  @override
+  String get dueGracePeriodError => 'सही दिन डालें (0-60)';
+
+  @override
+  String get dashboard => 'डैशबोर्ड';
+
+  @override
+  String get cards => 'कार्ड्स';
+
+  @override
+  String get dues => 'ड्यूज़';
+
+  @override
+  String get settings => 'सेटिंग्स';
+
+  @override
+  String get demoMode => 'डेमो मोड';
+
+  @override
+  String get demoModeActive => 'डेमो मोड एक्टिव';
+
+  @override
+  String get demoModeDescription =>
+      'आप अभी डेमो मोड में हैं। आपके कार्ड ड्यूज़ और डिटेल्स फोन में सेव हो रहे हैं।\n\nअपने कार्ड्स को दूसरे डिवाइस में सिंक करने के लिए, कृपया अकाउंट से साइन इन करें।';
+
+  @override
+  String get continueDemo => 'डेमो चालू रखें';
+
+  @override
+  String get exitAndSignIn => 'बाहर निकलें और साइन इन करें';
+
+  @override
+  String get developerEmail => 'डेवलपर ईमेल';
+
+  @override
+  String get suggestFeature => 'नया फीचर सजेस्ट करें';
+
+  @override
+  String get suggestFeatureSubtitle => 'अपने आइडियाज़ हमारे साथ शेयर करें';
+
+  @override
+  String get loadUserError => 'यूज़र डिटेल्स लोड नहीं हो पाईं';
+
+  @override
+  String get asc => 'ASC';
+
+  @override
+  String get desc => 'DESC';
+
+  @override
+  String get any => 'कोई भी';
+
+  @override
+  String authError(String error) {
+    return 'ऑथेंटिकेशन में दिक्कत हुई: $error';
+  }
+
+  @override
+  String googleSignInFailed(String error) {
+    return 'Google साइन-इन फेल हो गया: $error';
+  }
+
+  @override
+  String githubSignInFailed(String error) {
+    return 'GitHub साइन-इन फेल हो गया: $error';
+  }
+
+  @override
+  String deletePaymentError(String error) {
+    return 'पेमेंट डिलीट करने में एरर: $error';
+  }
+
+  @override
+  String updateDueDateError(String error) {
+    return 'ड्यू डेट अपडेट करने में एरर: $error';
+  }
+
+  @override
+  String get selectCard => 'कार्ड चुनें';
+
+  @override
+  String get pleaseSelectCard => 'कृपया एक कार्ड चुनें';
 }

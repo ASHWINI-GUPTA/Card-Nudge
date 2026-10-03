@@ -3,36 +3,38 @@ import 'package:uuid/uuid.dart';
 
 part 'bank_model.g.dart';
 
+/// Represents a bank entity where the user holds a credit card.
+/// Stored locally via Hive and synchronized with the remote Supabase database.
 @HiveType(typeId: 1)
 class BankModel {
-  @HiveField(0)
+  @HiveField(0, defaultValue: '')
   String id;
 
-  @HiveField(1)
+  @HiveField(1, defaultValue: '')
   String userId;
 
-  @HiveField(2)
+  @HiveField(2, defaultValue: '')
   String name;
 
-  @HiveField(3)
+  @HiveField(3, defaultValue: null)
   String? code;
 
-  @HiveField(4)
+  @HiveField(4, defaultValue: null)
   String? logoPath;
 
-  @HiveField(5)
+  @HiveField(5, defaultValue: null)
   String? supportNumber;
 
-  @HiveField(6)
+  @HiveField(6, defaultValue: null)
   String? website;
 
-  @HiveField(7)
+  @HiveField(7, defaultValue: false)
   bool isFavorite;
 
-  @HiveField(8)
+  @HiveField(8, defaultValue: null)
   String? colorHex;
 
-  @HiveField(9)
+  @HiveField(9, defaultValue: null)
   int? priority;
 
   @HiveField(10)
@@ -41,10 +43,10 @@ class BankModel {
   @HiveField(11)
   DateTime updatedAt;
 
-  @HiveField(12)
+  @HiveField(12, defaultValue: true)
   bool syncPending;
 
-  @HiveField(13)
+  @HiveField(13, defaultValue: false)
   bool isDefault;
 
   BankModel({

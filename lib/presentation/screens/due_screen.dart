@@ -43,6 +43,13 @@ class DueScreen extends ConsumerWidget {
           child: DataSynchronizationProgressBar(),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => NavigationService.showBottomSheet(
+          context: context,
+          builder: (context) => const PaymentDueEntryBottomSheet(),
+        ),
+        child: const Icon(Icons.add),
+      ),
       body: cardsAsync.when(
         data: (cards) {
           final activeCards = cards.where((card) => !card.isArchived).toList();
@@ -114,13 +121,30 @@ class DueScreen extends ConsumerWidget {
               itemCount: groupedCards.length,
               itemBuilder: (context, index) {
                 final entry = groupedCards.entries.elementAt(index);
-                final label = entry.key;
+                final groupDate = entry.key;
                 final payments = entry.value;
+
+                final now = DateTime.now();
+                final today = DateTime(now.year, now.month, now.day);
+                
+                String label;
+                bool isOverdue = false;
+                bool isToday = false;
+                
+                if (groupDate.year == 1970) {
+                  label = context.l10n.overdue;
+                  isOverdue = true;
+                } else if (groupDate == today) {
+                  label = context.l10n.today;
+                  isToday = true;
+                } else {
+                  label = DateFormat.yMMMMd().format(groupDate);
+                }
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    DateHeader(label: label),
+                    DateHeader(label: label, isOverdue: isOverdue, isToday: isToday),
                     ...payments.map((payment) {
                       final card = activeCards.firstWhere(
                         (c) => c.id == payment.cardId,
@@ -210,9 +234,7 @@ class DueScreen extends ConsumerWidget {
             onPressed:
                 () => NavigationService.showBottomSheet(
                   context: context,
-                  builder:
-                      (context) =>
-                          PaymentDueEntryBottomSheet(card: cards.first),
+                  builder: (context) => const PaymentDueEntryBottomSheet(),
                 ),
             child: Text(context.l10n.addPaymentButton),
           ),
@@ -221,13 +243,13 @@ class DueScreen extends ConsumerWidget {
     );
   }
 
-  Map<String, List<PaymentModel>> _groupPaymentsByDueDate(
+  Map<DateTime, List<PaymentModel>> _groupPaymentsByDueDate(
     BuildContext context,
     List<PaymentModel> payments,
   ) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    Map<String, List<PaymentModel>> grouped = {};
+    Map<DateTime, List<PaymentModel>> grouped = {};
 
     for (var payment in payments) {
       final dueDate = DateTime(
@@ -236,36 +258,22 @@ class DueScreen extends ConsumerWidget {
         payment.dueDate.day,
       );
       final diff = dueDate.differenceInDaysCeil(today);
-      String label;
+      DateTime groupKey;
 
       if (diff < 0) {
-        label = AppStrings.overdue;
+        groupKey = DateTime(1970); // Overdue
       } else if (diff == 0) {
-        label = AppStrings.today;
+        groupKey = today; // Today
       } else {
-        label = DateFormat.yMMMMd().format(dueDate);
+        groupKey = dueDate;
       }
 
-      grouped.putIfAbsent(label, () => []).add(payment);
+      grouped.putIfAbsent(groupKey, () => []).add(payment);
     }
 
     // Sort by date (overdue first)
     grouped = Map.fromEntries(
-      grouped.entries.toList()..sort((a, b) {
-        if (a.key == 'Overdue') return -1;
-        if (b.key == 'Overdue') return 1;
-        if (a.key == 'Today') return -1;
-        if (b.key == 'Today') return 1;
-        final dateA =
-            a.key == 'Overdue' || a.key == 'Today'
-                ? today
-                : DateFormat.yMMMMd().parse(a.key);
-        final dateB =
-            b.key == 'Overdue' || b.key == 'Today'
-                ? today
-                : DateFormat.yMMMMd().parse(b.key);
-        return dateA.compareTo(dateB);
-      }),
+      grouped.entries.toList()..sort((a, b) => a.key.compareTo(b.key)),
     );
 
     return grouped;
@@ -282,14 +290,14 @@ class DueScreen extends ConsumerWidget {
 
 class DateHeader extends StatelessWidget {
   final String label;
+  final bool isOverdue;
+  final bool isToday;
 
-  const DateHeader({super.key, required this.label});
+  const DateHeader({super.key, required this.label, this.isOverdue = false, this.isToday = false});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isOverdue = label == 'Overdue';
-    final isToday = label == 'Today';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

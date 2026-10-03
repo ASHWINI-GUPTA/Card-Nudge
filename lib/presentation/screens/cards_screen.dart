@@ -21,9 +21,9 @@ class CardsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cardsAsync = ref.watch(creditCardProvider);
     final theme = Theme.of(context);
-    final user = ref.read(userProvider);
+    final user = ref.watch(userProvider);
     if (user == null) {
-      throw Exception('User not found');
+      return const SizedBox.shrink();
     }
 
     return Scaffold(
@@ -44,7 +44,7 @@ class CardsScreen extends ConsumerWidget {
                 ),
           ),
           IconButton(
-            tooltip: 'Spend Analysis',
+            tooltip: context.l10n.spendAnalysisTitle,
             icon: const Icon(Icons.analytics_outlined),
             color: Colors.white,
             onPressed:

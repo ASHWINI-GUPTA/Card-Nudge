@@ -17,19 +17,19 @@ class PaymentModelAdapter extends TypeAdapter<PaymentModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PaymentModel(
-      id: fields[0] as String?,
-      userId: fields[1] as String,
-      cardId: fields[2] as String,
-      dueAmount: fields[3] as double,
+      id: fields[0] == null ? '' : fields[0] as String?,
+      userId: fields[1] == null ? '' : fields[1] as String,
+      cardId: fields[2] == null ? '' : fields[2] as String,
+      dueAmount: fields[3] == null ? 0.0 : fields[3] as double,
       paymentDate: fields[4] as DateTime?,
-      isPaid: fields[5] as bool,
+      isPaid: fields[5] == null ? false : fields[5] as bool,
       createdAt: fields[6] as DateTime?,
       updatedAt: fields[7] as DateTime?,
       minimumDueAmount: fields[8] as double?,
-      paidAmount: fields[9] as double,
+      paidAmount: fields[9] == null ? 0.0 : fields[9] as double,
       dueDate: fields[10] as DateTime,
-      statementAmount: fields[11] as double?,
-      syncPending: fields[12] as bool,
+      statementAmount: fields[11] == null ? 0.0 : fields[11] as double?,
+      syncPending: fields[12] == null ? true : fields[12] as bool,
     );
   }
 

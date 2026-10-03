@@ -195,16 +195,14 @@ class DashboardScreen extends ConsumerWidget {
         (sum, p) => sum + p.statementAmount,
       );
       monthlySpends.add({
-        'month': DateFormat.MMM().format(month),
+        'date': month,
         'amount': amount,
       });
     }
+    
+    // Sort strictly by DateTime
     monthlySpends.sort(
-      (a, b) => months
-          .indexWhere((m) => DateFormat.MMM().format(m) == a['month'])
-          .compareTo(
-            months.indexWhere((m) => DateFormat.MMM().format(m) == b['month']),
-          ),
+      (a, b) => (a['date'] as DateTime).compareTo(b['date'] as DateTime),
     );
 
     // Monthly overview data for DashboardMonthWidget
@@ -325,7 +323,7 @@ class DashboardScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     return [
       Text(
-        'Alerts',
+        context.l10n.alerts,
         style: theme.textTheme.titleMedium?.copyWith(
           fontSize: 16,
           fontWeight: FontWeight.bold,

@@ -305,7 +305,8 @@ class SyncService {
           'for ${entityType.table}: $e',
         );
 
-        rethrow;
+        // Continue processing other entities instead of aborting the entire sync.
+        continue;
       }
     }
 
@@ -463,7 +464,7 @@ class SyncService {
 
       final serverUpdatedAt = DateTime.parse(serverBank['updated_at']);
 
-      if (localBank == null || serverUpdatedAt.isAfter(localBank.updatedAt)) {
+      if (localBank == null || (!localBank.syncPending && serverUpdatedAt.isAfter(localBank.updatedAt))) {
         final bank = BankModel(
           id: serverBank['id'],
           userId: serverBank['user_id'],
@@ -559,7 +560,7 @@ class SyncService {
 
       final serverUpdatedAt = DateTime.parse(serverCard['updated_at']);
 
-      if (localCard == null || serverUpdatedAt.isAfter(localCard.updatedAt)) {
+      if (localCard == null || (!localCard.syncPending && serverUpdatedAt.isAfter(localCard.updatedAt))) {
         final card = CreditCardModel(
           id: serverCard['id'],
           userId: serverCard['user_id'],
@@ -660,7 +661,7 @@ class SyncService {
       final serverUpdatedAt = DateTime.parse(serverPayment['updated_at']);
 
       if (localPayment == null ||
-          serverUpdatedAt.isAfter(localPayment.updatedAt)) {
+          (!localPayment.syncPending && serverUpdatedAt.isAfter(localPayment.updatedAt))) {
         final payment = PaymentModel(
           id: serverPayment['id'],
           userId: serverPayment['user_id'],
@@ -880,7 +881,7 @@ class SyncService {
           localSetting == null ||
           localSetting.isDefaultSetting ||
           localSetting.userId != userId ||
-          serverUpdatedAt.isAfter(localSetting.updatedAt);
+          (!localSetting.syncPending && serverUpdatedAt.isAfter(localSetting.updatedAt));
 
       if (shouldPullServer) {
         final timeArray = serverSetting['reminder_time'].toString().split(':');

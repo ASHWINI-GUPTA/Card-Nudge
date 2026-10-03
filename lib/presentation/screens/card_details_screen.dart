@@ -295,7 +295,11 @@ class CardDetailsScreen extends ConsumerWidget {
 
   ListView _listPayment(List<PaymentModel> paymentHistory) {
     final sortedHistory = [...paymentHistory]
-      ..sort((a, b) => (b.paymentDate!).compareTo(a.paymentDate!));
+      ..sort((a, b) {
+        final dateA = a.paymentDate ?? a.dueDate;
+        final dateB = b.paymentDate ?? b.dueDate;
+        return dateB.compareTo(dateA);
+      });
     return ListView.separated(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
@@ -432,7 +436,7 @@ class CardDetailsScreen extends ConsumerWidget {
                   } catch (e) {
                     if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error deleting payment: $e')),
+                      SnackBar(content: Text(context.l10n.deletePaymentError(e.toString()))),
                     );
                   }
                 },

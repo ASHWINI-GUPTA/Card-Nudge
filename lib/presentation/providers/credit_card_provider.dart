@@ -40,7 +40,9 @@ class CreditCardNotifier extends AsyncNotifier<List<CreditCardModel>> {
 
   @override
   Future<List<CreditCardModel>> build() async {
-    _box.listenable().addListener(_onBoxChange);
+    final listenable = _box.listenable();
+    listenable.addListener(_onBoxChange);
+    ref.onDispose(() => listenable.removeListener(_onBoxChange));
     return _box.values.toList()..sort((a, b) {
       final dueDateComparison = a.dueDate.differenceInDaysCeil(b.dueDate);
       if (dueDateComparison != 0) {
