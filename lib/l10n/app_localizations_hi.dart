@@ -906,4 +906,23 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get pleaseSelectCard => 'कृपया एक कार्ड चुनें';
+
+  @override
+  String get paymentPastDueDateWarning => 'पेमेंट ड्यू डेट निकल चुकी है';
+
+  @override
+  String get whenWasPaymentMade => 'यह पेमेंट कब किया गया था?';
+
+  @override
+  String onDueDateOption(String date) {
+    return 'ड्यू डेट पर ($date)';
+  }
+
+  @override
+  String todayOption(String date) {
+    return 'आज ($date)';
+  }
+
+  @override
+  String get customDateOption => 'कस्टम तारीख';
 }

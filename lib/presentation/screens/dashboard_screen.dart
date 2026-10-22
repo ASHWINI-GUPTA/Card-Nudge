@@ -17,6 +17,9 @@ import '../widgets/dashboard_month_widget.dart';
 import '../widgets/monthly_spend_chart_widget.dart';
 import '../widgets/data_sync_progress_bar.dart';
 
+import '../../services/navigation_service.dart';
+import 'emi_calculator_screen.dart';
+
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
@@ -66,6 +69,16 @@ class DashboardScreen extends ConsumerWidget {
           ),
         ),
         backgroundColor: theme.colorScheme.primary,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.calculate_outlined, color: theme.colorScheme.onPrimary),
+            tooltip: 'EMI Calculator',
+            onPressed: () => NavigationService.navigateTo(
+              context,
+              const EmiCalculatorScreen(),
+            ),
+          ),
+        ],
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(2),
           child: DataSynchronizationProgressBar(),

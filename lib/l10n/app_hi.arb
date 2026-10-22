@@ -318,5 +318,10 @@
   "deletePaymentError": "पेमेंट डिलीट करने में एरर: {error}",
   "updateDueDateError": "ड्यू डेट अपडेट करने में एरर: {error}",
   "selectCard": "कार्ड चुनें",
-  "pleaseSelectCard": "कृपया एक कार्ड चुनें"
+  "pleaseSelectCard": "कृपया एक कार्ड चुनें",
+  "paymentPastDueDateWarning": "पेमेंट ड्यू डेट निकल चुकी है",
+  "whenWasPaymentMade": "यह पेमेंट कब किया गया था?",
+  "onDueDateOption": "ड्यू डेट पर ({date})",
+  "todayOption": "आज ({date})",
+  "customDateOption": "कस्टम तारीख"
 }

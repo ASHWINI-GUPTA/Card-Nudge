@@ -5,6 +5,7 @@ class AppRoutes {
   static const String dashboard = '/dashboard';
   static const String cardDetails = '/card_details/:cardId';
   static const String spendAnalysis = '/spend-analysis';
+  static const String emiCalculator = '/emi-calculator';
   static const String auth = '/auth';
   static const String loginCallback = '/login-callback';
   static const String sync = '/sync';
@@ -16,6 +17,7 @@ class AppRoutes {
   static const String dashboardName = 'dashboard';
   static const String cardDetailsName = 'cardDetails';
   static const String spendAnalysisName = 'spendAnalysis';
+  static const String emiCalculatorName = 'emiCalculator';
   static const String authName = 'auth';
   static const String loginCallbackName = 'loginCallback';
   static const String syncName = 'sync';

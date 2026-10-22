@@ -1133,6 +1133,36 @@
     "description": "Label for selecting a card"
   },
   "pleaseSelectCard": "Please select a card",
+  "paymentPastDueDateWarning": "Payment is past due date",
+  "@paymentPastDueDateWarning": {
+    "description": "Warning message when payment is being marked after due date"
+  },
+  "whenWasPaymentMade": "When was this payment made?",
+  "@whenWasPaymentMade": {
+    "description": "Question asking user for the actual payment date"
+  },
+  "onDueDateOption": "On Due Date ({date})",
+  "@onDueDateOption": {
+    "description": "Option to mark payment on its due date",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "todayOption": "Today ({date})",
+  "@todayOption": {
+    "description": "Option to mark payment today",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "customDateOption": "Custom Date",
+  "@customDateOption": {
+    "description": "Option to select a custom payment date"
+  },
   "@pleaseSelectCard": {
     "description": "Validation error when card is not selected"
   }

@@ -16,6 +16,7 @@ import '../providers/sync_provider.dart';
 import '../providers/user_provider.dart';
 import '../widgets/data_sync_progress_bar.dart';
 import '../widgets/app_version_information_tile.dart';
+import 'emi_calculator_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -261,6 +262,33 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
 
+            const SizedBox(height: _heightBetweenSection),
+            // Tools & Calculators Section
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: Icon(
+                      Icons.calculate_outlined,
+                      color: theme.colorScheme.primary,
+                    ),
+                    title: const Text('EMI & No-Cost EMI Calculator'),
+                    subtitle: const Text('Calculate EMIs, true costs, & foreclosure'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {
+                      NavigationService.navigateTo(
+                        context,
+                        const EmiCalculatorScreen(),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: _heightBetweenSection),
             // Data Management Section
             Card(

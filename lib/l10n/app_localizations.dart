@@ -1717,6 +1717,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please select a card'**
   String get pleaseSelectCard;
+
+  /// Warning message when payment is being marked after due date
+  ///
+  /// In en, this message translates to:
+  /// **'Payment is past due date'**
+  String get paymentPastDueDateWarning;
+
+  /// Question asking user for the actual payment date
+  ///
+  /// In en, this message translates to:
+  /// **'When was this payment made?'**
+  String get whenWasPaymentMade;
+
+  /// Option to mark payment on its due date
+  ///
+  /// In en, this message translates to:
+  /// **'On Due Date ({date})'**
+  String onDueDateOption(String date);
+
+  /// Option to mark payment today
+  ///
+  /// In en, this message translates to:
+  /// **'Today ({date})'**
+  String todayOption(String date);
+
+  /// Option to select a custom payment date
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Date'**
+  String get customDateOption;
 }
 
 class _AppLocalizationsDelegate

@@ -1,6 +1,7 @@
 import 'package:card_nudge/constants/app_routes.dart';
 import 'package:card_nudge/presentation/screens/dashboard_screen.dart';
 import '../screens/spend_analysis_screen.dart';
+import '../screens/emi_calculator_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -94,6 +95,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.spendAnalysis,
         name: AppRoutes.spendAnalysisName,
         builder: (context, state) => const SpendAnalysisScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.emiCalculator,
+        name: AppRoutes.emiCalculatorName,
+        builder: (context, state) {
+          final cardId = state.uri.queryParameters['cardId'];
+          return EmiCalculatorScreen(initialCardId: cardId);
+        },
       ),
       GoRoute(
         path: AppRoutes.cardDetails,

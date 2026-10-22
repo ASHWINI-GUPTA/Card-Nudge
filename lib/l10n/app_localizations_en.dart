@@ -896,4 +896,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pleaseSelectCard => 'Please select a card';
+
+  @override
+  String get paymentPastDueDateWarning => 'Payment is past due date';
+
+  @override
+  String get whenWasPaymentMade => 'When was this payment made?';
+
+  @override
+  String onDueDateOption(String date) {
+    return 'On Due Date ($date)';
+  }
+
+  @override
+  String todayOption(String date) {
+    return 'Today ($date)';
+  }
+
+  @override
+  String get customDateOption => 'Custom Date';
 }

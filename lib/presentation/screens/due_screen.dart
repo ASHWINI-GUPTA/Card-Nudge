@@ -536,7 +536,11 @@ class DueCardContent extends ConsumerWidget {
                         context: context,
                         builder:
                             (context) =>
-                                PaymentHistoryBottomSheet(payment: payment),
+                                PaymentHistoryBottomSheet(
+                                  payment: payment,
+                                  card: card,
+                                  isAutoDebit: card.isAutoDebitEnabled,
+                                ),
                       ),
                 ),
               ),

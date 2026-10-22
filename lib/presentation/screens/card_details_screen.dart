@@ -16,6 +16,7 @@ import '../widgets/payment_summary_display_card.dart';
 import '../widgets/payment_history_bottom_sheet.dart';
 import 'benefits_summary_screen.dart';
 import 'card_card_form_screen.dart';
+import 'emi_calculator_screen.dart';
 
 class CardDetailsScreen extends ConsumerWidget {
   final CreditCardModel card;
@@ -55,6 +56,16 @@ class CardDetailsScreen extends ConsumerWidget {
             elevation: 8,
             itemBuilder:
                 (context) => [
+                  PopupMenuItem(
+                    value: 'emi',
+                    child: Row(
+                      children: [
+                        Icon(Icons.calculate_outlined, color: theme.colorScheme.primary),
+                        const SizedBox(width: 12),
+                        const Text('EMI Calculator'),
+                      ],
+                    ),
+                  ),
                   PopupMenuItem(
                     value: 'edit',
                     child: Row(
@@ -221,6 +232,8 @@ class CardDetailsScreen extends ConsumerWidget {
                             builder:
                                 (context) => PaymentHistoryBottomSheet(
                                   payment: upcoming.first,
+                                  card: card,
+                                  isAutoDebit: card.isAutoDebitEnabled,
                                 ),
                           ),
                       child: PaymentSummaryDisplayCard(payment: upcoming.first),
@@ -323,6 +336,12 @@ class CardDetailsScreen extends ConsumerWidget {
     final user = ref.watch(userProvider)!;
 
     switch (value) {
+      case 'emi':
+        NavigationService.navigateTo(
+          context,
+          EmiCalculatorScreen(initialCardId: card.id),
+        );
+        break;
       case 'edit':
         NavigationService.navigateTo(
           context,

@@ -116,7 +116,11 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
     }
   }
 
-  Future<void> markAsPaid(String paymentId, double amount) async {
+  Future<void> markAsPaid(
+    String paymentId,
+    double amount, {
+    DateTime? paymentDate,
+  }) async {
     state = const AsyncValue.loading();
     try {
       final payment = state.value!.firstWhere((p) => p.id == paymentId);
@@ -133,7 +137,7 @@ class PaymentNotifier extends AsyncNotifier<List<PaymentModel>> {
         isPaid: true,
         paidAmount: amount,
         dueAmount: payment.dueAmount - amount,
-        paymentDate: DateTime.now().toUtc(),
+        paymentDate: (paymentDate ?? DateTime.now()).toUtc(),
         syncPending: true,
       );
 
